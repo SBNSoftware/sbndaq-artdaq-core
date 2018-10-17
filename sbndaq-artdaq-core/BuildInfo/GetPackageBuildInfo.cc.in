@@ -1,0 +1,21 @@
+#include "sbndaq-artdaq-core/BuildInfo/GetPackageBuildInfo.hh"
+
+#include <string>
+
+namespace sbndaqcore
+{
+
+artdaq::PackageBuildInfo GetPackageBuildInfo::getPackageBuildInfo()
+{
+
+    artdaq::PackageBuildInfo pkg;
+
+    pkg.setPackageName ( "sbndaq-artdaq-core" );
+    pkg.setPackageVersion ( "@version@" );
+    pkg.setBuildTimestamp ( "@utcDateTime@" );
+
+    return pkg;
+}
+
+}
+

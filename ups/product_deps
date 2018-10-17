@@ -1,0 +1,43 @@
+# The parent line must be the first non-comment line in the file
+# This line defines the product name and version
+parent sbndaq_artdaq_core		v0_01_00
+defaultqual	e15:icarus
+
+# These optional lines define the installed directories where
+# headers, libraries, and executables will be found
+# Use them only if your product does not conform to the defaults
+# Format: directory_type directory_path directory_name
+# The only recognized values of the first field are incdir, libdir, and bindir
+# The only recognized values of the second field are product_dir and fq_dir
+# The third field is not constrained
+# The examples here reflect the defaults
+incdir      product_dir include
+libdir      fq_dir      lib
+bindir      fq_dir      bin
+fcldir      -
+
+#
+product			version	       optional
+
+artdaq_core 		v3_04_02
+
+icarus_artdaq_base     	v0_06_01       -       optional
+cetbuildtools   	v7_02_01       -       only_for_build
+
+end_product_list
+
+# -nq- here means there is no qualifier
+# a "-" here means the dependent product is not required by the parent and will not be setup
+qualifier		icarus_artdaq_base	artdaq_core
+e15:prof		-			e15:prof:s64
+e15:debug		-			e15:debug:s64
+e15:prof:icarus		e15:prof:icarus		e15:prof:s64
+e15:debug:icarus	e15:debug:icarus	e15:debug:s64
+
+# Preserve tabs and formatting in emacs and vi / vim:
+
+### Local Variables:
+### tab-width: 8
+### End:
+
+# vi:set ts=8 noexpandtab:
