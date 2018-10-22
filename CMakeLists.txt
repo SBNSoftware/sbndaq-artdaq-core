@@ -67,6 +67,15 @@ find_ups_boost( v1_63_0b filesystem
 
 find_ups_product( cetbuildtools v5_08_01 )
  
+#experiment specific products needed
+IF(ICARUS_BUILD)
+  find_ups_product( icarus_artdaq_base v0_03_00 )
+ENDIF()
+
+IF(SBND_BUILD)
+
+ENDIF()
+
 # macros for art_dictionary and simple_plugin
 #include(ArtMake)
 include(CetTest)
