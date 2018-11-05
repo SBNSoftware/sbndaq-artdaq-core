@@ -7,9 +7,18 @@ namespace icarus {
   namespace detail {
     enum FragmentType : artdaq::Fragment::type_t
     { MISSED = artdaq::Fragment::FirstUserFragmentType,
+	//COMMON
+	CAENV1730,
+	SpectratimeEvent,
+
+	//ICARUS
 	PHYSCRATEDATA,
 	PHYSCRATESTAT,
-	CAENV1730,
+
+	//SBND
+	NevisTPC,
+	PENNTRIGGER,
+
         INVALID // Should always be last.
         };
 

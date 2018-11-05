@@ -7,7 +7,23 @@
 
 namespace {
   static std::vector<std::string> const
-  names { "MISSED", "PHYSCRATEDATA","PHYSCRATESTAT","CAENV1730","UNKNOWN" };
+  names{
+    "MISSED", 
+
+      //Common
+      "CAENV1730",
+      "SPECTRATIMEVENT",
+
+      //ICARUS
+      "PHYSCRATEDATA",
+      "PHYSCRATESTAT",
+
+      //SBND
+      "NEVISTPC",
+      "PENNTRIGGER",
+
+      "UNKNOWN"
+      };
 }
 
 icarus::FragmentType

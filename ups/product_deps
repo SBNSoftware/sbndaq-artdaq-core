@@ -33,6 +33,8 @@ e15:prof		-			e15:prof:s64
 e15:debug		-			e15:debug:s64
 e15:prof:icarus		e15:prof:icarus		e15:prof:s64
 e15:debug:icarus	e15:debug:icarus	e15:debug:s64
+e15:prof:sbnd		-       		e15:prof:s64
+e15:debug:sbnd  	-		  	e15:debug:s64
 
 # Preserve tabs and formatting in emacs and vi / vim:
 

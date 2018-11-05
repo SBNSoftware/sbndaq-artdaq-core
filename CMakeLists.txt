@@ -12,7 +12,7 @@ project(sbndaq-artdaq-core)
 # use cmake 3.7 or later
 cmake_minimum_required (VERSION 3.7)
 
-#optional for icarus build
+#optional build setup
 
 string(FIND $ENV{MRB_QUALS} "icarus" ICARUS_FOUND)
 IF (ICARUS_FOUND EQUAL -1)
@@ -48,7 +48,7 @@ cet_cmake_env()
 cet_set_compiler_flags(DIAGS VIGILANT
  WERROR
  NO_UNDEFINED
- EXTRA_FLAGS -pedantic 
+ EXTRA_FLAGS -pedantic -pthread
  )
 
 cet_report_compiler_flags()
