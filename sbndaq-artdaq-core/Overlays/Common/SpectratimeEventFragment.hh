@@ -12,7 +12,7 @@ namespace sbndaq{
 
 	struct SpectratimeEvent;
 
-	class SpectratimeFragmentMetadata;
+	struct SpectratimeFragmentMetadata;
 }
 
 struct sbndaq::SpectratimeEvent{
@@ -20,6 +20,13 @@ struct sbndaq::SpectratimeEvent{
 	char quality;
 	short phase;
 	char status;
+};
+
+struct sbndaq::SpectratimeFragmentMetadata{
+
+public:
+  SpectratimeFragmentMetadata() {};
+
 };
 
 #endif

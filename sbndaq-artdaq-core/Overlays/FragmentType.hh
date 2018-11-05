@@ -2,7 +2,7 @@
 #define sbndaq_artdaq_core_Overlays_FragmentType_hh
 #include "artdaq-core/Data/Fragment.hh"
 
-namespace icarus {
+namespace sbndaq {
 
   namespace detail {
     enum FragmentType : artdaq::Fragment::type_t

@@ -26,8 +26,8 @@ namespace {
       };
 }
 
-icarus::FragmentType
-icarus::toFragmentType(std::string t_string)
+sbndaq::FragmentType
+sbndaq::toFragmentType(std::string t_string)
 {
   std::transform(t_string.begin(),
                  t_string.end(),
@@ -41,7 +41,7 @@ icarus::toFragmentType(std::string t_string)
 }
 
 std::string
-icarus::fragmentTypeToString(FragmentType val)
+sbndaq::fragmentTypeToString(FragmentType val)
 {
   if (val < FragmentType::INVALID) {
     return names[val - FragmentType::MISSED];
@@ -51,7 +51,7 @@ icarus::fragmentTypeToString(FragmentType val)
   }
 }
 
-std::map< artdaq::Fragment::type_t, std::string > icarus::makeFragmentTypeMap()
+std::map< artdaq::Fragment::type_t, std::string > sbndaq::makeFragmentTypeMap()
 {
 	auto output = artdaq::Fragment::MakeSystemTypeMap();
 	for (auto name : names)
