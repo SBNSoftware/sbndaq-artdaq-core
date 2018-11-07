@@ -16,7 +16,7 @@ cmake_minimum_required (VERSION 3.7)
 
 string(FIND $ENV{MRB_QUALS} "icarus" ICARUS_FOUND)
 IF (ICARUS_FOUND EQUAL -1)
-   MESSAGE ("No ICARUS_BUILD")
+   MESSAGE ("No ICARUS_BUILD?")
 ELSE()
    SET(ICARUS_BUILD 1)
    MESSAGE ("Performing ICARUS_BUILD")
@@ -24,10 +24,16 @@ ENDIF()
 
 string(FIND $ENV{MRB_QUALS} "sbnd" SBND_FOUND)
 IF (SBND_FOUND EQUAL -1)
-   MESSAGE ("No SBND_BUILD")
+   MESSAGE ("No SBND_BUILD?")
 ELSE()
    SET(SBND_BUILD 1)
    MESSAGE ("Performing SBND_BUILD")
+ENDIF()
+
+IF (NOT(SBND_BUILD OR ICARUS_BUILD))
+   MESSAGE("No experiment-specific build specified. Building all.")
+   SET(SBND_BUILD 1)
+   SET(ICARUS_BUILD 1)
 ENDIF()
 
 # cetbuildtools contains our cmake modules

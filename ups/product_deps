@@ -29,8 +29,8 @@ end_product_list
 # -nq- here means there is no qualifier
 # a "-" here means the dependent product is not required by the parent and will not be setup
 qualifier		icarus_artdaq_base	artdaq_core
-e15:prof		-			e15:prof:s64
-e15:debug		-			e15:debug:s64
+e15:prof		e15:prof:icarus		e15:prof:s64
+e15:debug		e15:debug:icarus	e15:debug:s64
 e15:prof:icarus		e15:prof:icarus		e15:prof:s64
 e15:debug:icarus	e15:debug:icarus	e15:debug:s64
 e15:prof:sbnd		-       		e15:prof:s64
