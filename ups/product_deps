@@ -1,7 +1,7 @@
 # The parent line must be the first non-comment line in the file
 # This line defines the product name and version
 parent sbndaq_artdaq_core		v0_01_00
-defaultqual	e15:icarus
+defaultqual	e15
 
 # These optional lines define the installed directories where
 # headers, libraries, and executables will be found
@@ -29,10 +29,10 @@ end_product_list
 # -nq- here means there is no qualifier
 # a "-" here means the dependent product is not required by the parent and will not be setup
 qualifier		icarus_artdaq_base	artdaq_core
-e15:prof		e15:prof:icarus		e15:prof:s64
-e15:debug		e15:debug:icarus	e15:debug:s64
-e15:prof:icarus		e15:prof:icarus		e15:prof:s64
-e15:debug:icarus	e15:debug:icarus	e15:debug:s64
+e15:prof		e15:prof		e15:prof:s64
+e15:debug		e15:debug       	e15:debug:s64
+e15:prof:icarus		e15:prof		e15:prof:s64
+e15:debug:icarus	e15:debug       	e15:debug:s64
 e15:prof:sbnd		-       		e15:prof:s64
 e15:debug:sbnd  	-		  	e15:debug:s64
 
