@@ -3,7 +3,7 @@
 
 #include "cetlib/exception.h"
 
-void bernfebdaq::BernCRTZMQFragmentMetadata::CheckTimeWindow() const {
+void sbndaq::BernCRTZMQFragmentMetadata::CheckTimeWindow() const {
   if(_time_end_seconds*1e9+_time_end_nanosec < _time_start_seconds*1e9+_time_start_nanosec)
     throw cet::exception("BernFragmentMetadata::CheckTimeWindow") 
       << "Failed. time_start (" << _time_start_seconds << "," << _time_start_nanosec 
@@ -11,7 +11,7 @@ void bernfebdaq::BernCRTZMQFragmentMetadata::CheckTimeWindow() const {
 }
 
 
-std::ostream & bernfebdaq::operator << (std::ostream & os, BernCRTZMQFragmentMetadata const& m){
+std::ostream & sbndaq::operator << (std::ostream & os, BernCRTZMQFragmentMetadata const& m){
   os << "\nBernCRTZMQFragmentMetadata:"
      << "\n\tTime window start: " << m.time_start_seconds() << " s, " << m.time_start_nanosec() << " ns" 
      << "\n\tTime window end: " << m.time_end_seconds() << " s, " << m.time_end_nanosec() << " ns" 
@@ -34,7 +34,7 @@ std::ostream & bernfebdaq::operator << (std::ostream & os, BernCRTZMQFragmentMet
   return os;
 }
 
-std::ostream & bernfebdaq::operator << (std::ostream & os, BernCRTZMQEvent const & e){
+std::ostream & sbndaq::operator << (std::ostream & os, BernCRTZMQEvent const & e){
   os << "\nBernCRTZMQEvent"
      << "\n\tMAC5: " << std::hex << e.MAC5() << std::dec;
   os << "\n\tFlags word: " << std::hex << e.flags << std::dec;
@@ -52,7 +52,7 @@ std::ostream & bernfebdaq::operator << (std::ostream & os, BernCRTZMQEvent const
   return os;
 }
 
-std::ostream & bernfebdaq::operator << (std::ostream & os, BernCRTZMQFragment const & f) {
+std::ostream & sbndaq::operator << (std::ostream & os, BernCRTZMQFragment const & f) {
   os << "BernCRTZMQFragment: "
      << "\n" << *(f.metadata());
   for(size_t i_b=0; i_b<f.metadata()->n_events(); ++i_b)
@@ -62,7 +62,7 @@ std::ostream & bernfebdaq::operator << (std::ostream & os, BernCRTZMQFragment co
   return os;
 }
 
-bool bernfebdaq::BernCRTZMQFragment::Verify() const {
+bool sbndaq::BernCRTZMQFragment::Verify() const {
   bool verified=true;
 
   if(metadata()->n_events()*sizeof(BernCRTZMQEvent) != DataPayloadSize() )
@@ -72,7 +72,7 @@ bool bernfebdaq::BernCRTZMQFragment::Verify() const {
     
 }
 /*
-std::string bernfebdaq::BernCRTZMQEvent::db_entry() const {
+std::string sbndaq::BernCRTZMQEvent::db_entry() const {
 
   std::stringstream ss_tags,ss_data;
   ss_tags << "time1_ref=" << time1.IsReference() << ",";

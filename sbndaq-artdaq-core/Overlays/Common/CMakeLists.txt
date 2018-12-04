@@ -13,6 +13,7 @@ cet_make_library( LIBRARY_NAME sbndaq-artdaq-core_Overlays_Common
 		  SOURCE 
 		  CAENV1730Fragment.cc
 		  SpectratimeEventFragment.cc
+		  BernCRTZMQFragment.cc
 		  LIBRARIES
 		  ${ARTDAQ_DAQDATA}
 		  ${CETLIB}
