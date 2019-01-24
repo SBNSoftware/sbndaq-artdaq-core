@@ -51,12 +51,19 @@ struct sbndaq::CAENV1730FragmentMetadata {
   uint32_t  nSamples;
   uint32_t  timeStampSec;
   uint32_t  timeStampNSec;
+
+  uint32_t  chTemps[CAEN_V1730_MAX_CHANNELS];
   
   CAENV1730FragmentMetadata() {}
   
   CAENV1730FragmentMetadata(uint32_t nc, uint32_t ns,
-		       uint32_t ts_s, uint32_t ts_ns) :
-    nChannels(nc),nSamples(ns),timeStampSec(ts_s),timeStampNSec(ts_ns) {}
+			    uint32_t ts_s, uint32_t ts_ns,
+			    uint32_t chtemp[CAEN_V1730_MAX_CHANNELS]) :
+    nChannels(nc),nSamples(ns),
+    timeStampSec(ts_s),timeStampNSec(ts_ns)
+  {
+    memcpy(chTemps,chtemp,CAEN_V1730_MAX_CHANNELS*sizeof(uint32_t));
+  }
 
   size_t ExpectedDataSize() const 
   { return (sizeof(CAENV1730EventHeader) + 
