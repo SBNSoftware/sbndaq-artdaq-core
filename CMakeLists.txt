@@ -7,10 +7,11 @@
 # ======================================================================
 
 
-project(sbndaq-artdaq-core)
 
 # use cmake 3.7 or later
 cmake_minimum_required (VERSION 3.7)
+
+project(sbndaq-artdaq-core)
 
 #optional build setup
 
