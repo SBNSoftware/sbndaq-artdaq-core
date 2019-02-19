@@ -7,10 +7,11 @@
 # ======================================================================
 
 
-project(sbndaq-artdaq-core)
 
 # use cmake 3.7 or later
 cmake_minimum_required (VERSION 3.7)
+
+project(sbndaq-artdaq-core)
 
 #optional build setup
 
@@ -56,6 +57,12 @@ cet_set_compiler_flags(DIAGS VIGILANT
  NO_UNDEFINED
  EXTRA_FLAGS -pedantic -pthread
  )
+
+SET ( SANITIZE_ADDRESS $ENV{SANITIZE_ADDRESS} )
+IF ( SANITIZE_ADDRESS )
+    MESSAGE (STATUS "Enable  -fsanitize=address -Wno-unused-command-line-argument -fno-omit-frame-pointer")
+    cet_add_compiler_flags(-fsanitize=address -Wno-unused-command-line-argument -fno-omit-frame-pointer)
+ENDIF()
 
 cet_report_compiler_flags()
 
