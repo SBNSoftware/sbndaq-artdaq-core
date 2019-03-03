@@ -1,5 +1,6 @@
 add_subdirectory(NevisTPC)
 
+
 cet_make_library( LIBRARY_NAME sbndaq-artdaq-core_Overlays_SBND_Penn
 		  SOURCE 
                   PennMicroSlice.cc
@@ -15,10 +16,12 @@ cet_make_library( LIBRARY_NAME sbndaq-artdaq-core_Overlays_SBND_Penn
                   ${MF_UTILITIES}
 )
 
+
 cet_make_library( LIBRARY_NAME sbndaq-artdaq-core_Overlays_SBND
 		  SOURCE 
 		  NevisTPCFragment.cc
 		  PennMilliSliceFragment.cc
+		  CTBFragment.cc
 		  LIBRARIES
 		  sbndaq-artdaq-core_Overlays_SBND_NevisTPC
 		  sbndaq-artdaq-core_Overlays_SBND_Penn
