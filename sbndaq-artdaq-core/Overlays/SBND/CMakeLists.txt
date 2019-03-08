@@ -22,6 +22,7 @@ cet_make_library( LIBRARY_NAME sbndaq-artdaq-core_Overlays_SBND
 		  NevisTPCFragment.cc
 		  PennMilliSliceFragment.cc
 		  CTBFragment.cc
+		  CTBContent.cc
 		  LIBRARIES
 		  sbndaq-artdaq-core_Overlays_SBND_NevisTPC
 		  sbndaq-artdaq-core_Overlays_SBND_Penn
