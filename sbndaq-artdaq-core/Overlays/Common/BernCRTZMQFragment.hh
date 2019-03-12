@@ -2,7 +2,7 @@
 #define sbndaq_Overlays_BernZMQFragment_hh
 
 #include "artdaq-core/Data/Fragment.hh"
-#include "cetlib/exception.h"
+#include "cetlib_except/exception.h"
 
 #include <iostream>
 #include <sstream>

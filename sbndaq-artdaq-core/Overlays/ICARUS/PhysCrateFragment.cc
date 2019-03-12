@@ -1,5 +1,5 @@
 #include "sbndaq-artdaq-core/Overlays/ICARUS/PhysCrateFragment.hh"
-#include "cetlib/exception.h"
+#include "cetlib_except/exception.h"
 #include "sbndaq-artdaq-core/Trace/trace_defines.h"
 
 #include "icarus-artdaq-base/common.h"

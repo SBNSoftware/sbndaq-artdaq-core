@@ -2,7 +2,7 @@
 #define sbndaq_artdaq_core_Overlays_Common_CAENV1730Fragment_hh
 
 #include "artdaq-core/Data/Fragment.hh"
-#include "cetlib/exception.h"
+#include "cetlib_except/exception.h"
 
 #define CAEN_V1730_MAX_CHANNELS 16
 

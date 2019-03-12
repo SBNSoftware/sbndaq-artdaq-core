@@ -1,7 +1,7 @@
 #include "sbndaq-artdaq-core/Overlays/ICARUS/PhysCrateStatFragment.hh"
 #include <iostream>
 
-#include "cetlib/exception.h"
+#include "cetlib_except/exception.h"
 
 std::ostream & icarus::operator << (std::ostream & os, struct PhysCrateStatBlock const & m) {
 

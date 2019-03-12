@@ -1,5 +1,5 @@
 #include "sbndaq-artdaq-core/Overlays/Common/CAENV1730Fragment.hh"
-#include "cetlib/exception.h"
+#include "cetlib_except/exception.h"
 
 bool sbndaq::CAENV1730Fragment::Verify() const {
 
