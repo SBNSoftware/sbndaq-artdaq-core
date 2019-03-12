@@ -3,7 +3,7 @@
 #include "sbndaq-artdaq-core/Overlays/Common/Utilities.hh"
 
 #include "messagefacility/MessageLogger/MessageLogger.h"
-#include "cetlib/exception.h"
+#include "cetlib_except/exception.h"
 
 #include <bitset>
 #include <iostream>

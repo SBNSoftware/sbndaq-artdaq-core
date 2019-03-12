@@ -1,7 +1,7 @@
 #ifndef sbndaq_artdaq_core_Overlays_Common_Utilities_hh
 #define sbndaq_artdaq_core_Overlays_Common_Utilities_hh
 
-#include "cetlib/exception.h"
+#include "cetlib_except/exception.h"
 
 #include <string>
 
