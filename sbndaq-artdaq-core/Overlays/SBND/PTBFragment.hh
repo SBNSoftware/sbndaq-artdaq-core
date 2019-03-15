@@ -1,9 +1,9 @@
-#ifndef sbndaq_artdaq_core_Overlays_SBND_CTBFragment_hh
-#define dune_artdaq_Overlays_CTBFragment_hh
+#ifndef sbndaq_artdaq_core_Overlays_SBND_PTBFragment_hh
+#define sbndaq_artdaq_core_Overlays_SBND_PTBFragment_hh
 
 #include "artdaq-core/Data/Fragment.hh"
 
-#include "sbndaq-artdaq-core/Overlays/SBND/CTB_content.h"
+#include "sbndaq-artdaq-core/Overlays/SBND/PTB_content.h"
 
 #include "cetlib/exception.h"
 

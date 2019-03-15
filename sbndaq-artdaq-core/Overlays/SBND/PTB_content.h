@@ -150,7 +150,7 @@ namespace ptb {
     	  static size_t const n_bits_type       = word_t::n_bits_type ;
 
     	  typedef uint64_t ts_size_t;
-    	  typedef uint64_t bi_size_t;
+    	  typedef uint64_t beam_size_t;
     	  typedef uint64_t crt_size_t;
     	  typedef uint64_t pds_size_t;
     	  typedef uint64_t mtca_size_t;
@@ -160,7 +160,7 @@ namespace ptb {
 
            ////////bits 0-63//////////////
            ts_size_t     timestamp  : n_bits_timestamp ;
-           bi_size_t     beam       : n_bits_beam ;
+           beam_size_t   beam       : n_bits_beam ;
            ////////bits 64-125////////////
            crt_size_t    crt        : n_bits_crt ;
            pds_size_t    pds        : n_bits_pds ;

@@ -21,7 +21,6 @@ namespace {
 
       //SBND
       "NEVISTPC",
-      "PENNTRIGGER",
       "TRIGGERBOARD",
 
       "UNKNOWN"

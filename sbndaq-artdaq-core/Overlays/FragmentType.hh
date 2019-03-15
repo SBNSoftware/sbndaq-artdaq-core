@@ -18,11 +18,10 @@ namespace sbndaq {
 
 	//SBND
 	NevisTPC,
-	PENNTRIGGER,
 	TRIGGERBOARD,
 
-        INVALID // Should always be last.
-        };
+    INVALID // Should always be last.
+   };
 
     // Safety check.
     static_assert(artdaq::Fragment::isUserFragmentType(FragmentType::INVALID - 1),

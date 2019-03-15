@@ -1,4 +1,4 @@
-#include "sbndaq-artdaq-core/Overlays/SBND/CTBFragment.hh""sbndaq-artdaq-core/Overlays/SBND/CTBFragment.hh"
+#include "sbndaq-artdaq-core/Overlays/SBND/PTBFragment.hh"
 
 #include "cetlib/exception.h"
 
@@ -18,19 +18,19 @@ namespace sbndaq {
       }
       else if ( f.ChStatus(i) ) {
 	out << "Check Status word " << std::hex
-            << " PDS " << f.ChStatus(i) -> get_pds()
-            << ", CRT: " << f.ChStatus(i) -> get_crt()
-	    << ", Beam: " << f.ChStatus(i) -> get_beam()
+            << " PDS " << f.ChStatus(i) -> pds
+            << ", CRT: " << f.ChStatus(i) -> crt
+	    << ", Beam: " << f.ChStatus(i) -> beam
 	    << ", TS: " << f.TimeStamp(i)
 	    << std::dec << std::endl ;
 
       }
       else if ( f.Feedback(i) ) {
 	out << "Feedback word  " << std::hex
-	    << ", Padding: " << f.Feedback(i) -> padding
-	    << ", Source: " << f.Feedback(i) -> source
 	    << ", Code: " << f.Feedback(i) -> code
-            << ", TS: " << f.TimeStamp(i) << std::dec << std::endl ;
+	    << ", Source: " << f.Feedback(i) -> source
+	    << ", payload: " << f.Feedback(i) -> payload
+        << ", TS: " << f.TimeStamp(i) << std::dec << std::endl ;
 
       }
       else {
