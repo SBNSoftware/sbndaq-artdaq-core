@@ -102,10 +102,6 @@ namespace ptb {
       } word_t;
 
 
-      typedef union word{
-          word_t frame;
-          uint8_t *get_bytes() {return reinterpret_cast<uint8_t*>(&frame);}
-      } word;
 
 
       /// -- Several different structures that can be used to reinterpret the payload depending on
@@ -251,6 +247,16 @@ namespace ptb {
       	 std::set<unsigned short> Triggers( size_t max_bit = n_bits_tmask ) const ;
 
        } trigger_t;
+
+
+       typedef union word{
+    	   word_t frame;
+    	   feedback_t feedback ;
+    	   ch_status_t ch_status ;
+    	   timestamp_t timestamp ;
+    	   trigger_t trigger ;
+    	   uint8_t *get_bytes() {return reinterpret_cast<uint8_t*>(&frame);}
+       } word;
 
     } // -- namespace word
   } // -- namespace content
