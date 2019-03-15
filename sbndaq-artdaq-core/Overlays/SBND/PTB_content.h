@@ -82,21 +82,21 @@ namespace ptb {
       ///
 
       typedef struct word_t {
+
+        static size_t const n_bits_timestamp  = 64;
+        static size_t const n_bits_payload    = 61;
+        static size_t const n_bits_type       = 3;
+
         typedef uint64_t ts_size_t;
         typedef uint64_t pad_size_t;
         typedef uint64_t  word_type_t;
-        //typedef uint8_t  word_type_t;
 
         ts_size_t timestamp;
-        pad_size_t payload : 61;
-        word_type_t word_type : 3;
+        pad_size_t payload    : n_bits_payload  ;
+        word_type_t word_type : n_bits_type ;
 
-        static size_t const size_bytes = 4*sizeof(uint32_t);
-        static size_t const size_u32 = 4*sizeof(uint32_t)/sizeof(uint32_t);
-
-        static size_t const n_bits_timestamp  = 64;
-        static size_t const n_bits_payload = 61;
-        static size_t const n_bits_type     = 3;
+        static size_t const size_bytes = sizeof( word_t );
+        static size_t const size_u32 = size_bytes/sizeof(uint32_t);
 
       } word_t;
 
@@ -111,31 +111,28 @@ namespace ptb {
       /// the word type. All these structures map into the full 16 bytes of the CTB words
       ///
       typedef struct feedback_t {
-            typedef uint64_t   ts_size_t;
-            typedef uint64_t   code_size_t;
-            //typedef uint8_t  code_size_t;
-            typedef uint64_t   source_size_t;
-            //typedef uint8_t  source_size_t;
-            typedef uint64_t   wtype_size_t;
-            //typedef uint8_t  wtype_size_t;
-            typedef uint64_t   payload_size_t;
-            //typedef uint32_t  payload_size_t;
 
-            ts_size_t       timestamp;
-            code_size_t     code      : 8;
-            source_size_t   source    : 8;
-            payload_size_t  payload1   : 16;
-            payload_size_t  payload2   : 29;
-            wtype_size_t    word_type : 3;
+    	  static size_t const n_bits_timestamp  = 64 ;
+    	  static size_t const n_bits_code       = 8  ;
+    	  static size_t const n_bits_source     = 8  ;
+    	  static size_t const n_bits_payload    = 45 ;
+    	  static size_t const n_bits_type       = word_t::n_bits_type ;
 
-            void set_payload(uint64_t pl) {payload1 = (pl & 0xFFFF); payload2 = ((pl >> 16) & 0x1FFFFFFF);}
-            uint64_t get_payload() {return ((((uint64_t)payload2) << 16) | (uint64_t)payload1);}
-            static size_t const size_bytes = 2*sizeof(uint64_t);
-            static size_t const size_u32 = size_bytes/sizeof(uint32_t);
+    	  typedef uint64_t  ts_size_t;
+    	  typedef uint64_t  code_size_t;
+    	  typedef uint64_t  source_size_t;
+    	  typedef uint64_t  payload_size_t;
+    	  typedef uint64_t  wtype_size_t;
 
-            static size_t const n_bits_timestamp  = 64;
-            static size_t const n_bits_payload = 32;
-            static size_t const n_bits_type     = 3;
+    	  ts_size_t       timestamp;
+    	  code_size_t     code      : n_bits_code ;
+    	  source_size_t   source    : n_bits_source ;
+    	  payload_size_t  payload   : n_bits_payload;
+    	  wtype_size_t    word_type : n_bits_type ;
+
+    	  static size_t const size_bytes = sizeof( feedback_t ) ;
+    	  static size_t const size_u32 = size_bytes/sizeof(uint32_t);
+
 
         } feedback_t;
 
