@@ -9,6 +9,7 @@
 #ifndef SBNDAQ_OVERLAYS_SBND_PTB_CONTENT_H_
 #define SBNDAQ_OVERLAYS_SBND_PTB_CONTENT_H_
 
+#include <set>
 #include <cstdint>
 
 namespace ptb {
@@ -124,7 +125,7 @@ namespace ptb {
     	  typedef uint64_t  payload_size_t;
     	  typedef uint64_t  wtype_size_t;
 
-    	  ts_size_t       timestamp;
+    	  ts_size_t       timestamp ;
     	  code_size_t     code      : n_bits_code ;
     	  source_size_t   source    : n_bits_source ;
     	  payload_size_t  payload   : n_bits_payload;
@@ -142,46 +143,49 @@ namespace ptb {
       //       won't rollover until the year 3431 for a 61-bit timestamp
 
       typedef struct ch_status_t {
-           typedef uint64_t ts_size_t;      
-           typedef uint64_t bi_size_t;
-           typedef uint64_t crt_size_t;
-           typedef uint64_t pds_size_t;
-           typedef uint64_t  mtca_size_t;
-           typedef uint64_t  nim_size_t;
-           typedef uint64_t auxpds_size_t;
-           typedef uint64_t  wtype_size_t;
+
+    	  static size_t const n_bits_timestamp  = 61 ;
+    	  static size_t const n_bits_beam       =  3 ;
+    	  static size_t const n_bits_crt        = 14 ;
+    	  static size_t const n_bits_pds        = 10 ;
+    	  static size_t const n_bits_mtca       =  6 ;
+    	  static size_t const n_bits_nim        =  6 ;
+    	  static size_t const n_bits_auxpds     = 25 ;
+    	  static size_t const n_bits_type       = word_t::n_bits_type ;
+
+    	  typedef uint64_t ts_size_t;
+    	  typedef uint64_t bi_size_t;
+    	  typedef uint64_t crt_size_t;
+    	  typedef uint64_t pds_size_t;
+    	  typedef uint64_t mtca_size_t;
+    	  typedef uint64_t nim_size_t;
+    	  typedef uint64_t auxpds_size_t;
+    	  typedef uint64_t wtype_size_t;
 
            ////////bits 0-63//////////////
-           ts_size_t     timestamp  : 61;
-           bi_size_t     beam       : 3 ;
+           ts_size_t     timestamp  : n_bits_timestamp ;
+           bi_size_t     beam       : n_bits_beam ;
            ////////bits 64-125////////////
-           crt_size_t    crt        : 14;
-           pds_size_t    pds        : 10;
-           mtca_size_t   mtca       : 6 ;
-           nim_size_t    nim        : 6 ; 
-           auxpds_size_t auxpds     : 25; //leftovers are for the v2495
-           wtype_size_t  word_type  : 3 ;
+           crt_size_t    crt        : n_bits_crt ;
+           pds_size_t    pds        : n_bits_pds ;
+           mtca_size_t   mtca       : n_bits_mtca ;
+           nim_size_t    nim        : n_bits_nim ;
+           auxpds_size_t auxpds     : n_bits_auxpds ; //leftovers are for the v2495
+           wtype_size_t  word_type  : n_bits_type ;
 
-
-           //not used..
-           static size_t const size_bytes = 2*sizeof(uint64_t);
+           static size_t const size_bytes = sizeof( ch_status_t );
            static size_t const size_u32 = size_bytes/sizeof(uint32_t);
 
-           static size_t const n_bits_timestamp  = 61;
-           //static size_t const n_bits_padding    = 1;
-           static size_t const n_bits_payload    = 61;
-           static size_t const n_bits_type       = 3;
-           //
-
-           // aux_functions
+           // aux_functions Not sure why they are needed
+           /*
            uint8_t  get_beam()   {return (beam   & 0x7)      ;}
            uint16_t get_crt()    {return (crt    & 0x3FFF)   ;}
            uint16_t get_pds()    {return (pds    & 0x3FF)    ;}
            uint8_t  get_mtca()   {return (mtca   & 0x3F)     ;}
            uint8_t  get_nim()    {return (mtca   & 0x3F)     ;}
            uint32_t get_auxpds() {return (auxpds & 0x1FFFFFF);} //25{1'b1}
+           */
            
-
            bool get_state_crt(const uint16_t channel) {
              return (    (crt & (0x1 << channel)) != 0x0);
            }
@@ -203,43 +207,48 @@ namespace ptb {
 
        } ch_status_t;
 
+
        typedef struct timestamp_t {
+
+    	   static size_t const n_bits_timestamp = 64;
+    	   static size_t const n_bits_unused    = 61;
+    	   static size_t const n_bits_type      = 3;
+
            typedef uint64_t ts_size_t;
            typedef uint64_t pad_size_t;
            typedef uint64_t wtype_size_t;
-           //typedef uint8_t wtype_size_t;
 
            ts_size_t    timestamp;
-           pad_size_t   padding   : 61;
-           wtype_size_t word_type : 3;
+           pad_size_t   padding   : n_bits_unused ;
+           wtype_size_t word_type : n_bits_type ;
 
-           static size_t const size_bytes = 2*sizeof(uint64_t);
+           static size_t const size_bytes = sizeof( timestamp_t );
            static size_t const size_u32 = size_bytes/sizeof(uint32_t);
-
-           static size_t const n_bits_timestamp = 64;
-           static size_t const n_bits_unused    = 61;
-           static size_t const n_bits_type      = 3;
 
        } timestamp_t;
 
 
        typedef struct trigger_t {
-           typedef uint64_t ts_size_t;
+
+    	   static size_t const n_bits_timestamp = 64;
+    	   static size_t const n_bits_tmask     = 61;
+    	   static size_t const n_bits_type      = word_t::n_bits_type ;
+
+    	   typedef uint64_t ts_size_t;
            typedef uint64_t mask_size_t;
            typedef uint64_t wtype_size_t;
-           //typedef uint8_t  wtype_size_t;
 
            ts_size_t timestamp;
+           mask_size_t  trigger_word : n_bits_timestamp ;
+           wtype_size_t word_type    : n_bits_type ;
 
-           mask_size_t  trigger_word       : 61;
-           wtype_size_t word_type : 3;
-
-           static size_t const size_bytes = 2*sizeof(uint64_t);
+           static size_t const size_bytes = sizeof( trigger_t );
            static size_t const size_u32 = size_bytes/sizeof(uint32_t);
 
-           static size_t const n_bits_timestamp = 64;
-           static size_t const n_bits_tmask     = 61;
-           static size_t const n_bits_type      = 3;
+      	 bool IsHLT() const { return word_type == word_type::t_gt ; }
+      	 bool IsLLT() const { return word_type == word_type::t_lt ; }
+      	 bool IsTrigger( const unsigned int i ) const  { return trigger_word & ( 0x1 << i ); }
+      	 std::set<unsigned short> Triggers( size_t max_bit = n_bits_tmask ) const ;
 
        } trigger_t;
 
