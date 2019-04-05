@@ -9,6 +9,7 @@ cet_make_library( LIBRARY_NAME sbndaq-artdaq-core_Overlays_Common_Utilities
                   ${MF_MESSAGELOGGER}
                   ${MF_UTILITIES}
 )
+
 cet_make_library( LIBRARY_NAME sbndaq-artdaq-core_Overlays_Common
 		  SOURCE 
 		  CAENV1730Fragment.cc

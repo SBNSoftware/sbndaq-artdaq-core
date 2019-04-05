@@ -18,7 +18,7 @@ namespace sbndaq {
 
 	//SBND
 	NevisTPC,
-	PENNTRIGGER,
+	PTB,
 
         INVALID // Should always be last.
         };
