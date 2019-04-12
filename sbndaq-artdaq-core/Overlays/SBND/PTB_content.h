@@ -11,11 +11,12 @@
 
 #include <set>
 #include <cstdint>
-#include <stddef.h>
 
 namespace ptb {
 
   namespace content {
+
+    using std::size_t ;
 
     // NFB: Note that order denotes bit order in the word:
     //      Upper fields are in the lsb and lower field is in the msb
@@ -37,14 +38,14 @@ namespace ptb {
         typedef uint16_t pkt_size_t;
         typedef uint8_t   seq_size_t;
         typedef uint8_t   ver_size_t;
-        uint16_t packet_size 	: 16; // Size of the data content in bytes
-        uint8_t  sequence_id 	: 8; // packet order...rotates every 256
+        uint16_t packet_size    : 16; // Size of the data content in bytes
+        uint8_t  sequence_id    : 8; // packet order...rotates every 256
         uint8_t  format_version : 8;
 
         static size_t const size_bytes = sizeof(uint32_t);
-        static size_t const n_bits_size 		= 16;
-        static size_t const n_bits_sequence_id 	= 8;
-        static size_t const n_bits_version 	    = 8;
+        static size_t const n_bits_size                 = 16;
+        static size_t const n_bits_sequence_id  = 8;
+        static size_t const n_bits_version          = 8;
 
     } tcp_header_t;
 
@@ -53,7 +54,7 @@ namespace ptb {
     // However, I have tested that they work on gcc on the PTB
     typedef union tcp_header {
         tcp_header_t word;
-        uint32_t 	 value;
+        uint32_t         value;
     } tcp_header;
 
     namespace word {
@@ -97,8 +98,8 @@ namespace ptb {
         pad_size_t payload    : n_bits_payload  ;
         word_type_t word_type : n_bits_type ;
 
-	//        static size_t const size_bytes = sizeof( word_t );
-	static size_t const size_bytes = sizeof( ts_size_t ) + sizeof( pad_size_t ) + sizeof(word_type_t);
+        //static size_t const size_bytes = sizeof( word_t );
+        static size_t const size_bytes = 4*sizeof( uint32_t );
         static size_t const size_u32 = size_bytes/sizeof(uint32_t);
 
       } word_t;
@@ -111,28 +112,27 @@ namespace ptb {
       ///
       typedef struct feedback_t {
 
-    	  static size_t const n_bits_timestamp  = 64 ;
-    	  static size_t const n_bits_code       = 8  ;
-    	  static size_t const n_bits_source     = 8  ;
-    	  static size_t const n_bits_payload    = 45 ;
-    	  static size_t const n_bits_type       = word_t::n_bits_type ;
+          static size_t const n_bits_timestamp  = 64 ;
+          static size_t const n_bits_code       = 8  ;
+          static size_t const n_bits_source     = 8  ;
+          static size_t const n_bits_payload    = 45 ;
+          static size_t const n_bits_type       = word_t::n_bits_type ;
 
-    	  typedef uint64_t  ts_size_t;
-    	  typedef uint64_t  code_size_t;
-    	  typedef uint64_t  source_size_t;
-    	  typedef uint64_t  payload_size_t;
-    	  typedef uint64_t  wtype_size_t;
+          typedef uint64_t  ts_size_t;
+          typedef uint64_t  code_size_t;
+          typedef uint64_t  source_size_t;
+          typedef uint64_t  payload_size_t;
+          typedef uint64_t  wtype_size_t;
 
-    	  ts_size_t       timestamp ;
-    	  code_size_t     code      : n_bits_code ;
-    	  source_size_t   source    : n_bits_source ;
-    	  payload_size_t  payload   : n_bits_payload;
-    	  wtype_size_t    word_type : n_bits_type ;
+          ts_size_t       timestamp ;
+          code_size_t     code      : n_bits_code ;
+          source_size_t   source    : n_bits_source ;
+          payload_size_t  payload   : n_bits_payload;
+          wtype_size_t    word_type : n_bits_type ;
 
-	// static size_t const size_bytes = sizeof( feedback_t ) ;
-	  static size_t const size_bytes = sizeof( ts_size_t ) + sizeof(code_size_t) + sizeof(source_size_t)
-	    + sizeof(payload_size_t)+sizeof(wtype_size_t) ;
-    	  static size_t const size_u32 = size_bytes/sizeof(uint32_t);
+          //static size_t const size_bytes = sizeof( feedback_t ) ;
+          static size_t const size_bytes = 2*sizeof( uint64_t ) ;
+          static size_t const size_u32 = size_bytes/sizeof(uint32_t);
 
 
         } feedback_t;
@@ -144,23 +144,23 @@ namespace ptb {
 
       typedef struct ch_status_t {
 
-    	  static size_t const n_bits_timestamp  = 61 ;
-    	  static size_t const n_bits_beam       =  3 ;
-    	  static size_t const n_bits_crt        = 14 ;
-    	  static size_t const n_bits_pds        = 10 ;
-    	  static size_t const n_bits_mtca       =  6 ;
-    	  static size_t const n_bits_nim        =  6 ;
-    	  static size_t const n_bits_auxpds     = 25 ;
-    	  static size_t const n_bits_type       = word_t::n_bits_type ;
+          static size_t const n_bits_timestamp  = 61 ;
+          static size_t const n_bits_beam       =  3 ;
+          static size_t const n_bits_crt        = 14 ;
+          static size_t const n_bits_pds        = 10 ;
+          static size_t const n_bits_mtca       =  6 ;
+          static size_t const n_bits_nim        =  6 ;
+          static size_t const n_bits_auxpds     = 25 ;
+          static size_t const n_bits_type       = word_t::n_bits_type ;
 
-    	  typedef uint64_t ts_size_t;
-    	  typedef uint64_t beam_size_t;
-    	  typedef uint64_t crt_size_t;
-    	  typedef uint64_t pds_size_t;
-    	  typedef uint64_t mtca_size_t;
-    	  typedef uint64_t nim_size_t;
-    	  typedef uint64_t auxpds_size_t;
-    	  typedef uint64_t wtype_size_t;
+          typedef uint64_t ts_size_t;
+          typedef uint64_t beam_size_t;
+          typedef uint64_t crt_size_t;
+          typedef uint64_t pds_size_t;
+          typedef uint64_t mtca_size_t;
+          typedef uint64_t nim_size_t;
+          typedef uint64_t auxpds_size_t;
+          typedef uint64_t wtype_size_t;
 
            ////////bits 0-63//////////////
            ts_size_t     timestamp  : n_bits_timestamp ;
@@ -173,8 +173,8 @@ namespace ptb {
            auxpds_size_t auxpds     : n_bits_auxpds ; //leftovers are for the v2495
            wtype_size_t  word_type  : n_bits_type ;
 
-	//static size_t const size_bytes = sizeof( ch_status_t );
-	   static size_t const size_bytes = 8 * sizeof( uint64_t );
+           //static size_t const size_bytes = sizeof( ch_status_t );
+           static size_t const size_bytes = 2*sizeof( uint64_t );
            static size_t const size_u32 = size_bytes/sizeof(uint32_t);
 
            // aux_functions Not sure why they are needed
@@ -211,9 +211,9 @@ namespace ptb {
 
        typedef struct timestamp_t {
 
-    	   static size_t const n_bits_timestamp = 64;
-    	   static size_t const n_bits_unused    = 61;
-    	   static size_t const n_bits_type      = 3;
+           static size_t const n_bits_timestamp = 64;
+           static size_t const n_bits_unused    = 61;
+           static size_t const n_bits_type      = 3;
 
            typedef uint64_t ts_size_t;
            typedef uint64_t pad_size_t;
@@ -223,8 +223,8 @@ namespace ptb {
            pad_size_t   padding   : n_bits_unused ;
            wtype_size_t word_type : n_bits_type ;
 
-	 //static size_t const size_bytes = sizeof( timestamp_t );
-           static size_t const size_bytes = 3 * sizeof( uint64_t );
+           //static size_t const size_bytes = sizeof( timestamp_t );
+           static size_t const size_bytes = 2*sizeof( uint64_t );
            static size_t const size_u32 = size_bytes/sizeof(uint32_t);
 
        } timestamp_t;
@@ -232,11 +232,11 @@ namespace ptb {
 
        typedef struct trigger_t {
 
-    	   static size_t const n_bits_timestamp = 64;
-    	   static size_t const n_bits_tmask     = 61;
-    	   static size_t const n_bits_type      = word_t::n_bits_type ;
+           static size_t const n_bits_timestamp = 64;
+           static size_t const n_bits_tmask     = 61;
+           static size_t const n_bits_type      = word_t::n_bits_type ;
 
-    	   typedef uint64_t ts_size_t;
+           typedef uint64_t ts_size_t;
            typedef uint64_t mask_size_t;
            typedef uint64_t wtype_size_t;
 
@@ -244,25 +244,25 @@ namespace ptb {
            mask_size_t  trigger_word : n_bits_timestamp ;
            wtype_size_t word_type    : n_bits_type ;
 
-	 //static size_t const size_bytes = sizeof( trigger_t );
-           static size_t const size_bytes = 3 * sizeof( uint64_t );
+           //static size_t const size_bytes = sizeof( trigger_t );
+           static size_t const size_bytes = 2*sizeof( uint64_t );
            static size_t const size_u32 = size_bytes/sizeof(uint32_t);
 
-      	 bool IsHLT() const { return word_type == word_type::t_gt ; }
-      	 bool IsLLT() const { return word_type == word_type::t_lt ; }
-      	 bool IsTrigger( const unsigned int i ) const  { return trigger_word & ( 0x1 << i ); }
-      	 std::set<unsigned short> Triggers( size_t max_bit = n_bits_tmask ) const ;
+         bool IsHLT() const { return word_type == word_type::t_gt ; }
+         bool IsLLT() const { return word_type == word_type::t_lt ; }
+         bool IsTrigger( const unsigned int i ) const  { return trigger_word & ( 0x1 << i ); }
+         std::set<unsigned short> Triggers( size_t max_bit = n_bits_tmask ) const ;
 
        } trigger_t;
 
 
        typedef union word{
-    	   word_t frame;
-    	   feedback_t feedback ;
-    	   ch_status_t ch_status ;
-    	   timestamp_t timestamp ;
-    	   trigger_t trigger ;
-    	   uint8_t *get_bytes() {return reinterpret_cast<uint8_t*>(&frame);}
+           word_t frame;
+           feedback_t feedback ;
+           ch_status_t ch_status ;
+           timestamp_t timestamp ;
+           trigger_t trigger ;
+           uint8_t *get_bytes() {return reinterpret_cast<uint8_t*>(&frame);}
        } word;
 
     } // -- namespace word
