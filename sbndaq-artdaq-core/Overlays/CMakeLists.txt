@@ -16,6 +16,7 @@ IF(ICARUS_BUILD)
 add_subdirectory(ICARUS)
 ENDIF()
 
-IF(SBND_BUILD)
+# Wes will want to fix the following
+#IF(SBND_BUILD)
 add_subdirectory(SBND)
-ENDIF()
+#ENDIF()
