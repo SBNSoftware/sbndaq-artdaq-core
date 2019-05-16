@@ -4,7 +4,7 @@
 #include "sbndaq-artdaq-core/Overlays/SBND/NevisTPC/NevisTPCUtilities.hh"
 #include <iostream>
 
-sbnddaq::NevisTPCWordType_t sbnddaq::NevisTPCDecoder::get_word_type( uint16_t word )
+sbndaq::NevisTPCWordType_t sbndaq::NevisTPCDecoder::get_word_type( uint16_t word )
 {
   if( (word & 0xF000) == 0x4000 ) return NevisTPCWordType_t::kChannelHeader;
   if( (word & 0xF000) == 0x0000 ) return NevisTPCWordType_t::kADC;
@@ -14,7 +14,7 @@ sbnddaq::NevisTPCWordType_t sbnddaq::NevisTPCDecoder::get_word_type( uint16_t wo
     return NevisTPCWordType_t::kUnknown;
 }
 
-int sbnddaq::NevisTPCDecoder::decode_huffman( int zeros )
+int sbndaq::NevisTPCDecoder::decode_huffman( int zeros )
 {
   switch( zeros ){
   case 0: return 0;
@@ -30,14 +30,14 @@ int sbnddaq::NevisTPCDecoder::decode_huffman( int zeros )
   }
 }
 
-sbnddaq::NevisTPCHeader sbnddaq::NevisTPCDecoder::decode_header(const char* hdr_ptr)
+sbndaq::NevisTPCHeader sbndaq::NevisTPCDecoder::decode_header(const char* hdr_ptr)
 {
   return *(reinterpret_cast<NevisTPCHeader const*>(hdr_ptr));
 }
 
-size_t sbnddaq::NevisTPCDecoder::decode_data(const sbnddaq::NevisTPC_ADC_t* data_ptr,
+size_t sbndaq::NevisTPCDecoder::decode_data(const sbndaq::NevisTPC_ADC_t* data_ptr,
 					     size_t n_words,
-					     std::unordered_map<uint16_t,sbnddaq::NevisTPC_Data_t> & wvfm_map)
+					     std::unordered_map<uint16_t,sbndaq::NevisTPC_Data_t> & wvfm_map)
 {
   //clear out the output map
   wvfm_map.clear();

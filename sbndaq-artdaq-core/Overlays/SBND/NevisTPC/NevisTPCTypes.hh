@@ -7,7 +7,7 @@
 #include <iomanip>
 #include <vector>
 
-namespace sbnddaq{
+namespace sbndaq{
   
   struct NevisTPCHeader;
   std::ostream & operator << (std::ostream &, NevisTPCHeader const &);
@@ -18,7 +18,7 @@ namespace sbnddaq{
   typedef std::vector<NevisTPC_ADC_t>  NevisTPC_Data_t;
 }
 
-struct sbnddaq::NevisTPCHeader{
+struct sbndaq::NevisTPCHeader{
   
   union {
     struct {
@@ -127,7 +127,7 @@ struct sbnddaq::NevisTPCHeader{
   const char* c_str() const { std::ostringstream ss; ss << *this; return ss.str().c_str(); }
 };
 
-enum class sbnddaq::NevisTPCWordType_t
+enum class sbndaq::NevisTPCWordType_t
 {
   kChannelHeader,
   kADC,
