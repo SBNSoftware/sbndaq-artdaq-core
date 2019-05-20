@@ -90,11 +90,9 @@ icarus::PhysCrateDataTileHeader::PhysCrateDataTileHeader( struct DataTile::Heade
 {
 
   token          = (*(reinterpret_cast<const uint32_t*>(&(h.token))));
-  stop_addr      = (*(reinterpret_cast<const uint32_t*>(&(h.info1))) & 0xff00)>>16;
-  mode           = (*(reinterpret_cast<const uint32_t*>(&(h.info1))) & 0x00ff);
-  dead_peak_mask = (*(reinterpret_cast<const uint32_t*>(&(h.info2))));
-  tv_trcr        = (*(reinterpret_cast<const uint32_t*>(&(h.info3))) & 0xff00)>>16;
-  abs_time       = (*(reinterpret_cast<const uint32_t*>(&(h.info3))) & 0x00ff);
+  info1          = (*(reinterpret_cast<const uint32_t*>(&(h.info1))));
+  info2          = (*(reinterpret_cast<const uint32_t*>(&(h.info2))));
+  info3          = (*(reinterpret_cast<const uint32_t*>(&(h.info3))));
   timeinfo       = h.timeinfo;
   pkt_fmt_ver    = (*(reinterpret_cast<const uint32_t*>(&(h.chID))) & 0xf000)>>24;
   crate_id       = (*(reinterpret_cast<const uint32_t*>(&(h.chID))) & 0x0f00)>>16;
@@ -106,12 +104,20 @@ icarus::PhysCrateDataTileHeader::PhysCrateDataTileHeader( struct DataTile::Heade
 
 std::ostream & icarus::operator << (std::ostream & os, struct PhysCrateDataTileHeader const & h){
   os << "\nPhysCrateDataTileHeader: ";
-  os << "\n\tToken: " << h.token;
-  os << "\n\tStopAddress: " << h.stop_addr;
-  os << "\n\tMode: " << h.mode;
-  os << "\n\tDeadalus peak mask: " << h.dead_peak_mask;
-  os << "\n\tTV TRCR: " << h.tv_trcr;
-  os << "\n\tAbsolute time chunk: " << h.abs_time;
+
+  os << "\n\tToken: " << h.token << std::hex << "(0x" << h.token << ")" << std::dec;
+
+  os << "\n\tInfo1: " << h.info1 << std::hex << "(0x" << h.info1 << ")" << std::dec;
+
+  os << "\n\tInfo2: " << h.info2 << std::hex << "(0x" << h.info2 << ")" << std::dec;
+  os << "\n\t\tSlotID: " << h.StatusReg_SlotID();
+  os << "\n\t\tRunning: " << h.StatusReg_Running();
+  os << "\n\t\tDataReady: " << h.StatusReg_DataReady();
+  os << "\n\t\tBusy: " << h.StatusReg_Busy();
+  os << "\n\t\tGBusy: " << h.StatusReg_GBusy();
+
+  os << "\n\tInfo3: " << h.info3 << std::hex << "(0x" << h.info3 << ")" << std::dec;
+
   os << "\n\tAbsolute trigger time: " << h.timeinfo;
   os << "\n\tPacket format version: " << h.pkt_fmt_ver;
   os << "\n\tCrate ID: " << h.crate_id;
