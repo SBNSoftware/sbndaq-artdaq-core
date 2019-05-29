@@ -12,7 +12,7 @@
 #include <vector>
 #include <unordered_map>
 
-namespace sbnddaq{
+namespace sbndaq{
   
   class NevisTPCFragmentMetadata;
   std::ostream & operator << (std::ostream &, NevisTPCFragmentMetadata const &);
@@ -21,7 +21,7 @@ namespace sbnddaq{
   std::ostream & operator << (std::ostream &, NevisTPCFragment const &);
 }
 
-class sbnddaq::NevisTPCFragmentMetadata {
+class sbndaq::NevisTPCFragmentMetadata {
   
 private:
   uint32_t _event_number;
@@ -53,7 +53,7 @@ public:
   }
 };
 
-class sbnddaq::NevisTPCFragment {
+class sbndaq::NevisTPCFragment {
   
 public:
   NevisTPCFragment(artdaq::Fragment const & f) :

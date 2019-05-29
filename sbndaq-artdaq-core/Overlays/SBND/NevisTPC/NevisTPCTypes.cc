@@ -1,6 +1,6 @@
 #include "sbndaq-artdaq-core/Overlays/SBND/NevisTPC/NevisTPCTypes.hh"
 
-std::ostream & sbnddaq::operator  << (std::ostream & os, NevisTPCHeader const & h){
+std::ostream & sbndaq::operator  << (std::ostream & os, NevisTPCHeader const & h){
 
 	os << " NevisTPCHeader." << std::endl;
 	os << std::hex << std::setfill('0') << std::setw(4);

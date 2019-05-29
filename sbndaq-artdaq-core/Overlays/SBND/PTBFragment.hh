@@ -117,4 +117,4 @@ private:
 
 }  // sbndaq namespace
 
-#endif /* dune_artdaq_Overlays_CTBFragment_hh */
+#endif /* sbndaq_artdaq_core_Overlays_SBND_PTBFragment_hh */

@@ -1,16 +1,16 @@
-#ifndef sbnddaq_NevisTPC_NevisTPCUtilities_hh
-#define sbnddaq_NevisTPC_NevisTPCUtilities_hh
+#ifndef sbndaq_NevisTPC_NevisTPCUtilities_hh
+#define sbndaq_NevisTPC_NevisTPCUtilities_hh
 
 #include "sbndaq-artdaq-core/Overlays/SBND/NevisTPC/NevisTPCTypes.hh"
 
 #include <vector>
 #include <unordered_map>
 
-namespace sbnddaq{
+namespace sbndaq{
   class NevisTPCDecoder;  
 }
 
-class sbnddaq::NevisTPCDecoder {
+class sbndaq::NevisTPCDecoder {
 
 public:
   NevisTPCDecoder() : fReserveWvfmSize(0) {}
