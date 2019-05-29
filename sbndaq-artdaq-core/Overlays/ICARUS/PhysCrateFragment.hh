@@ -33,16 +33,42 @@ struct icarus::PhysCrateDataTileHeader{
   uint32_t token;
   
   //info1
-  uint32_t stop_addr : 16;
-  uint32_t mode      : 16;
-  
+  //this is an update based on looking at info from May2019
+  //uint32_t stop_addr : 16;
+  //uint32_t mode      : 16;
+  //this is an update based on looking at info from May2019
+
+  uint32_t info1;
+  /*
+  uint32_t ctrl_bufforg  : 4;
+  uint32_t ctrl_status   : 4; //(CTRL_INHIBIT_TRG=0x8 | CTRL_ACQRUN=0x1)
+  uint32_t ctrl_datamode : 4; //(CTRL_TTL_PROPAG=0x4 | CTRL_SRAM_TEST=0x2 | CTRL_TEST_PATTERN=0x1)
+  uint32_t ctrl_unused1  : 4;
+  uint32_t ctrl_unused2  : 4;
+  uint32_t ctrl_unused3  : 4;
+  uint32_t ctrl_unused4  : 4;
+  uint32_t ctrl_testmode : 4; //( CTRL_TEST_EVENT=0x8 | CTRL_TEST_MODE=0x1)
+  */
+
   //info2
-  uint32_t dead_peak_mask;
-  
+  //uint32_t dead_peak_mask;
+  //this is an update based on looking at info from May2019
+
+  uint32_t info2;
+  /*
+  uint32_t slot_id : 4;
+  uint32_t status  : 4; // (GBUSY=0x8 | BUSY=0x4 | DRDY=0x2 | RUNNING=0x1)
+  uint32_t unused1 : 24;
+  */
+
   //info3
-  uint32_t tv_trcr  : 16;
-  uint32_t abs_time : 16;
+  //uint32_t tv_trcr  : 16;
+  //uint32_t abs_time : 16;
+  //this is an update based on looking at info from May2019
   
+  uint32_t info3;
+  //uint32_t nev_stored;
+
   //timeinfo
   uint32_t timeinfo;
   
@@ -57,6 +83,24 @@ struct icarus::PhysCrateDataTileHeader{
 
   PhysCrateDataTileHeader(){};
   PhysCrateDataTileHeader( struct DataTile::Header const& );
+
+
+  uint32_t CtrlStatus_BuffOrg()     const { return (info1 & 0x0000000F); }
+  uint32_t CtrlStatus_AcqRun()      const { return (info1 & 0x00000010) >> 4; }
+  uint32_t CtrlStatus_InhibitTrg()  const { return (info1 & 0x00000080) >> 4; }
+  uint32_t CtrlStatus_TestPattern() const { return (info1 & 0x00000100) >> 8; }
+  uint32_t CtrlStatus_SRAMTest()    const { return (info1 & 0x00000200) >> 9; }
+  uint32_t CtrlStatus_TTLPropag()   const { return (info1 & 0x00000400) >> 10; }
+  uint32_t CtrlStatus_TestMode()    const { return (info1 & 0x10000000) >> 28; }
+  uint32_t CtrlStatus_TestEvent()   const { return (info1 & 0x80000000) >> 31; }  
+
+  uint32_t StatusReg_SlotID()       const { return (info2 & 0x0000000F); }
+  uint32_t StatusReg_Running()      const { return (info2 & 0x00000010) >> 4; }
+  uint32_t StatusReg_DataReady()    const { return (info2 & 0x00000020) >> 5; }
+  uint32_t StatusReg_Busy()         const { return (info2 & 0x00000040) >> 6; }
+  uint32_t StatusReg_GBusy()        const { return (info2 & 0x00000080) >> 7; }
+
+
 };
 struct icarus::A2795DataBlock{
 
