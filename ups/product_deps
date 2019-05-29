@@ -20,7 +20,7 @@ fcldir      -
 product			version	       optional
 
 artdaq_core 		v3_04_16
-icarus_artdaq_base     	v0_08_00       -       optional
+icarus_artdaq_base     	v0_06_06       -       optional
 cetbuildtools   	v7_02_01       -       only_for_build
 
 end_product_list
