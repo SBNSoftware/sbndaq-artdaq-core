@@ -34,6 +34,12 @@ e17:prof:icarus		e17:prof:s67	 e17:prof
 e17:debug:icarus	e17:debug:s67	 e17:debug      
 e17:prof:sbnd		e17:prof:s67	 -       	
 e17:debug:sbnd  	e17:debug:s67	 -		
+e19:prof		e19:prof:s82	 e19:prof	
+e19:debug		e19:debug:s82	 e19:debug      
+e19:prof:icarus		e19:prof:s82	 e19:prof	
+e19:debug:icarus	e19:debug:s82	 e19:debug      
+e19:prof:sbnd		e19:prof:s82	 -       	
+e19:debug:sbnd  	e19:debug:s82	 -		
 # Preserve tabs and formatting in emacs and vi / vim:
 
 ### Local Variables:
