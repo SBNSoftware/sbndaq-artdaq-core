@@ -41,6 +41,8 @@ e19:debug:icarus	e19:debug:s82	 e19:debug
 e19:prof:sbnd		e19:prof:s82	 -       	
 e19:debug:sbnd  	e19:debug:s82	 -		
 
+e17:prof:s82            e17:prof:s82     e17:prof
+e17:debug:s82           e17:debug:s82    e17:debug
 e17:prof:s83            e17:prof:s83     e17:prof
 e17:debug:s83           e17:debug:s83    e17:debug
 
