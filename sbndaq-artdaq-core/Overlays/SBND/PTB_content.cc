@@ -55,6 +55,13 @@ std::set<unsigned short> ptb::content::word::ch_status_t::pds_channels() const {
 
 */
 
+uint64_t ptb::content::word::word_t::timestamp_ns() const {
+
+  uint64_t ts_ns = timestamp * 20; //50MHz clock ->  20ns/tick
+
+  return ts_ns ;
+
+}
 
 std::set<unsigned short> ptb::content::word::trigger_t::Triggers( size_t max_bit ) const {
 

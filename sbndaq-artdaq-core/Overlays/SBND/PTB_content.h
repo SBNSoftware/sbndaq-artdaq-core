@@ -102,6 +102,9 @@ namespace ptb {
         static size_t const size_bytes = 4*sizeof( uint32_t );
         static size_t const size_u32 = size_bytes/sizeof(uint32_t);
 
+        // -- D.R. : allow for conversion of all ts to 1ns ticks 
+        uint64_t timestamp_ns() const;
+
       } word_t;
 
 
