@@ -28,18 +28,18 @@ end_product_list
 # -nq- here means there is no qualifier
 # a "-" here means the dependent product is not required by the parent and will not be setup
 qualifier		artdaq_core 	 icarus_artdaq_base
-e15:prof		e15:prof:s67	 e15:prof	
-e15:debug		e15:debug:s67	 e15:debug      
-e15:prof:icarus		e15:prof:s67	 e15:prof	
-e15:debug:icarus	e15:debug:s67	 e15:debug      
-e15:prof:sbnd		e15:prof:s67	 -       	
-e15:debug:sbnd  	e15:debug:s67	 -		
-e17:prof		e17:prof:s67	 e17:prof	
-e17:debug		e17:debug:s67	 e17:debug      
-e17:prof:icarus		e17:prof:s67	 e17:prof	
-e17:debug:icarus	e17:debug:s67	 e17:debug      
-e17:prof:sbnd		e17:prof:s67	 -       	
-e17:debug:sbnd  	e17:debug:s67	 -		
+e15:prof		e15:prof:s65	 e15:prof	
+e15:debug		e15:debug:s65	 e15:debug      
+e15:prof:icarus		e15:prof:s65	 e15:prof	
+e15:debug:icarus	e15:debug:s65	 e15:debug      
+e15:prof:sbnd		e15:prof:s65	 -       	
+e15:debug:sbnd  	e15:debug:s65	 -		
+e17:prof		e17:prof:s65	 e17:prof	
+e17:debug		e17:debug:s65	 e17:debug      
+e17:prof:icarus		e17:prof:s65	 e17:prof	
+e17:debug:icarus	e17:debug:s65	 e17:debug      
+e17:prof:sbnd		e17:prof:s65	 -       	
+e17:debug:sbnd  	e17:debug:s65	 -		
 # Preserve tabs and formatting in emacs and vi / vim:
 
 ### Local Variables:
