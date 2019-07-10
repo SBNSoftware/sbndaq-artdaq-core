@@ -36,6 +36,116 @@ public:
 
   BernCRTZMQFragmentMetadata(){}
 
+  BernCRTZMQFragmentMetadata(uint32_t rst_s, uint32_t rst_ns,
+			     uint32_t polls_s, uint32_t polls_ns,
+   			     uint32_t pollf_s, uint32_t pollf_ns, 
+			     uint32_t tlpolls_s, uint32_t tlpolls_ns,
+			     uint32_t tlpollf_s, uint32_t tlpollf_ns,
+			     uint32_t fragfill_s, uint32_t fragfill_ns,
+			     uint32_t feb_c, uint32_t gps_c,
+			     uint32_t evpack, uint32_t seq)
+    :
+    _run_start_time_s(rst_s),
+    _run_start_time_ns(rst_ns),
+    _time_poll_start_s(polls_s),
+    _time_poll_start_ns(polls_ns),
+    _time_poll_finish_s(pollf_s),
+    _time_poll_finish_ns(pollf_ns),
+    _time_last_poll_start_s(tlpolls_s),
+    _time_last_poll_start_ns(tlpolls_ns),
+    _time_last_poll_finish_s(tlpollf_s),
+    _time_last_poll_finish_ns(tlpollf_ns),
+    _fragment_fill_time_s(fragfill_s),
+    _fragment_fill_time_ns(fragfill_ns),
+    _feb_event_count(feb_c),
+    _gps_counter(gps_c),
+    _events_in_data_packet(evpack),
+    _sequence_number(seq),
+    _missed_events(0),
+    _overwritten_events(0),
+    _dropped_events(0),
+    _n_events(0),
+    _n_datagrams(0)    
+  { CheckTimeWindow(); }
+
+  uint32_t const& run_start_time_seconds() const { return _run_start_time_s; }
+  uint32_t const& run_start_time_nanosec() const { return _run_start_time_ns; }
+  
+  uint32_t const& time_poll_start_seconds() const { return _time_poll_start_s; }
+  uint32_t const& time_poll_start_nanosec() const { return _time_poll_start_ns; }
+  
+  uint32_t const& time_poll_finish_seconds() const { return _time_poll_finish_s; }
+  uint32_t const& time_poll_finish_nanosec() const { return _time_poll_finish_ns; }
+
+  uint32_t const& time_last_poll_start_seconds() const { return _time_last_poll_start_s; }
+  uint32_t const& time_last_poll_start_nanosec() const { return _time_last_poll_start_ns; }
+
+  uint32_t const& time_last_poll_finish_seconds() const { return _time_last_poll_finish_s; }
+  uint32_t const& time_last_poll_finish_nanosec() const { return _time_last_poll_finish_ns; }
+
+  uint32_t const& fragment_fill_time_seconds() const { return _fragment_fill_time_s; }
+  uint32_t const& fragment_fill_time_nanosec() const { return _fragment_fill_time_ns; }
+  
+  uint32_t const& feb_event_count()         const { return _feb_event_count; }
+  uint32_t const& gps_count()    const { return _gps_counter; }
+  uint32_t const& event_packet() const { return _events_in_data_packet; }
+  uint32_t const& sequence_number() const{return _sequence_number;}
+ /* uint32_t const& reader_id()          const { return _reader_id; }
+  uint32_t const& n_channels()         const { return _n_channels; }
+  uint32_t const& n_adc_bits()         const { return _n_adc_bits; }*/
+  uint32_t const& missed_events()      const { return _missed_events; }
+  uint32_t const& overwritten_events() const { return _overwritten_events; }
+  uint32_t const& dropped_events()     const { return _dropped_events; }
+  uint32_t const& n_events()           const { return _n_events; }
+  uint32_t const& n_datagrams()        const { return _n_datagrams; }
+
+  uint32_t inc_MissedEvents(uint32_t n=1)      { _missed_events+=n; return missed_events(); }
+  uint32_t inc_OverwrittenEvents(uint32_t n=1) { _overwritten_events+=n; return overwritten_events(); }
+  uint32_t inc_DroppedEvents(uint32_t n=1)     { _dropped_events+=n; return dropped_events(); }
+  uint32_t inc_Events(uint32_t n=1)            { _n_events+=n; return n_events(); }
+  uint32_t inc_Datagrams(uint32_t n=1)         { _n_datagrams+=n; return n_datagrams(); }
+  
+  void increment(uint32_t missed, uint32_t overwritten, uint32_t dropped, uint32_t events=1, uint32_t d=0)
+  { inc_MissedEvents(missed); inc_OverwrittenEvents(overwritten); inc_DroppedEvents(dropped); inc_Events(events); inc_Datagrams(d); }
+  
+  const char* c_str() const { std::ostringstream ss; ss << *this; return ss.str().c_str(); }
+
+private:
+
+  uint32_t  _run_start_time_s;
+  uint32_t  _run_start_time_ns;
+  uint32_t  _time_poll_start_s;
+  uint32_t  _time_poll_start_ns;
+  uint32_t  _time_poll_finish_s;
+  uint32_t  _time_poll_finish_ns;
+  uint32_t  _time_last_poll_start_s;
+  uint32_t  _time_last_poll_start_ns;
+  uint32_t  _time_last_poll_finish_s;
+  uint32_t  _time_last_poll_finish_ns;
+  uint32_t  _fragment_fill_time_s;
+  uint32_t  _fragment_fill_time_ns;
+  uint32_t  _feb_event_count;
+  uint32_t  _gps_counter;
+  uint32_t  _events_in_data_packet;
+  uint32_t  _sequence_number;
+
+  uint32_t _missed_events;
+  uint32_t _overwritten_events;
+  uint32_t _dropped_events;
+  uint32_t _n_events;
+  uint32_t _n_datagrams;
+
+  void CheckTimeWindow() const;
+  
+};
+
+
+/*class sbndaq::BernCRTZMQFragmentMetadata {
+
+public:
+
+  BernCRTZMQFragmentMetadata(){}
+
   BernCRTZMQFragmentMetadata(uint32_t ts_s, uint32_t ts_ns, 
 			     uint32_t te_s, uint32_t te_ns,
 			     int t_c, uint64_t t_o,
@@ -121,7 +231,7 @@ private:
 
   void CheckTimeWindow() const;
   
-};
+};*/
 
 struct sbndaq::BernCRTZMQEvent{    
 
@@ -180,9 +290,9 @@ private:
 
 };
 
-double sbndaq::GetCorrectedTime( uint32_t const& t, BernCRTZMQFragmentMetadata const& m)
+/*double sbndaq::GetCorrectedTime( uint32_t const& t, BernCRTZMQFragmentMetadata const& m)
 {
   return (double)(t+m.time_offset()) * (1.0 - ((double)(m.time_correction_diff())/1.0e9));
-}
+}*/
 
 #endif /* artdaq_demo_Overlays_ToyFragment_hh */
