@@ -4,32 +4,32 @@
 #include "cetlib_except/exception.h"
 
 void sbndaq::BernCRTZMQFragmentMetadata::CheckTimeWindow() const {
-  if(_time_end_seconds*1e9+_time_end_nanosec < _time_start_seconds*1e9+_time_start_nanosec)
+  if(_run_start_time_s/*_time_end_seconds*1e9+_time_end_nanosec*/ >_time_poll_start_s/* 0 _time_start_seconds*1e9+_time_start_nanosec*/)
     throw cet::exception("BernFragmentMetadata::CheckTimeWindow") 
-      << "Failed. time_start (" << _time_start_seconds << "," << _time_start_nanosec 
-      << ") is after time_end (" << _time_end_seconds << "," << _time_end_nanosec  << ")";
+      << "Failed. time_start (" << /*_time_start_seconds << "," << _time_start_nanosec 
+      << ") is after time_end (" << _time_end_seconds << "," << _time_end_nanosec  <<*/ ")";
 }
 
 
 std::ostream & sbndaq::operator << (std::ostream & os, BernCRTZMQFragmentMetadata const& m){
   os << "\nBernCRTZMQFragmentMetadata:"
-     << "\n\tTime window start: " << m.time_start_seconds() << " s, " << m.time_start_nanosec() << " ns" 
-     << "\n\tTime window end: " << m.time_end_seconds() << " s, " << m.time_end_nanosec() << " ns" 
-     << "\n\tRaw time correction factor: " << m.time_correction_diff()
-     << "\n\tRaw time offset: " << m.time_offset()
-     << "\n\tRun number: " << m.run_number()
-     << "\n\tSequence number: " << m.sequence_number()
-     << std::hex
-     << "\n\tZMQ ID: " << m.feb_id() 
-     << "\n\tReader ID: " << m.reader_id()
+     << "\n\tTime run start: " << m.run_start_time_seconds() << " s, " << m.run_start_time_nanosec() << " ns" 
+    // << "\n\tTime  end: " << m.time_end_seconds() << " s, " << m.time_end_nanosec() << " ns" 
+     << "\n\tTime poll start: " << m.time_poll_start_seconds() << " s, " << m.time_poll_start_nanosec() << " ns"
+     << "\n\tTime poll finish: " << m.time_poll_finish_seconds() << " s, " << m.time_poll_finish_nanosec() << " ns"
+     << "\n\tTime last poll start: " << m.time_last_poll_start_seconds() << " s, " << m.time_last_poll_start_nanosec() << " ns"
+     << "\n\tTime last poll finish: " << m.time_last_poll_finish_seconds() << " s, " << m.time_last_poll_finish_nanosec() << " ns"
+     //<< std::hex
+     << "\n\tFragment fill time: " << m.fragment_fill_time_seconds() << " s, " << m.fragment_fill_time_nanosec() << " ns"
+     << "\n\tFEB event count: " << m.feb_event_count()
      << std::dec
-     << "\n\tNumber of channels: " << m.n_channels()
-     << "\n\tNumber of adc bits: " << m.n_adc_bits()
-     << "\n\tNumber of missed events: " << m.missed_events()
-     << "\n\tNumber of overwritten events: " << m.overwritten_events()
-     << "\n\tNumber of dropped events: " << m.dropped_events()
-     << "\n\tNumber of events recorded: " << m.n_events()
-     << "\n\tNumber of datagrams: " << m.n_datagrams();
+     << "\n\tGPS count: " << m.gps_count()
+     << "\n\tNumber of event in the ZMQ packet: " << m.event_packet();
+     //<< "\n\tNumber of missed events: " << m.missed_events()
+     //<< "\n\tNumber of overwritten events: " << m.overwritten_events()
+     //<< "\n\tNumber of dropped events: " << m.dropped_events()
+     //<< "\n\tNumber of events recorded: " << m.n_events()
+     //<< "\n\tNumber of datagrams: " << m.n_datagrams();
   os << std::endl;
   return os;
 }
