@@ -243,6 +243,7 @@ struct sbndaq::BernCRTZMQEvent{
   uint32_t ts0;
   uint32_t ts1;
   uint16_t adc[32];
+  uint32_t coinc;
   //} EVENT_t; 
   //
   //EVENT_t event_data;
