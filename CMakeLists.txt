@@ -67,7 +67,6 @@ ENDIF()
 cet_report_compiler_flags()
 
 # these are minimum required versions, not the actual product versions
-#find_ups_product( icarus_artdaq_base v0_03_00 )
 find_ups_product( artdaq_core v3_00_00 )
 find_ups_product( TRACE v3_09_01 )
 find_ups_product( cetlib v3_00_01 )
@@ -82,7 +81,7 @@ find_ups_product( cetbuildtools v5_08_01 )
  
 #experiment specific products needed
 IF(ICARUS_BUILD)
-  find_ups_product( icarus_artdaq_base v0_03_00 )
+
 ENDIF()
 
 IF(SBND_BUILD)
