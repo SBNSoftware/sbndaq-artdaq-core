@@ -8,7 +8,7 @@ cet_make_library( LIBRARY_NAME sbndaq-artdaq-core_Overlays_SBND
 		  LIBRARIES
 		  sbndaq-artdaq-core_Overlays_SBND_NevisTPC
 		  ${ARTDAQ_DAQDATA}
-			${ARTDAQ-CORE_UTILITIES}
+		  artdaq-core_Utilities
 		  ${CETLIB}
 		  ${CETLIB_EXCEPT}
 )

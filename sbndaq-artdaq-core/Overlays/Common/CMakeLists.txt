@@ -3,7 +3,7 @@ cet_make_library( LIBRARY_NAME sbndaq-artdaq-core_Overlays_Common_Utilities
 		  Utilities.cc
 		  LIBRARIES
 		  ${ARTDAQ_DAQDATA}
-			${ARTDAQ-CORE_UTILITIES}
+		  artdaq-core_Utilities
 		  ${CETLIB}
 		  ${CETLIB_EXCEPT}
                   ${Boost_SYSTEM_LIBRARY}
@@ -18,7 +18,7 @@ cet_make_library( LIBRARY_NAME sbndaq-artdaq-core_Overlays_Common
 		  BernCRTZMQFragment.cc
 		  LIBRARIES
 		  ${ARTDAQ_DAQDATA}
-			${ARTDAQ-CORE_UTILITIES}
+		  artdaq-core_Utilities
 		  ${CETLIB}
 		  ${CETLIB_EXCEPT}
 )

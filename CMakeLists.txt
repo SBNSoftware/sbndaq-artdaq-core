@@ -71,6 +71,7 @@ find_ups_product( artdaq_core v3_00_00 )
 find_ups_product( TRACE v3_09_01 )
 find_ups_product( cetlib v3_00_01 )
 find_ups_product( cetlib_except v1_01_02 )
+find_ups_product( messagefacility v1_14_01 )
 find_ups_boost( v1_63_0b filesystem
                         program_options
                         unit_test_framework
@@ -79,6 +80,23 @@ find_ups_boost( v1_63_0b filesystem
 
 find_ups_product( cetbuildtools v5_08_01 )
  
+string(REGEX MATCHALL "[0-9][0-9]?[0-9]?" MESSAGEFACILITY_VERSION_LIST "$ENV{MESSAGEFACILITY_VERSION}")
+list(GET MESSAGEFACILITY_VERSION_LIST 0 MESSAGEFACILITY_MAJOR_VERSION)
+list(GET MESSAGEFACILITY_VERSION_LIST 1 MESSAGEFACILITY_MINOR_VERSION)
+list(GET MESSAGEFACILITY_VERSION_LIST 2 MESSAGEFACILITY_PATCH_VERSION)
+
+message("-DMESSAGEFACILITY_HEX_VERSION=0x${MESSAGEFACILITY_MAJOR_VERSION}${MESSAGEFACILITY_MINOR_VERSION}${MESSAGEFACILITY_PATCH_VERSION}")
+add_definitions(-DMESSAGEFACILITY_HEX_VERSION=0x${MESSAGEFACILITY_MAJOR_VERSION}${MESSAGEFACILITY_MINOR_VERSION}${MESSAGEFACILITY_PATCH_VERSION})
+
+# as of art v2_11_00, messagefacility has a single library
+check_ups_version(messagefacility $ENV{MESSAGEFACILITY_VERSION} v2_02_00 PRODUCT_MATCHES_VAR ONE_MF_LIBRARY)
+if(ONE_MF_LIBRARY)
+    set( MESSAGEFACILITY_LIBS MF_MessageLogger)
+else()
+    set( MESSAGEFACILITY_LIBS MF_MessageLogger MF_Utilities)
+endif()
+
+
 #experiment specific products needed
 IF(ICARUS_BUILD)
 
