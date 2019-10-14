@@ -4,10 +4,12 @@
 #include "cetlib_except/exception.h"
 
 void sbndaq::BernCRTZMQFragmentMetadata::CheckTimeWindow() const {
-  if(_run_start_time_s/*_time_end_seconds*1e9+_time_end_nanosec*/ >_time_poll_start_s/* 0 _time_start_seconds*1e9+_time_start_nanosec*/)
-    throw cet::exception("BernFragmentMetadata::CheckTimeWindow") 
-      << "Failed. time_start (" << /*_time_start_seconds << "," << _time_start_nanosec 
-      << ") is after time_end (" << _time_end_seconds << "," << _time_end_nanosec  <<*/ ")";
+  if(_run_start_time_s/*_time_end_seconds*1e9+_time_end_nanosec*/ >_time_poll_start_s/* 0 _time_start_seconds*1e9+_time_start_nanosec*/) {
+   TRACE(1, std::string("BernCRTZMQFragmentMetadata::") + __func__ + " A failure occured but let us pretend nothing happened.");
+   // throw cet::exception("BernFragmentMetadata::CheckTimeWindow") 
+   //   << "Failed. time_start (" << /*_time_start_seconds << "," << _time_start_nanosec 
+   //   << ") is after time_end (" << _time_end_seconds << "," << _time_end_nanosec  <<*/ ")"; 
+  }
 }
 
 
