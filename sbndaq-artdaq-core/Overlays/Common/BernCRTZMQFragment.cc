@@ -26,11 +26,11 @@ std::ostream & sbndaq::operator << (std::ostream & os, BernCRTZMQFragmentMetadat
      << "\n\tFEB event count: " << m.feb_event_count()
      << std::dec
      << "\n\tGPS count: " << m.gps_count()
-     << "\n\tNumber of event in the ZMQ packet: " << m.event_packet();
+     << "\n\tNumber of event in the ZMQ packet: " << m.event_packet()
      //<< "\n\tNumber of missed events: " << m.missed_events()
      //<< "\n\tNumber of overwritten events: " << m.overwritten_events()
      //<< "\n\tNumber of dropped events: " << m.dropped_events()
-     //<< "\n\tNumber of events recorded: " << m.n_events()
+     << "\n\tNumber of events recorded: " << m.n_events();
      //<< "\n\tNumber of datagrams: " << m.n_datagrams();
   os << std::endl;
   return os;
