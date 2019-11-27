@@ -2,7 +2,7 @@
 #include "cetlib_except/exception.h"
 #include "sbndaq-artdaq-core/Trace/trace_defines.h"
 
-#include "sbndaq-artdaq-core/Overlays/ICARUS/common.h"
+//#include "sbndaq-artdaq-core/Overlays/ICARUS/common.h"
 
 #include <arpa/inet.h>
 
