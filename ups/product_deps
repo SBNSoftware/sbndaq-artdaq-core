@@ -20,7 +20,7 @@ fcldir      -
 product			version	       optional
 
 artdaq_core 		v3_05_08a
-cetbuildtools           v7_13_02       -       only_for_build
+cetbuildtools           v7_14_00       -       only_for_build
 end_product_list
 
 # -nq- here means there is no qualifier
