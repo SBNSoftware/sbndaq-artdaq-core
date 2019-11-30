@@ -4,7 +4,7 @@
 #include "cetlib_except/exception.h"
 
 void sbndaq::BernCRTZMQFragmentMetadata::CheckTimeWindow() const {
-  if(_run_start_time_s/*_time_end_seconds*1e9+_time_end_nanosec*/ >_time_poll_start_s/* 0 _time_start_seconds*1e9+_time_start_nanosec*/) {
+  if(_run_start_time >_this_poll_start) {
    TRACE(1, std::string("BernCRTZMQFragmentMetadata::") + __func__ + " A failure occured but let us pretend nothing happened.");
    // throw cet::exception("BernFragmentMetadata::CheckTimeWindow") 
    //   << "Failed. time_start (" << /*_time_start_seconds << "," << _time_start_nanosec 
@@ -14,42 +14,36 @@ void sbndaq::BernCRTZMQFragmentMetadata::CheckTimeWindow() const {
 
 
 std::ostream & sbndaq::operator << (std::ostream & os, BernCRTZMQFragmentMetadata const& m){
-  os << "\nBernCRTZMQFragmentMetadata:"
-     << "\n\tTime run start: " << m.run_start_time_seconds() << " s, " << m.run_start_time_nanosec() << " ns" 
-    // << "\n\tTime  end: " << m.time_end_seconds() << " s, " << m.time_end_nanosec() << " ns" 
-     << "\n\tTime poll start: " << m.time_poll_start_seconds() << " s, " << m.time_poll_start_nanosec() << " ns"
-     << "\n\tTime poll finish: " << m.time_poll_finish_seconds() << " s, " << m.time_poll_finish_nanosec() << " ns"
-     << "\n\tTime last poll start: " << m.time_last_poll_start_seconds() << " s, " << m.time_last_poll_start_nanosec() << " ns"
-     << "\n\tTime last poll finish: " << m.time_last_poll_finish_seconds() << " s, " << m.time_last_poll_finish_nanosec() << " ns"
-     //<< std::hex
-     << "\n\tFragment fill time: " << m.fragment_fill_time_seconds() << " s, " << m.fragment_fill_time_nanosec() << " ns"
+  os << "BernCRTZMQFragmentMetadata:"
+     << "\n\tTime run start:   " << sbndaq::BernCRTZMQFragmentMetadata::print_timestamp(m.run_start_time())
+     << "\n\tThis poll start:  " << sbndaq::BernCRTZMQFragmentMetadata::print_timestamp(m.this_poll_start())
+     << "\n\tThis poll finish: " << sbndaq::BernCRTZMQFragmentMetadata::print_timestamp(m.this_poll_end())
+     << "\n\tLast poll start:  " << sbndaq::BernCRTZMQFragmentMetadata::print_timestamp(m.last_poll_start())
+     << "\n\tLast poll finish: " << sbndaq::BernCRTZMQFragmentMetadata::print_timestamp(m.last_poll_end())
      << "\n\tFEB event count: " << m.feb_event_count()
-     << std::dec
      << "\n\tGPS count: " << m.gps_count()
      << "\n\tNumber of event in the ZMQ packet: " << m.event_packet()
-     //<< "\n\tNumber of missed events: " << m.missed_events()
-     //<< "\n\tNumber of overwritten events: " << m.overwritten_events()
-     //<< "\n\tNumber of dropped events: " << m.dropped_events()
-     << "\n\tNumber of events recorded: " << m.n_events();
-     //<< "\n\tNumber of datagrams: " << m.n_datagrams();
+     << "\n\tSequence number: " << m.sequence_number()
+     << "\n\tNumber of missed events: " << m.missed_events()
+     << "\n\tNumber of overwritten events: " << m.overwritten_events()
+     << "\n\tNumber of dropped events: " << m.dropped_events()
+     << "\n\tNumber of events recorded: " << m.n_events()
+     << "\n\tNumber of datagrams: " << m.n_datagrams();
   os << std::endl;
   return os;
 }
 
 std::ostream & sbndaq::operator << (std::ostream & os, BernCRTZMQEvent const & e){
   os << "\nBernCRTZMQEvent"
-     << "\n\tMAC5: " << std::hex << e.MAC5() << std::dec;
-  os << "\n\tFlags word: " << std::hex << e.flags << std::dec;
+     << "\n\tMAC5: 0x" << std::hex << e.MAC5() << std::dec;
+    os << "\n\tFlags word: s 0x" << std::hex << e.flags << std::dec;
   os << "\n\tLostCPU: " << e.lostcpu;
   os << "\n\tLostFPGA: " << e.lostfpga;
-  os << "\n\tTime1 (TS0): " << e.Time_TS0();
-  os << "\n\tTime2 (TS1): " << e.Time_TS1();
-  os << std::hex;
-  for(size_t i_c=0; i_c<32; ++i_c){
-    if(i_c%8==0) os << "\n\t\t";
-    os << "0x" << e.ADC(i_c) << " ";
+  os << "\n\tTime1 (TS0): " << sbndaq::BernCRTZMQFragmentMetadata::print_timestamp(e.Time_TS0());
+  os << "\n\tTime2 (TS1): " << sbndaq::BernCRTZMQFragmentMetadata::print_timestamp(e.Time_TS1());
+  for(size_t i_c=0; i_c<32; ++i_c) {
+    os << " adc["<<i_c<<"]: " << e.ADC(i_c) << " ";
   }
-  os << std::dec;
   os << std::endl;
   return os;
 }
@@ -73,6 +67,31 @@ bool sbndaq::BernCRTZMQFragment::Verify() const {
   return verified;
     
 }
+
+std::string sbndaq::BernCRTZMQFragmentMetadata::print_timestamp(uint64_t t) {
+  char s[40];
+  if(t >= (uint64_t)10*1000*1000*1000) {
+    sprintf(s, "%lu %03lu %03lu %03lu.%03lu %03lu %03lu [s.ns]",
+      (t/1000000000000000000) %1000,
+      (t/1000000000000000)    %1000,
+      (t/1000000000000)       %1000,
+      (t/1000000000)          %1000,
+      (t/1000000)             %1000,
+      (t/1000)                %1000,
+      (t)                     %1000
+    );
+  }
+  else {
+    sprintf(s, "            %lu.%03lu %03lu %03lu [s.ns]",
+      (t/1000000000)          %1000,
+      (t/1000000)             %1000,
+      (t/1000)                %1000,
+      (t)                     %1000
+    );
+  }
+  return s;
+}
+
 /*
 std::string sbndaq::BernCRTZMQEvent::db_entry() const {
 
