@@ -5,6 +5,7 @@
 
 void sbndaq::BernCRTZMQFragmentMetadata::CheckTimeWindow() const {
   if(_run_start_time >_this_poll_start) {
+    //TODO figure out purpose of this function
    TRACE(1, std::string("BernCRTZMQFragmentMetadata::") + __func__ + " A failure occured but let us pretend nothing happened.");
    // throw cet::exception("BernFragmentMetadata::CheckTimeWindow") 
    //   << "Failed. time_start (" << /*_time_start_seconds << "," << _time_start_nanosec 
@@ -15,11 +16,11 @@ void sbndaq::BernCRTZMQFragmentMetadata::CheckTimeWindow() const {
 
 std::ostream & sbndaq::operator << (std::ostream & os, BernCRTZMQFragmentMetadata const& m){
   os << "BernCRTZMQFragmentMetadata:"
-     << "\n\tTime run start:   " << sbndaq::BernCRTZMQFragmentMetadata::print_timestamp(m.run_start_time())
-     << "\n\tThis poll start:  " << sbndaq::BernCRTZMQFragmentMetadata::print_timestamp(m.this_poll_start())
-     << "\n\tThis poll finish: " << sbndaq::BernCRTZMQFragmentMetadata::print_timestamp(m.this_poll_end())
-     << "\n\tLast poll start:  " << sbndaq::BernCRTZMQFragmentMetadata::print_timestamp(m.last_poll_start())
-     << "\n\tLast poll finish: " << sbndaq::BernCRTZMQFragmentMetadata::print_timestamp(m.last_poll_end())
+     << "\n\tRun start time:   " << sbndaq::BernCRTZMQFragment::print_timestamp(m.run_start_time())
+     << "\n\tLast poll start:  " << sbndaq::BernCRTZMQFragment::print_timestamp(m.last_poll_start())
+     << "\n\tLast poll finish: " << sbndaq::BernCRTZMQFragment::print_timestamp(m.last_poll_end())
+     << "\n\tThis poll start:  " << sbndaq::BernCRTZMQFragment::print_timestamp(m.this_poll_start())
+     << "\n\tThis poll finish: " << sbndaq::BernCRTZMQFragment::print_timestamp(m.this_poll_end())
      << "\n\tFEB event count: " << m.feb_event_count()
      << "\n\tGPS count: " << m.gps_count()
      << "\n\tNumber of event in the ZMQ packet: " << m.event_packet()
@@ -39,8 +40,8 @@ std::ostream & sbndaq::operator << (std::ostream & os, BernCRTZMQEvent const & e
     os << "\n\tFlags word: s 0x" << std::hex << e.flags << std::dec;
   os << "\n\tLostCPU: " << e.lostcpu;
   os << "\n\tLostFPGA: " << e.lostfpga;
-  os << "\n\tTime1 (TS0): " << sbndaq::BernCRTZMQFragmentMetadata::print_timestamp(e.Time_TS0());
-  os << "\n\tTime2 (TS1): " << sbndaq::BernCRTZMQFragmentMetadata::print_timestamp(e.Time_TS1());
+  os << "\n\tTime1 (TS0): " << sbndaq::BernCRTZMQFragment::print_timestamp(e.Time_TS0());
+  os << "\n\tTime2 (TS1): " << sbndaq::BernCRTZMQFragment::print_timestamp(e.Time_TS1());
   for(size_t i_c=0; i_c<32; ++i_c) {
     os << " adc["<<i_c<<"]: " << e.ADC(i_c) << " ";
   }
@@ -68,7 +69,7 @@ bool sbndaq::BernCRTZMQFragment::Verify() const {
     
 }
 
-std::string sbndaq::BernCRTZMQFragmentMetadata::print_timestamp(uint64_t t) {
+std::string sbndaq::BernCRTZMQFragment::print_timestamp(uint64_t t) {
   char s[40];
   if(t >= (uint64_t)10*1000*1000*1000) {
     sprintf(s, "%lu %03lu %03lu %03lu.%03lu %03lu %03lu [s.ns]",

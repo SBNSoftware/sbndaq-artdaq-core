@@ -94,8 +94,6 @@ public:
   
   const char* c_str() const { std::ostringstream ss; ss << *this; return ss.str().c_str(); }
 
-  static std::string print_timestamp(uint64_t t);
-
 private:
 
   uint64_t  _run_start_time;
@@ -189,6 +187,8 @@ public:
 
   const char* c_str() const { std::ostringstream ss; ss << *this; return ss.str().c_str(); }
   
+  static std::string print_timestamp(uint64_t t);
+
 private:
 
   artdaq::Fragment const & artdaq_Fragment_;
