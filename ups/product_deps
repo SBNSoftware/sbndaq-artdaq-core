@@ -1,7 +1,7 @@
 # The parent line must be the first non-comment line in the file
 # This line defines the product name and version
-parent sbndaq_artdaq_core		v0_03_00
-defaultqual	e17
+parent sbndaq_artdaq_core       v0_04_00
+defaultqual e17:s83
 
 # These optional lines define the installed directories where
 # headers, libraries, and executables will be found
@@ -17,48 +17,47 @@ bindir      fq_dir      bin
 fcldir      -
 
 #
-product			version	       optional
+product             version       optional
 
-artdaq_core 		v3_05_07
-icarus_artdaq_base     	v0_09_00       -       optional
-cetbuildtools           v7_13_02       -       only_for_build
+artdaq_core         v3_05_09
+icarus_artdaq_base  v0_10_00      -       optional
+cetbuildtools       v7_14_00      -       only_for_build
 end_product_list
 
 # -nq- here means there is no qualifier
 # a "-" here means the dependent product is not required by the parent and will not be setup
-qualifier		artdaq_core 	 icarus_artdaq_base
-e17:prof:s67		e17:prof:s67	 e17:prof
-e17:debug:s67		e17:debug:s67	 e17:debug
-e17:prof:icarus:s67	e17:prof:s67	 e17:prof
-e17:debug:icarus:s67	e17:debug:s67	 e17:debug
-e17:prof:sbnd:s67	e17:prof:s67	 -
-e17:debug:sbnd:s67  	e17:debug:s67	 -
+qualifier            artdaq_core      icarus_artdaq_base
+e17:prof:s67         e17:prof:s67     e17:prof
+e17:debug:s67        e17:debug:s67    e17:debug
+e17:prof:icarus:s67  e17:prof:s67     e17:prof
+e17:debug:icarus:s67 e17:debug:s67    e17:debug
+e17:prof:sbnd:s67    e17:prof:s67     -
+e17:debug:sbnd:s67   e17:debug:s67    -
 
-e17:prof:s82		e17:prof:s82	 e17:prof
-e17:debug:s82		e17:debug:s82	 e17:debug
-e17:prof:icarus:s82	e17:prof:s82	 e17:prof
-e17:debug:icarus:s82	e17:debug:s82	 e17:debug
-e17:prof:sbnd:s82	e17:prof:s82	 -
-e17:debug:sbnd:s82  	e17:debug:s82	 -
+e17:prof:s82         e17:prof:s82     e17:prof
+e17:debug:s82        e17:debug:s82    e17:debug
+e17:prof:icarus:s82  e17:prof:s82     e17:prof
+e17:debug:icarus:s82 e17:debug:s82    e17:debug
+e17:prof:sbnd:s82    e17:prof:s82     -
+e17:debug:sbnd:s82   e17:debug:s82    -
 
-e17:prof:s83		e17:prof:s83	 e17:prof
-e17:debug:s83		e17:debug:s83	 e17:debug
-e17:prof:icarus:s83	e17:prof:s83	 e17:prof
-e17:debug:icarus:s83	e17:debug:s83	 e17:debug
-e17:prof:sbnd:s83	e17:prof:s83	 -
-e17:debug:sbnd:s83  	e17:debug:s83	 -
+e17:prof:s83         e17:prof:s83     e17:prof
+e17:debug:s83        e17:debug:s83    e17:debug
+e17:prof:icarus:s83  e17:prof:s83     e17:prof
+e17:debug:icarus:s83 e17:debug:s83    e17:debug
+e17:prof:sbnd:s83    e17:prof:s83     -
+e17:debug:sbnd:s83   e17:debug:s83    -
 
-e19:prof:s82		e19:prof:s82	 e19:prof
-e19:debug:s82		e19:debug:s82	 e19:debug
-e19:prof:icarus:s82	e19:prof:s82	 e19:prof
-e19:debug:icarus:s82	e19:debug:s82	 e19:debug
-e19:prof:sbnd:s82	e19:prof:s82	 -
-e19:debug:sbnd:s82  	e19:debug:s82	 -
+e19:prof:s82         e19:prof:s82     e19:prof
+e19:debug:s82        e19:debug:s82    e19:debug
+e19:prof:icarus:s82  e19:prof:s82     e19:prof
+e19:debug:icarus:s82 e19:debug:s82    e19:debug
+e19:prof:sbnd:s82    e19:prof:s82     -
+e19:debug:sbnd:s82   e19:debug:s82    -
 
 # Preserve tabs and formatting in emacs and vi / vim:
 
 ### Local Variables:
-### tab-width: 8
+### tab-width: 4
 ### End:
 
-# vi:set ts=8 noexpandtab:
