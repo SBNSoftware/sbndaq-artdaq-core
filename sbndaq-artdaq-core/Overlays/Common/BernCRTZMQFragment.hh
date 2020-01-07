@@ -9,8 +9,6 @@
 #include <string>
 #include <vector>
 
-#include <sys/timeb.h> //AA: I somehow don't like the timeb, perhaps I'll find a way to get rid of it
-
 // Implementation of "BernCRTZMQFragment", an artdaq::Fragment overlay class
 
 namespace sbndaq {
@@ -44,6 +42,7 @@ public:
    			     uint64_t l_this_poll_end,
 			     uint64_t l_last_poll_start,
 			     uint64_t l_last_poll_end,
+                             uint32_t l_system_clock_deviation,
 			     uint32_t feb_c, uint32_t gps_c,
 			     uint32_t evpack, uint32_t seq)
     :
@@ -52,6 +51,7 @@ public:
     _this_poll_end(l_this_poll_end),
     _last_poll_start(l_last_poll_start),
     _last_poll_end(l_last_poll_end),
+    _system_clock_deviation(l_system_clock_deviation),
     _feb_event_count(feb_c),
     _gps_counter(gps_c),
     _events_in_data_packet(evpack),
@@ -68,6 +68,7 @@ public:
   uint64_t const& this_poll_end() const { return _this_poll_end; }
   uint64_t const& last_poll_start() const { return _last_poll_start; }
   uint64_t const& last_poll_end() const { return _last_poll_end; }
+  int32_t  const& system_clock_deviation() const { return _system_clock_deviation; }
 
   uint32_t const& feb_event_count()         const { return _feb_event_count; }
   uint32_t const& gps_count()    const { return _gps_counter; }
@@ -101,6 +102,7 @@ private:
   uint64_t  _this_poll_end;
   uint64_t  _last_poll_start;
   uint64_t  _last_poll_end;
+  int32_t   _system_clock_deviation; //system clock deviation w.r.t. steady clock, synchronised at the beginning of the run
   //AA: TODO consider removing these
   uint32_t  _feb_event_count;
   uint32_t  _gps_counter;
@@ -147,15 +149,30 @@ struct sbndaq::BernCRTZMQEvent {
 
 struct sbndaq::BernCRTZMQLastEvent {
   /**
-   * Last zeromq event in each packet with a special structure, containing timing information
+   * Last zeromq event in each zmq packet with a special structure containing number of events and timing information
    */
-  uint16_t magic_number0;
-  uint16_t magic_number1;
-  uint32_t magic_number2;
-  uint32_t magic_number3;
+  uint16_t mac5;
+  uint16_t flags;
+  uint32_t magic_number0;
+  uint32_t magic_number1;
   uint32_t n_events;
-  timeb    poll_time_start;
-  timeb    poll_time_end;
+
+  //febdrv poll start and end time (ns since the epoch measured by system clock)
+  uint64_t poll_time_start;
+  uint64_t poll_time_end;
+
+  //deviation of the variables above w.r.t. steady clock synchronised each time febdrv receives DAQ_BEG command
+  int32_t poll_start_deviation;
+  int32_t poll_end_deviation;
+
+  //variables to match the size of BernCRTZMQEvent.
+  //They are not mandatory, but they allow to fill the remainder of the last event with zeros
+  uint64_t zero_padding0;
+  uint64_t zero_padding1;
+  uint64_t zero_padding2;
+  uint64_t zero_padding3;
+  uint64_t zero_padding4;
+  uint32_t zero_padding5;
 };
 
 union sbndaq::BernCRTZMQEventUnion {
