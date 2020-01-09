@@ -43,7 +43,7 @@ public:
 			     uint64_t l_last_poll_start,
 			     uint64_t l_last_poll_end,
                              uint32_t l_system_clock_deviation,
-			     uint32_t feb_c, uint32_t gps_c,
+			     uint32_t feb_c,
 			     uint32_t evpack, uint32_t seq)
     :
     _run_start_time(l_run_start_time),
@@ -53,37 +53,33 @@ public:
     _last_poll_end(l_last_poll_end),
     _system_clock_deviation(l_system_clock_deviation),
     _feb_event_count(feb_c),
-    _gps_counter(gps_c),
     _events_in_data_packet(evpack),
     _sequence_number(seq),
     _missed_events(0),
     _overwritten_events(0),
     _dropped_events(0),
     _n_events(0),
-    _n_datagrams(0)    
-  { CheckTimeWindow(); }
+    _n_datagrams(0)
+  {}
 
-  uint64_t const& run_start_time() const { return _run_start_time; }
+  uint64_t const& run_start_time()  const { return _run_start_time; }
   uint64_t const& this_poll_start() const { return _this_poll_start; }
-  uint64_t const& this_poll_end() const { return _this_poll_end; }
+  uint64_t const& this_poll_end()   const { return _this_poll_end; }
   uint64_t const& last_poll_start() const { return _last_poll_start; }
-  uint64_t const& last_poll_end() const { return _last_poll_end; }
+  uint64_t const& last_poll_end()   const { return _last_poll_end; }
   int32_t  const& system_clock_deviation() const { return _system_clock_deviation; }
 
-  uint32_t const& feb_event_count()         const { return _feb_event_count; }
-  uint32_t const& gps_count()    const { return _gps_counter; }
-  uint32_t const& event_packet() const { return _events_in_data_packet; }
-  uint32_t const& sequence_number() const{return _sequence_number;}
- /* uint32_t const& reader_id()          const { return _reader_id; }
-  uint32_t const& n_channels()         const { return _n_channels; }
-  uint32_t const& n_adc_bits()         const { return _n_adc_bits; }*/
+  uint32_t const& feb_event_count()    const { return _feb_event_count; }
+  uint32_t const& event_packet()       const { return _events_in_data_packet; }
+  uint32_t const& sequence_number()    const { return _sequence_number;}
+  //AA: TODO consider removing these fields
   uint32_t const& missed_events()      const { return _missed_events; }
   uint32_t const& overwritten_events() const { return _overwritten_events; }
   uint32_t const& dropped_events()     const { return _dropped_events; }
   uint32_t const& n_events()           const { return _n_events; }
   uint32_t const& n_datagrams()        const { return _n_datagrams; }
 
-  uint32_t inc_SequenceNumber(uint32_t n=1)      { _sequence_number+=n; return sequence_number(); }
+  uint32_t inc_SequenceNumber(uint32_t n=1)    { _sequence_number+=n; return sequence_number(); }
   uint32_t inc_MissedEvents(uint32_t n=1)      { _missed_events+=n; return missed_events(); }
   uint32_t inc_OverwrittenEvents(uint32_t n=1) { _overwritten_events+=n; return overwritten_events(); }
   uint32_t inc_DroppedEvents(uint32_t n=1)     { _dropped_events+=n; return dropped_events(); }
@@ -105,7 +101,6 @@ private:
   int32_t   _system_clock_deviation; //system clock deviation w.r.t. steady clock, synchronised at the beginning of the run
   //AA: TODO consider removing these
   uint32_t  _feb_event_count;
-  uint32_t  _gps_counter;
   uint32_t  _events_in_data_packet;
   uint32_t  _sequence_number;
 
@@ -115,8 +110,6 @@ private:
   uint32_t _n_events;
   uint32_t _n_datagrams;
 
-  void CheckTimeWindow() const;
-  
 };
 
 
@@ -150,6 +143,7 @@ struct sbndaq::BernCRTZMQEvent {
 struct sbndaq::BernCRTZMQLastEvent {
   /**
    * Last zeromq event in each zmq packet with a special structure containing number of events and timing information
+   * It has the same (or no greater) length as BernCRTZMQEvent, as febdrv sends it as an additional event in the list
    */
   uint16_t mac5;
   uint16_t flags;

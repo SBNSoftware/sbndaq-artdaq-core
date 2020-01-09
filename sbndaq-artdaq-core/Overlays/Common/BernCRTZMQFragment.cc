@@ -3,17 +3,6 @@
 
 #include "cetlib_except/exception.h"
 
-void sbndaq::BernCRTZMQFragmentMetadata::CheckTimeWindow() const {
-  if(_run_start_time >_this_poll_start) {
-    //TODO figure out purpose of this function
-   TRACE(1, std::string("BernCRTZMQFragmentMetadata::") + __func__ + " A failure occured but let us pretend nothing happened.");
-   // throw cet::exception("BernFragmentMetadata::CheckTimeWindow") 
-   //   << "Failed. time_start (" << /*_time_start_seconds << "," << _time_start_nanosec 
-   //   << ") is after time_end (" << _time_end_seconds << "," << _time_end_nanosec  <<*/ ")"; 
-  }
-}
-
-
 std::ostream & sbndaq::operator << (std::ostream & os, BernCRTZMQFragmentMetadata const& m){
   os << "BernCRTZMQFragmentMetadata:"
      << "\n\tRun start time:   " << sbndaq::BernCRTZMQFragment::print_timestamp(m.run_start_time())
@@ -22,7 +11,6 @@ std::ostream & sbndaq::operator << (std::ostream & os, BernCRTZMQFragmentMetadat
      << "\n\tThis poll start:  " << sbndaq::BernCRTZMQFragment::print_timestamp(m.this_poll_start())
      << "\n\tThis poll finish: " << sbndaq::BernCRTZMQFragment::print_timestamp(m.this_poll_end())
      << "\n\tFEB event count: " << m.feb_event_count()
-     << "\n\tGPS count: " << m.gps_count()
      << "\n\tNumber of event in the ZMQ packet: " << m.event_packet()
      << "\n\tSequence number: " << m.sequence_number()
      << "\n\tNumber of missed events: " << m.missed_events()
