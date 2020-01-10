@@ -9,6 +9,10 @@
 #include <string>
 #include <vector>
 
+//This variable ensures compatibility between data sent by febdrv and received by fragment generator
+//Please update it whenever you modify the data format
+#define FEBDRV_VERSION 20200120
+
 // Implementation of "BernCRTZMQFragment", an artdaq::Fragment overlay class
 
 namespace sbndaq {
@@ -114,6 +118,10 @@ private:
 
 
 struct sbndaq::BernCRTZMQEvent {
+  /*
+   * Format of data received from FEBs.
+   * If this struct ever changes, please update FEBDRV_VERSION
+   */
 
   uint16_t mac5;
   uint16_t flags;
@@ -144,11 +152,12 @@ struct sbndaq::BernCRTZMQLastEvent {
   /**
    * Last zeromq event in each zmq packet with a special structure containing number of events and timing information
    * It has the same (or no greater) length as BernCRTZMQEvent, as febdrv sends it as an additional event in the list
+   * If this struct ever changes, please update FEBDRV_VERSION
    */
   uint16_t mac5;
   uint16_t flags;
-  uint32_t magic_number0;
-  uint32_t magic_number1;
+  uint32_t magic_number;
+  uint32_t febdrv_version;
   uint32_t n_events;
 
   //febdrv poll start and end time (ns since the epoch measured by system clock)
