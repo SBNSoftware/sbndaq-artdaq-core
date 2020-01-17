@@ -9,7 +9,9 @@
 #include <string>
 #include <vector>
 
-//#include "bernfebdrv/febevt.h"
+//This variable ensures compatibility between data sent by febdrv and received by fragment generator
+//Please update it whenever you modify the data format
+#define FEBDRV_VERSION 20200120
 
 // Implementation of "BernCRTZMQFragment", an artdaq::Fragment overlay class
 
@@ -17,6 +19,10 @@ namespace sbndaq {
 
   struct BernCRTZMQEvent;
   std::ostream & operator << (std::ostream &, BernCRTZMQEvent const &);
+  
+  struct BernCRTZMQLastEvent;
+
+  union BernCRTZMQEventUnion;
 
   class BernCRTZMQFragment;
   std::ostream & operator << (std::ostream &, BernCRTZMQFragment const &);
@@ -24,8 +30,7 @@ namespace sbndaq {
   class BernCRTZMQFragmentMetadata;
   std::ostream & operator << (std::ostream &, BernCRTZMQFragmentMetadata const&);
 
-  typedef std::vector<BernCRTZMQEvent> BernCRTZMQEvents;
-  typedef std::pair<BernCRTZMQFragmentMetadata,BernCRTZMQEvents> BernCRTZMQDataPair;
+  typedef std::pair<BernCRTZMQEvent,BernCRTZMQFragmentMetadata> BernCRTZMQDataPair;
 
   double GetCorrectedTime(uint32_t const&, BernCRTZMQFragmentMetadata const&);
 }
@@ -36,69 +41,49 @@ public:
 
   BernCRTZMQFragmentMetadata(){}
 
-  BernCRTZMQFragmentMetadata(uint32_t rst_s, uint32_t rst_ns,
-			     uint32_t polls_s, uint32_t polls_ns,
-   			     uint32_t pollf_s, uint32_t pollf_ns, 
-			     uint32_t tlpolls_s, uint32_t tlpolls_ns,
-			     uint32_t tlpollf_s, uint32_t tlpollf_ns,
-			     uint32_t fragfill_s, uint32_t fragfill_ns,
-			     uint32_t feb_c, uint32_t gps_c,
+  BernCRTZMQFragmentMetadata(uint64_t l_run_start_time,
+			     uint64_t l_this_poll_start,
+   			     uint64_t l_this_poll_end,
+			     uint64_t l_last_poll_start,
+			     uint64_t l_last_poll_end,
+                             uint32_t l_system_clock_deviation,
+			     uint32_t feb_c,
 			     uint32_t evpack, uint32_t seq)
     :
-    _run_start_time_s(rst_s),
-    _run_start_time_ns(rst_ns),
-    _time_poll_start_s(polls_s),
-    _time_poll_start_ns(polls_ns),
-    _time_poll_finish_s(pollf_s),
-    _time_poll_finish_ns(pollf_ns),
-    _time_last_poll_start_s(tlpolls_s),
-    _time_last_poll_start_ns(tlpolls_ns),
-    _time_last_poll_finish_s(tlpollf_s),
-    _time_last_poll_finish_ns(tlpollf_ns),
-    _fragment_fill_time_s(fragfill_s),
-    _fragment_fill_time_ns(fragfill_ns),
+    _run_start_time(l_run_start_time),
+    _this_poll_start(l_this_poll_start),
+    _this_poll_end(l_this_poll_end),
+    _last_poll_start(l_last_poll_start),
+    _last_poll_end(l_last_poll_end),
+    _system_clock_deviation(l_system_clock_deviation),
     _feb_event_count(feb_c),
-    _gps_counter(gps_c),
     _events_in_data_packet(evpack),
     _sequence_number(seq),
     _missed_events(0),
     _overwritten_events(0),
     _dropped_events(0),
     _n_events(0),
-    _n_datagrams(0)    
-  { CheckTimeWindow(); }
+    _n_datagrams(0)
+  {}
 
-  uint32_t const& run_start_time_seconds() const { return _run_start_time_s; }
-  uint32_t const& run_start_time_nanosec() const { return _run_start_time_ns; }
-  
-  uint32_t const& time_poll_start_seconds() const { return _time_poll_start_s; }
-  uint32_t const& time_poll_start_nanosec() const { return _time_poll_start_ns; }
-  
-  uint32_t const& time_poll_finish_seconds() const { return _time_poll_finish_s; }
-  uint32_t const& time_poll_finish_nanosec() const { return _time_poll_finish_ns; }
+  uint64_t const& run_start_time()  const { return _run_start_time; }
+  uint64_t const& this_poll_start() const { return _this_poll_start; }
+  uint64_t const& this_poll_end()   const { return _this_poll_end; }
+  uint64_t const& last_poll_start() const { return _last_poll_start; }
+  uint64_t const& last_poll_end()   const { return _last_poll_end; }
+  int32_t  const& system_clock_deviation() const { return _system_clock_deviation; }
 
-  uint32_t const& time_last_poll_start_seconds() const { return _time_last_poll_start_s; }
-  uint32_t const& time_last_poll_start_nanosec() const { return _time_last_poll_start_ns; }
-
-  uint32_t const& time_last_poll_finish_seconds() const { return _time_last_poll_finish_s; }
-  uint32_t const& time_last_poll_finish_nanosec() const { return _time_last_poll_finish_ns; }
-
-  uint32_t const& fragment_fill_time_seconds() const { return _fragment_fill_time_s; }
-  uint32_t const& fragment_fill_time_nanosec() const { return _fragment_fill_time_ns; }
-  
-  uint32_t const& feb_event_count()         const { return _feb_event_count; }
-  uint32_t const& gps_count()    const { return _gps_counter; }
-  uint32_t const& event_packet() const { return _events_in_data_packet; }
-  uint32_t const& sequence_number() const{return _sequence_number;}
- /* uint32_t const& reader_id()          const { return _reader_id; }
-  uint32_t const& n_channels()         const { return _n_channels; }
-  uint32_t const& n_adc_bits()         const { return _n_adc_bits; }*/
+  uint32_t const& feb_event_count()    const { return _feb_event_count; }
+  uint32_t const& event_packet()       const { return _events_in_data_packet; }
+  uint32_t const& sequence_number()    const { return _sequence_number;}
+  //AA: TODO consider removing these fields
   uint32_t const& missed_events()      const { return _missed_events; }
   uint32_t const& overwritten_events() const { return _overwritten_events; }
   uint32_t const& dropped_events()     const { return _dropped_events; }
   uint32_t const& n_events()           const { return _n_events; }
   uint32_t const& n_datagrams()        const { return _n_datagrams; }
 
+  uint32_t inc_SequenceNumber(uint32_t n=1)    { _sequence_number+=n; return sequence_number(); }
   uint32_t inc_MissedEvents(uint32_t n=1)      { _missed_events+=n; return missed_events(); }
   uint32_t inc_OverwrittenEvents(uint32_t n=1) { _overwritten_events+=n; return overwritten_events(); }
   uint32_t inc_DroppedEvents(uint32_t n=1)     { _dropped_events+=n; return dropped_events(); }
@@ -112,20 +97,14 @@ public:
 
 private:
 
-  uint32_t  _run_start_time_s;
-  uint32_t  _run_start_time_ns;
-  uint32_t  _time_poll_start_s;
-  uint32_t  _time_poll_start_ns;
-  uint32_t  _time_poll_finish_s;
-  uint32_t  _time_poll_finish_ns;
-  uint32_t  _time_last_poll_start_s;
-  uint32_t  _time_last_poll_start_ns;
-  uint32_t  _time_last_poll_finish_s;
-  uint32_t  _time_last_poll_finish_ns;
-  uint32_t  _fragment_fill_time_s;
-  uint32_t  _fragment_fill_time_ns;
+  uint64_t  _run_start_time;
+  uint64_t  _this_poll_start;
+  uint64_t  _this_poll_end;
+  uint64_t  _last_poll_start;
+  uint64_t  _last_poll_end;
+  int32_t   _system_clock_deviation; //system clock deviation w.r.t. steady clock, synchronised at the beginning of the run
+  //AA: TODO consider removing these
   uint32_t  _feb_event_count;
-  uint32_t  _gps_counter;
   uint32_t  _events_in_data_packet;
   uint32_t  _sequence_number;
 
@@ -135,107 +114,15 @@ private:
   uint32_t _n_events;
   uint32_t _n_datagrams;
 
-  void CheckTimeWindow() const;
-  
 };
 
 
-/*class sbndaq::BernCRTZMQFragmentMetadata {
+struct sbndaq::BernCRTZMQEvent {
+  /*
+   * Format of data received from FEBs.
+   * If this struct ever changes, please update FEBDRV_VERSION
+   */
 
-public:
-
-  BernCRTZMQFragmentMetadata(){}
-
-  BernCRTZMQFragmentMetadata(uint32_t ts_s, uint32_t ts_ns, 
-			     uint32_t te_s, uint32_t te_ns,
-			     int t_c, uint64_t t_o,
-			     uint32_t r, uint32_t seq,
-			     uint64_t fid, uint32_t rid,
-			     uint32_t nch, uint32_t nadc)
-    :
-    _time_start_seconds(ts_s),
-    _time_start_nanosec(ts_ns),
-    _time_end_seconds(te_s),
-    _time_end_nanosec(te_ns),
-    _time_correction_diff(t_c),
-    _time_offset(t_o),
-    _run_number(r),
-    _sequence_number(seq),
-    _feb_id(fid),
-    _reader_id(rid),
-    _n_channels(nch),
-    _n_adc_bits(nadc),
-    _missed_events(0),
-    _overwritten_events(0),
-    _dropped_events(0),
-    _n_events(0),
-    _n_datagrams(0)    
-  { CheckTimeWindow(); }
-
-  uint32_t const& time_start_seconds() const { return _time_start_seconds; }
-  uint32_t const& time_start_nanosec() const { return _time_start_nanosec; }
-  
-  uint32_t const& time_end_seconds() const { return _time_end_seconds; }
-  uint32_t const& time_end_nanosec() const { return _time_end_nanosec; }
-  
-  int      const& time_correction_diff() const { return _time_correction_diff; }
-  uint64_t const& time_offset() const { return _time_offset; }
-  
-  uint32_t const& run_number()         const { return _run_number; }
-  uint32_t const& sequence_number()    const { return _sequence_number; }
-  uint64_t const& feb_id()             const { return _feb_id; }
-  uint32_t const& reader_id()          const { return _reader_id; }
-  uint32_t const& n_channels()         const { return _n_channels; }
-  uint32_t const& n_adc_bits()         const { return _n_adc_bits; }
-  uint32_t const& missed_events()      const { return _missed_events; }
-  uint32_t const& overwritten_events() const { return _overwritten_events; }
-  uint32_t const& dropped_events()     const { return _dropped_events; }
-  uint32_t const& n_events()           const { return _n_events; }
-  uint32_t const& n_datagrams()        const { return _n_datagrams; }
-
-  uint32_t inc_MissedEvents(uint32_t n=1)      { _missed_events+=n; return missed_events(); }
-  uint32_t inc_OverwrittenEvents(uint32_t n=1) { _overwritten_events+=n; return overwritten_events(); }
-  uint32_t inc_DroppedEvents(uint32_t n=1)     { _dropped_events+=n; return dropped_events(); }
-  uint32_t inc_Events(uint32_t n=1)            { _n_events+=n; return n_events(); }
-  uint32_t inc_Datagrams(uint32_t n=1)         { _n_datagrams+=n; return n_datagrams(); }
-  
-  void increment(uint32_t missed, uint32_t overwritten, uint32_t dropped, uint32_t events=1, uint32_t d=0)
-  { inc_MissedEvents(missed); inc_OverwrittenEvents(overwritten); inc_DroppedEvents(dropped); inc_Events(events); inc_Datagrams(d); }
-  
-  const char* c_str() const { std::ostringstream ss; ss << *this; return ss.str().c_str(); }
-
-private:
-
-  uint32_t _time_start_seconds; //time at fragment start, seconds
-  uint32_t _time_start_nanosec; //time at fragment start, nanoseconds
-  uint32_t _time_end_seconds; //time at fragment end, seconds
-  uint32_t _time_end_nanosec; //time at fragment end, nanoseconds
-
-  int _time_correction_diff;
-  uint64_t _time_offset;
-
-  uint32_t _run_number;
-  uint32_t _sequence_number;
-
-  uint64_t _feb_id; //mac address
-  uint32_t _reader_id; //pc ID
-
-  uint32_t _n_channels;
-  uint32_t _n_adc_bits;
-
-  uint32_t _missed_events;
-  uint32_t _overwritten_events;
-  uint32_t _dropped_events;
-  uint32_t _n_events;
-  uint32_t _n_datagrams;
-
-  void CheckTimeWindow() const;
-  
-};*/
-
-struct sbndaq::BernCRTZMQEvent{    
-
-  //typedef struct {
   uint16_t mac5;
   uint16_t flags;
   uint16_t lostcpu;
@@ -244,10 +131,7 @@ struct sbndaq::BernCRTZMQEvent{
   uint32_t ts1;
   uint16_t adc[32];
   uint32_t coinc;
-  //} EVENT_t; 
-  //
-  //EVENT_t event_data;
-  
+
   uint16_t const& MAC5() const { return mac5; }
   
   bool     IsOverflow_TS0()  const { return (flags&0x1)==0; }
@@ -262,11 +146,49 @@ struct sbndaq::BernCRTZMQEvent{
   uint16_t const& ADC(size_t c) const { return adc[c]; }
   
   const char* c_str() const { std::ostringstream ss; ss << *this; return ss.str().c_str(); }
-  //std::string db_entry() const;
+};
+
+struct sbndaq::BernCRTZMQLastEvent {
+  /**
+   * Last zeromq event in each zmq packet with a special structure containing number of events and timing information
+   * It has the same (or no greater) length as BernCRTZMQEvent, as febdrv sends it as an additional event in the list
+   * If this struct ever changes, please update FEBDRV_VERSION
+   */
+  uint16_t mac5;
+  uint16_t flags;
+  uint32_t magic_number;
+  uint32_t febdrv_version;
+  uint32_t n_events;
+
+  //febdrv poll start and end time (ns since the epoch measured by system clock)
+  uint64_t poll_time_start;
+  uint64_t poll_time_end;
+
+  //deviation of the variables above w.r.t. steady clock synchronised each time febdrv receives DAQ_BEG command
+  int32_t poll_start_deviation;
+  int32_t poll_end_deviation;
+
+  //variables to match the size of BernCRTZMQEvent.
+  //They are not mandatory, but they allow to fill the remainder of the last event with zeros
+  uint64_t zero_padding0;
+  uint64_t zero_padding1;
+  uint64_t zero_padding2;
+  uint64_t zero_padding3;
+  uint64_t zero_padding4;
+  uint32_t zero_padding5;
+};
+
+union sbndaq::BernCRTZMQEventUnion {
+  /**
+   * Union needed to read the last BernCRTZMQEvent as BernCRTZMQLastEvent
+   */
+
+  sbndaq::BernCRTZMQEvent     event;
+  sbndaq::BernCRTZMQLastEvent last_event;
 };
 
 class sbndaq::BernCRTZMQFragment {
-  public:
+public:
 
   BernCRTZMQFragment(artdaq::Fragment const & f) : artdaq_Fragment_(f) {}
 
@@ -284,6 +206,8 @@ class sbndaq::BernCRTZMQFragment {
   bool Verify() const;
 
   const char* c_str() const { std::ostringstream ss; ss << *this; return ss.str().c_str(); }
+  
+  static std::string print_timestamp(uint64_t t);
 
 private:
 
