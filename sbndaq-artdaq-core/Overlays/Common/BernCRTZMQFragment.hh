@@ -47,8 +47,7 @@ public:
 			     uint64_t l_last_poll_start,
 			     uint64_t l_last_poll_end,
                              uint32_t l_system_clock_deviation,
-			     uint32_t feb_c,
-			     uint32_t evpack, uint32_t seq)
+			     uint32_t feb_c)
     :
     _run_start_time(l_run_start_time),
     _this_poll_start(l_this_poll_start),
@@ -56,9 +55,7 @@ public:
     _last_poll_start(l_last_poll_start),
     _last_poll_end(l_last_poll_end),
     _system_clock_deviation(l_system_clock_deviation),
-    _feb_event_count(feb_c),
-    _events_in_data_packet(evpack),
-    _sequence_number(seq),
+    _feb_events_per_poll(feb_c),
     _missed_events(0),
     _overwritten_events(0),
     _dropped_events(0),
@@ -73,9 +70,7 @@ public:
   uint64_t const& last_poll_end()   const { return _last_poll_end; }
   int32_t  const& system_clock_deviation() const { return _system_clock_deviation; }
 
-  uint32_t const& feb_event_count()    const { return _feb_event_count; }
-  uint32_t const& event_packet()       const { return _events_in_data_packet; }
-  uint32_t const& sequence_number()    const { return _sequence_number;}
+  uint32_t const& feb_events_per_poll()    const { return _feb_events_per_poll; }
   //AA: TODO consider removing these fields
   uint32_t const& missed_events()      const { return _missed_events; }
   uint32_t const& overwritten_events() const { return _overwritten_events; }
@@ -83,7 +78,6 @@ public:
   uint32_t const& n_events()           const { return _n_events; }
   uint32_t const& n_datagrams()        const { return _n_datagrams; }
 
-  uint32_t inc_SequenceNumber(uint32_t n=1)    { _sequence_number+=n; return sequence_number(); }
   uint32_t inc_MissedEvents(uint32_t n=1)      { _missed_events+=n; return missed_events(); }
   uint32_t inc_OverwrittenEvents(uint32_t n=1) { _overwritten_events+=n; return overwritten_events(); }
   uint32_t inc_DroppedEvents(uint32_t n=1)     { _dropped_events+=n; return dropped_events(); }
@@ -104,9 +98,7 @@ private:
   uint64_t  _last_poll_end;
   int32_t   _system_clock_deviation; //system clock deviation w.r.t. steady clock, synchronised at the beginning of the run
   //AA: TODO consider removing these
-  uint32_t  _feb_event_count;
-  uint32_t  _events_in_data_packet;
-  uint32_t  _sequence_number;
+  uint32_t  _feb_events_per_poll;
 
   uint32_t _missed_events;
   uint32_t _overwritten_events;
