@@ -56,7 +56,7 @@ bool sbndaq::BernCRTZMQFragment::Verify() const {
 }
 
 std::string sbndaq::BernCRTZMQFragment::print_timestamp(uint64_t t) {
-  char s[40];
+  char s[43];
   if(t >= (uint64_t)10*1000*1000*1000) {
     sprintf(s, "%lu %03lu %03lu %03lu.%03lu %03lu %03lu [s.ns]",
       (t/1000000000000000000) %1000,
