@@ -47,7 +47,8 @@ public:
 			     uint64_t l_last_poll_start,
 			     uint64_t l_last_poll_end,
                              uint32_t l_system_clock_deviation,
-			     uint32_t feb_c)
+			     uint32_t feb_c,
+                             uint32_t event_n)
     :
     _run_start_time(l_run_start_time),
     _this_poll_start(l_this_poll_start),
@@ -56,11 +57,7 @@ public:
     _last_poll_end(l_last_poll_end),
     _system_clock_deviation(l_system_clock_deviation),
     _feb_events_per_poll(feb_c),
-    _missed_events(0),
-    _overwritten_events(0),
-    _dropped_events(0),
-    _n_events(0),
-    _n_datagrams(0)
+    _feb_event_number(event_n)
   {}
 
   uint64_t const& run_start_time()  const { return _run_start_time; }
@@ -69,23 +66,10 @@ public:
   uint64_t const& last_poll_start() const { return _last_poll_start; }
   uint64_t const& last_poll_end()   const { return _last_poll_end; }
   int32_t  const& system_clock_deviation() const { return _system_clock_deviation; }
-
   uint32_t const& feb_events_per_poll()    const { return _feb_events_per_poll; }
-  //AA: TODO consider removing these fields
-  uint32_t const& missed_events()      const { return _missed_events; }
-  uint32_t const& overwritten_events() const { return _overwritten_events; }
-  uint32_t const& dropped_events()     const { return _dropped_events; }
-  uint32_t const& n_events()           const { return _n_events; }
-  uint32_t const& n_datagrams()        const { return _n_datagrams; }
+  uint32_t const& feb_event_number()       const { return _feb_event_number; }
 
-  uint32_t inc_MissedEvents(uint32_t n=1)      { _missed_events+=n; return missed_events(); }
-  uint32_t inc_OverwrittenEvents(uint32_t n=1) { _overwritten_events+=n; return overwritten_events(); }
-  uint32_t inc_DroppedEvents(uint32_t n=1)     { _dropped_events+=n; return dropped_events(); }
-  uint32_t inc_Events(uint32_t n=1)            { _n_events+=n; return n_events(); }
-  uint32_t inc_Datagrams(uint32_t n=1)         { _n_datagrams+=n; return n_datagrams(); }
-  
-  void increment(uint32_t missed, uint32_t overwritten, uint32_t dropped, uint32_t events=1, uint32_t d=0)
-  { inc_MissedEvents(missed); inc_OverwrittenEvents(overwritten); inc_DroppedEvents(dropped); inc_Events(events); inc_Datagrams(d); }
+  uint32_t increment_feb_events(uint32_t n=1)      { _feb_event_number+=n; return feb_event_number(); }
   
   const char* c_str() const { std::ostringstream ss; ss << *this; return ss.str().c_str(); }
 
@@ -97,14 +81,8 @@ private:
   uint64_t  _last_poll_start;
   uint64_t  _last_poll_end;
   int32_t   _system_clock_deviation; //system clock deviation w.r.t. steady clock, synchronised at the beginning of the run
-  //AA: TODO consider removing these
-  uint32_t  _feb_events_per_poll;
-
-  uint32_t _missed_events;
-  uint32_t _overwritten_events;
-  uint32_t _dropped_events;
-  uint32_t _n_events;
-  uint32_t _n_datagrams;
+  uint32_t  _feb_events_per_poll;    //number of events for given FEB in a single febdrv poll
+  uint32_t  _feb_event_number;       //event counter for individual FEB
 
 };
 
@@ -186,12 +164,9 @@ public:
 
   BernCRTZMQFragmentMetadata const * metadata() const { return artdaq_Fragment_.metadata<BernCRTZMQFragmentMetadata>(); }
 
-  BernCRTZMQEvent const* eventdata(uint16_t e) const {
-    if(e > metadata()->n_events())
-      throw cet::exception("BernCRTZMQFragment::BernCRTZMQEvent")
-	<< "Event requested (" << (uint32_t)e << ") is out of range: " << metadata()->n_events();
-    return ( reinterpret_cast<BernCRTZMQEvent const*>(artdaq_Fragment_.dataBeginBytes() + e*sizeof(BernCRTZMQEvent)) );
-  }
+  BernCRTZMQEvent const* eventdata() const {
+    return ( reinterpret_cast<BernCRTZMQEvent const*>(artdaq_Fragment_.dataBeginBytes()) );
+  } 
 
   size_t DataPayloadSize() const { return artdaq_Fragment_.dataSizeBytes(); }
 
