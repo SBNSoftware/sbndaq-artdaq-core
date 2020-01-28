@@ -82,7 +82,7 @@ find_ups_product( cetbuildtools v7_13_02 )
 
 #experiment specific products needed
 IF(ICARUS_BUILD)
-  find_ups_product( icarus_artdaq_base  v0_09_00)
+
 ENDIF()
 
 IF(SBND_BUILD)

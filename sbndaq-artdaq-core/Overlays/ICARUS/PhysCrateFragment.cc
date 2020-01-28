@@ -2,8 +2,6 @@
 #include "cetlib_except/exception.h"
 #include "sbndaq-artdaq-core/Trace/trace_defines.h"
 
-#include "icarus-artdaq-base/common.h"
-
 #include <arpa/inet.h>
 
 void icarus::PhysCrateFragmentMetadata::BoardExists(size_t i) const {
