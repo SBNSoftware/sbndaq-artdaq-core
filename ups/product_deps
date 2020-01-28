@@ -1,7 +1,7 @@
 # The parent line must be the first non-comment line in the file
 # This line defines the product name and version
-parent sbndaq_artdaq_core       v0_04_03
-defaultqual e17:s83
+parent sbndaq_artdaq_core       v0_05_00
+defaultqual e19:s87
 
 # These optional lines define the installed directories where
 # headers, libraries, and executables will be found
@@ -53,6 +53,13 @@ e19:prof:icarus:s82      e19:prof:s82
 e19:debug:icarus:s82     e19:debug:s82
 e19:prof:sbnd:s82        e19:prof:s82
 e19:debug:sbnd:s82       e19:debug:s82
+
+e19:prof:s87             e19:prof:s87
+e19:debug:s87            e19:debug:s87
+e19:prof:icarus:s87      e19:prof:s87
+e19:debug:icarus:s87     e19:debug:s87
+e19:prof:sbnd:s87        e19:prof:s87
+e19:debug:sbnd:s87       e19:debug:s87
 
 e19:prof:s93             e19:prof:s93
 e19:debug:s93            e19:debug:s93
