@@ -19,6 +19,7 @@ std::ostream & sbndaq::operator << (std::ostream & os, BernCRTZMQFragmentMetadat
 std::ostream & sbndaq::operator << (std::ostream & os, BernCRTZMQEvent const & e){
   os << "\nBernCRTZMQEvent"
      << "\n\tMAC5: 0x" << std::hex << e.MAC5() << std::dec;
+  os << "\n\tFlags word: s 0x" << std::hex << e.flags << std::dec;
   os << "\n\tLostCPU: " << e.lostcpu;
   os << "\n\tLostFPGA: " << e.lostfpga;
   os << "\n\tTime1 (TS0): " << sbndaq::BernCRTZMQFragment::print_timestamp(e.Time_TS0());
@@ -30,9 +31,16 @@ std::ostream & sbndaq::operator << (std::ostream & os, BernCRTZMQEvent const & e
   return os;
 }
 
+ std::ostream & sbndaq::operator << (std::ostream & os, BernCRTZMQFragment const & f) {
   os << "BernCRTZMQFragment: "
+     << "\n" << *(f.metadata())
+     << *(f.eventdata())
+     << std::endl;
   return os;
+} 
 
+//AA: TODO try to understand what is the purpose of this function, and either make it work, or delete
+/* bool sbndaq::BernCRTZMQFragment::Verify() const {
   bool verified=true;
 
   if(metadata()->n_events()*sizeof(BernCRTZMQEvent) != DataPayloadSize() )
@@ -40,6 +48,7 @@ std::ostream & sbndaq::operator << (std::ostream & os, BernCRTZMQEvent const & e
 
   return verified;
     
+} */
 
 std::string sbndaq::BernCRTZMQFragment::print_timestamp(uint64_t t) {
   char s[43];

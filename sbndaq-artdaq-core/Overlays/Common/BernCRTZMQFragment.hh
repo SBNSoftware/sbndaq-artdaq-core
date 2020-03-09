@@ -42,12 +42,12 @@ public:
   BernCRTZMQFragmentMetadata(){}
 
   BernCRTZMQFragmentMetadata(uint64_t l_run_start_time,
-			     uint64_t l_this_poll_start,
-   			     uint64_t l_this_poll_end,
-			     uint64_t l_last_poll_start,
-			     uint64_t l_last_poll_end,
+           uint64_t l_this_poll_start,
+             uint64_t l_this_poll_end,
+           uint64_t l_last_poll_start,
+           uint64_t l_last_poll_end,
                              uint32_t l_system_clock_deviation,
-			     uint32_t feb_c,
+           uint32_t feb_c,
                              uint32_t event_n)
     :
     _run_start_time(l_run_start_time),
@@ -57,7 +57,9 @@ public:
     _last_poll_end(l_last_poll_end),
     _system_clock_deviation(l_system_clock_deviation),
     _feb_events_per_poll(feb_c),
-    _feb_event_number(event_n)
+    _feb_event_number(event_n),
+    _omitted_events(0),
+    _last_accepted_timestamp(0)
   {}
 
   uint64_t const& run_start_time()  const { return _run_start_time; }
@@ -68,6 +70,12 @@ public:
   int32_t  const& system_clock_deviation() const { return _system_clock_deviation; }
   uint32_t const& feb_events_per_poll()    const { return _feb_events_per_poll; }
   uint32_t const& feb_event_number()       const { return _feb_event_number; }
+  
+  uint32_t const& omitted_events()          const { return _omitted_events; }
+  uint64_t const& last_accepted_timestamp() const { return _last_accepted_timestamp; }
+
+  void set_omitted_events(uint32_t n)          { _omitted_events = n; }
+  void set_last_accepted_timestamp(uint64_t t) { _last_accepted_timestamp = t; }
 
   uint32_t increment_feb_events(uint32_t n=1)      { _feb_event_number+=n; return feb_event_number(); }
   
@@ -80,9 +88,12 @@ private:
   uint64_t  _this_poll_end;
   uint64_t  _last_poll_start;
   uint64_t  _last_poll_end;
-  int32_t   _system_clock_deviation; //system clock deviation w.r.t. steady clock, synchronised at the beginning of the run
-  uint32_t  _feb_events_per_poll;    //number of events for given FEB in a single febdrv poll
-  uint32_t  _feb_event_number;       //event counter for individual FEB
+  int32_t   _system_clock_deviation;  //system clock deviation w.r.t. steady clock, synchronised at the beginning of the run
+  uint32_t  _feb_events_per_poll;     //number of events for given FEB in a single febdrv poll
+  uint32_t  _feb_event_number;        //event counter for individual FEB
+  uint32_t  _omitted_events;          //number of events omitted by fragment generator
+  uint64_t  _last_accepted_timestamp; //if events are omitted, this is timestamp of last accepted event.
+                                      //Otherwise it's 0. It's set to 1 if events were omitted at the very beginning of the run
 
 };
 
@@ -164,6 +175,9 @@ public:
 
   BernCRTZMQFragmentMetadata const * metadata() const { return artdaq_Fragment_.metadata<BernCRTZMQFragmentMetadata>(); }
 
+  BernCRTZMQEvent const* eventdata() const {
+    return ( reinterpret_cast<BernCRTZMQEvent const*>(artdaq_Fragment_.dataBeginBytes()) );
+  } 
 
   size_t DataPayloadSize() const { return artdaq_Fragment_.dataSizeBytes(); }
 
