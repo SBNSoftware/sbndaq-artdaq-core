@@ -1,6 +1,6 @@
 # The parent line must be the first non-comment line in the file
 # This line defines the product name and version
-parent sbndaq_artdaq_core       v0_05_00_f01
+parent sbndaq_artdaq_core       v0_05_00_f02
 defaultqual e17:s83
 
 # These optional lines define the installed directories where
@@ -19,7 +19,7 @@ fcldir      -
 #
 product             version       optional
 
-artdaq_core         v3_05_12
+artdaq_core         v3_05_13
 cetbuildtools       v7_15_01      -       only_for_build
 end_product_list
 
@@ -75,6 +75,14 @@ e19:prof:icarus:s95      e19:prof:s95
 e19:debug:icarus:s95     e19:debug:s95
 e19:prof:sbnd:s95        e19:prof:s95
 e19:debug:sbnd:s95       e19:debug:s95
+
+# Note that python3 is now the default for LArSoft with v08_46_00
+e19:prof:s96             e19:prof:s96
+e19:debug:s96            e19:debug:s96
+e19:prof:icarus:s96      e19:prof:s96
+e19:debug:icarus:s96     e19:debug:s96
+e19:prof:sbnd:s96        e19:prof:s96
+e19:debug:sbnd:s96       e19:debug:s96
 
 # Now we must expliclity set the py2 qualifier
 e19:prof:s94:py2         e19:prof:s94:py2
