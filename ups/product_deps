@@ -90,6 +90,22 @@ e19:prof:icarus:s94:py2  e19:prof:s94:py2
 e19:debug:icarus:s94:py2 e19:debug:s94:py2
 e19:prof:sbnd:s94:py2    e19:prof:s94:py2
 e19:debug:sbnd:s94:py2   e19:debug:s94:py2
+
+# Note that python3 is now the default for LArSoft with v08_46_00
+e19:prof:s96             e19:prof:s96
+e19:debug:s96            e19:debug:s96
+e19:prof:icarus:s96      e19:prof:s96
+e19:debug:icarus:s96     e19:debug:s96
+e19:prof:sbnd:s96        e19:prof:s96
+e19:debug:sbnd:s96       e19:debug:s96
+
+# Now we must expliclity set the py2 qualifier
+e19:prof:s96:py2         e19:prof:s96:py2
+e19:debug:s96:py2        e19:debug:s96:py2
+e19:prof:icarus:s96:py2  e19:prof:s96:py2
+e19:debug:icarus:s96:py2 e19:debug:s96:py2
+e19:prof:sbnd:s96:py2    e19:prof:s96:py2
+e19:debug:sbnd:s96:py2   e19:debug:s96:py2
 # Preserve tabs and formatting in emacs and vi / vim:
 
 ### Local Variables:
