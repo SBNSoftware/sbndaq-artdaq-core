@@ -11,6 +11,7 @@ namespace sbndaq {
 	CAENV1730,
 	SpectratimeEvent,
 	BERNCRTZMQ,
+        sbnToySimulator,
 
 	//ICARUS
 	PHYSCRATEDATA,
