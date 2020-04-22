@@ -15,7 +15,7 @@ usage() {
   cat 1>&2 <<EOF
 Usage: $(basename ${0}) [-h]
        $(basename ${0})  <branchtag> <qual_set> <buildtype>
-       env WORKSPACE=<workspace> BRANCHTAG=<develop|master|vN_NN_NN> QUALS=<qualifiers> BUILDTYPE=<debug|prof> $(basename ${0})
+       env WORKSPACE=<workspace> BRANCHTAG=<develop|master|vN_NN_NN> QUAL=<qualifiers> BUILDTYPE=<debug|prof> $(basename ${0})
 EOF
 }
 
@@ -37,7 +37,7 @@ OPTIND=1
 
 working_dir="${WORKSPACE:-$(pwd)}"
 branchtag="${1:-${BRANCHTAG}}"
-qual_set="${2:-${QUALS}}"
+qual_set="${2:-${QUAL}}"
 build_type="${3:-${BUILDTYPE}}"
 
 IFS=':' read -r -a quals <<< "$qual_set"
