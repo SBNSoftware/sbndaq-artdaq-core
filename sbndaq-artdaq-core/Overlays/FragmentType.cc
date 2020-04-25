@@ -14,7 +14,7 @@ namespace {
       "CAENV1730",
       "SPECTRATIMEVENT",
       "BERNCRTZMQ",
-      "sbnToySimulator",
+      "SBNTOYSIMULATOR",
 
       //ICARUS
       "PHYSCRATEDATA",
