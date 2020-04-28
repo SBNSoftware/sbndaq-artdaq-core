@@ -11,7 +11,6 @@ namespace sbndaq {
 	CAENV1730,
 	SpectratimeEvent,
 	BERNCRTZMQ,
-        sbnToySimulator,
 
 	//ICARUS
 	PHYSCRATEDATA,
@@ -20,6 +19,9 @@ namespace sbndaq {
 	//SBND
 	NevisTPC,
 	PTB,
+
+        //Simulators
+        sbnToySimulator,
 
         INVALID // Should always be last.
         };

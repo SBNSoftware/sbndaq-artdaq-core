@@ -14,7 +14,6 @@ namespace {
       "CAENV1730",
       "SPECTRATIMEVENT",
       "BERNCRTZMQ",
-      "SBNTOYSIMULATOR",
 
       //ICARUS
       "PHYSCRATEDATA",
@@ -23,6 +22,9 @@ namespace {
       //SBND
       "NEVISTPC",
       "PTB",
+
+      //Simulators
+      "SBNTOYSIMULATOR",
 
       "UNKNOWN"
       };
