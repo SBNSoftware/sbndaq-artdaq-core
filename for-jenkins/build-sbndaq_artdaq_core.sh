@@ -67,6 +67,8 @@ qual_set="${basequal}"
 [[ ! -z "${pyqual+x}" ]] && qual_set="${qual_set}:${pyqual}"
 qual_set="${qual_set}:${squal}"
 
+manifest_qual_set="${squal}:${basequal}"
+[[ ! -z "${pyqual+x}" ]] &&  manifest_qual_set="${manifest_qual_set}:${pyqual}"
 
 case ${build_type} in
   debug) build_type_flag="-d" ;;
@@ -147,7 +149,7 @@ echo
 cd ${products_dir} || exit 1
 curl --fail --silent --location --insecure -O http://scisoft.fnal.gov/scisoft/bundles/tools/pullProducts || exit 1
 chmod +x pullProducts
-./pullProducts ${products_dir} ${flvr} artdaq-${artdaq_version} ${qual_set//:/-} ${build_type} 2>&1 |tee ${products_dir}/pullproducts.log
+./pullProducts ${products_dir} ${flvr} artdaq-${artdaq_version} ${manifest_qual_set//:/-} ${build_type} 2>&1 |tee ${products_dir}/pullproducts.log
 
 
 
