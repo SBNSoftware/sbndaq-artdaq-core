@@ -24,7 +24,7 @@ namespace {
       "PTB",
 
       //Simulators
-      "SBNTOYSIMULATOR",
+      "DUMMYGENERATOR",
 
       "UNKNOWN"
       };

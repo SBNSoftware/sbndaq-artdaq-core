@@ -21,7 +21,7 @@ namespace sbndaq {
 	PTB,
 
         //Simulators
-        sbnToySimulator,
+        DummyGenerator,
 
         INVALID // Should always be last.
         };
