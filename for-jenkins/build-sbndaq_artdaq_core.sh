@@ -1,8 +1,7 @@
 #!/bin/bash
 
 #parameters
-
-#PRODUCTS=${WORKSPACE}/../products
+PRODUCTS=/cvmfs/fermilab.opensciencegrid.org/products/artdaq:/cvmfs/fermilab.opensciencegrid.org/products/larsoft
 
 artdaq_version="v3_08_00"
 
@@ -11,6 +10,8 @@ project_url=https://cdcvs.fnal.gov/projects/${project_name}
 
 
 #main script
+export PRODUCTS
+
 usage() {
   cat 1>&2 <<EOF
 Usage: $(basename ${0}) [-h]
