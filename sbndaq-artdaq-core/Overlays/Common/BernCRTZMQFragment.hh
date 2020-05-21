@@ -1,5 +1,5 @@
 #ifndef sbndaq_artdaq_core_Overlays_Common_BernCRTZMQFragment_hh
-#define sbndaq_Overlays_BernZMQFragment_hh
+#define sbndaq_artdaq_core_Overlays_Common_BernCRTZMQFragment_hh
 
 #include "artdaq-core/Data/Fragment.hh"
 #include "cetlib_except/exception.h"
@@ -198,4 +198,4 @@ private:
   return (double)(t+m.time_offset()) * (1.0 - ((double)(m.time_correction_diff())/1.0e9));
 }*/
 
-#endif /* artdaq_demo_Overlays_ToyFragment_hh */
+#endif /* sbndaq_artdaq_core_Overlays_Common_BernCRTZMQFragment_hh */
