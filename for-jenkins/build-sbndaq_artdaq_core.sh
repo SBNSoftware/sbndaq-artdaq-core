@@ -195,7 +195,7 @@ rm -rf "${build_dir}"
 rm -rf "${src_dir}"
 
 
-[[ $(ls ${copyback_dir/${product_name}*.tar.bz2 |wc -l ) -eq 1 ]] \
+[[ $(ls ${copyback_dir}/${product_name}*.tar.bz2 |wc -l ) -eq 1 ]] \
       ||  { echo "Error: No ${product_name}*.tar.bz2 found in the copyBack directory."; exit 2; }
 
 exit 0
