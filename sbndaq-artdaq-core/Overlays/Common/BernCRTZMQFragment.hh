@@ -81,7 +81,7 @@ public:
   
   const char* c_str() const { std::ostringstream ss; ss << *this; return ss.str().c_str(); }
 
-private:
+//private:
 
   uint64_t  _run_start_time;
   uint64_t  _this_poll_start;
@@ -100,7 +100,7 @@ private:
 
 struct sbndaq::BernCRTZMQEvent {
   /*
-   * Format of data received from FEBs.
+   * Format of data received from febdrv.
    * If this struct ever changes, please update FEBDRV_VERSION
    */
 
