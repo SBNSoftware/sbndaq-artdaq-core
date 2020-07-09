@@ -20,6 +20,9 @@ namespace sbndaq {
 	NevisTPC,
 	PTB,
 
+        //Simulators
+        DummyGenerator,
+
         INVALID // Should always be last.
         };
 

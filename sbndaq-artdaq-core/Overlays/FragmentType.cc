@@ -23,6 +23,9 @@ namespace {
       "NEVISTPC",
       "PTB",
 
+      //Simulators
+      "DUMMYGENERATOR",
+
       "UNKNOWN"
       };
 }
