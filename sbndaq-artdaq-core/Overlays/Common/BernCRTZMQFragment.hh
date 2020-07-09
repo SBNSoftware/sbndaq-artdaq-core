@@ -39,7 +39,19 @@ class sbndaq::BernCRTZMQFragmentMetadata {
 
 public:
 
-  BernCRTZMQFragmentMetadata(){}
+  BernCRTZMQFragmentMetadata()
+  :
+    _run_start_time(0),
+    _this_poll_start(0),
+    _this_poll_end(0),
+    _last_poll_start(0),
+    _last_poll_end(0),
+    _system_clock_deviation(0),
+    _feb_events_per_poll(0),
+    _feb_event_number(0),
+    _omitted_events(0),
+    _last_accepted_timestamp(0)
+  {}
 
   BernCRTZMQFragmentMetadata(uint64_t l_run_start_time,
 			     uint64_t l_this_poll_start,
