@@ -54,12 +54,12 @@ public:
   {}
 
   BernCRTZMQFragmentMetadata(uint64_t l_run_start_time,
-			     uint64_t l_this_poll_start,
-   			     uint64_t l_this_poll_end,
-			     uint64_t l_last_poll_start,
-			     uint64_t l_last_poll_end,
+                             uint64_t l_this_poll_start,
+                             uint64_t l_this_poll_end,
+                             uint64_t l_last_poll_start,
+                             uint64_t l_last_poll_end,
                              uint32_t l_system_clock_deviation,
-			     uint32_t feb_c,
+                             uint32_t feb_c,
                              uint32_t event_n)
     :
     _run_start_time(l_run_start_time),
@@ -88,12 +88,30 @@ public:
 
   void set_omitted_events(uint32_t n)          { _omitted_events = n; }
   void set_last_accepted_timestamp(uint64_t t) { _last_accepted_timestamp = t; }
+  void set_clock_deviation(int32_t deviation)  { _system_clock_deviation = deviation; }
+  void set_feb_events_per_poll(uint32_t n)     { _feb_events_per_poll = n;}
+  void set_run_start_time(uint64_t t)          { _run_start_time = t; }
+  
+  void update_poll_time(uint64_t poll_start, uint64_t poll_end) {
+    /**
+     * Copies fields from this poll to the last poll and updates this poll values
+     */
+    _last_poll_start = _this_poll_start;
+    _last_poll_end   = _this_poll_end;
+    _this_poll_start = poll_start;
+    _this_poll_end   = poll_end;
+    if(_last_poll_start == 0) {
+      //for the very first poll there is no previous poll, yet we need to fill these fields
+      _last_poll_start = poll_start - 200000; //200000ns is an example poll period, should be good enough for the very first poll
+      _last_poll_end   = poll_end   - 200000;
+    }
+  }
 
   uint32_t increment_feb_events(uint32_t n=1)      { _feb_event_number+=n; return feb_event_number(); }
   
   const char* c_str() const { std::ostringstream ss; ss << *this; return ss.str().c_str(); }
 
-//private:
+private:
 
   uint64_t  _run_start_time;
   uint64_t  _this_poll_start;
@@ -101,8 +119,8 @@ public:
   uint64_t  _last_poll_start;
   uint64_t  _last_poll_end;
   int32_t   _system_clock_deviation;  //system clock deviation w.r.t. steady clock, synchronised at the beginning of the run
-  uint32_t  _feb_events_per_poll;     //number of events for given FEB in a single febdrv poll
-  uint32_t  _feb_event_number;        //event counter for individual FEB
+  uint32_t  _feb_events_per_poll;     //number of events for given FEB in a single febdrv poll, including lost ones //NOTE 16 bits might be sufficient
+  uint32_t  _feb_event_number;        //event counter for individual FEB, taking account events lost in FEB or fragment generator
   uint32_t  _omitted_events;          //number of events omitted by fragment generator
   uint64_t  _last_accepted_timestamp; //if events are omitted, this is timestamp of last accepted event.
                                       //Otherwise it's 0. It's set to 1 if events were omitted at the very beginning of the run
@@ -117,13 +135,13 @@ struct sbndaq::BernCRTZMQEvent {
    */
 
   uint16_t mac5;
-  uint16_t flags;
+  uint16_t flags;    //NOTE: only 4 bits used. We could make it uint8_t
   uint16_t lostcpu;
-  uint16_t lostfpga;
+  uint16_t lostfpga; //NOTE: only 8 bits used. We could make it uint8_t
   uint32_t ts0;
   uint32_t ts1;
   uint16_t adc[32];
-  uint32_t coinc;
+  uint32_t coinc;    //NOTE: only 16 bits seem to be used. We could make it uint16_t
 
   uint16_t const& MAC5() const { return mac5; }
   
