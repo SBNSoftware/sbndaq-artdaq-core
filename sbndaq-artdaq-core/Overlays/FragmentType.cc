@@ -13,6 +13,7 @@ namespace {
       //Common
       "CAENV1730",
       "SPECTRATIMEVENT",
+      "BERNCRT",
       "BERNCRTZMQ",
 
       //ICARUS

@@ -10,6 +10,7 @@ namespace sbndaq {
 	//COMMON
 	CAENV1730,
 	SpectratimeEvent,
+	BERNCRT,
 	BERNCRTZMQ,
 
 	//ICARUS
