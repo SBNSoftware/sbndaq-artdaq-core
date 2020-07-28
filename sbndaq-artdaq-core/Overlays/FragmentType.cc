@@ -18,6 +18,7 @@ namespace {
       //ICARUS
       "PHYSCRATEDATA",
       "PHYSCRATESTAT",
+      "CRT",
 
       //SBND
       "NEVISTPC",

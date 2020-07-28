@@ -15,6 +15,7 @@ namespace sbndaq {
 	//ICARUS
 	PHYSCRATEDATA,
 	PHYSCRATESTAT,
+	CRT,
 
 	//SBND
 	NevisTPC,
