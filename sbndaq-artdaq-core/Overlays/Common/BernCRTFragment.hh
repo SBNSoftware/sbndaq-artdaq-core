@@ -102,8 +102,8 @@ public:
     _this_poll_end   = poll_end;
     if(_last_poll_start == 0) {
       //for the very first poll there is no previous poll, yet we need to fill these fields
-      _last_poll_start = poll_start - 200000; //200000ns is an example poll period, should be good enough for the very first poll
-      _last_poll_end   = poll_end   - 200000;
+      _last_poll_start = poll_start - 200000000; //2e8 ns is an example poll period, should be good enough for the very first poll
+      _last_poll_end   = poll_end   - 200000000;
     }
   }
 
