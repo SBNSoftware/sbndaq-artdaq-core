@@ -13,6 +13,7 @@ namespace {
       //Common
       "CAENV1730",
       "SPECTRATIMEVENT",
+      "BERNCRT",
       "BERNCRTZMQ",
 
       //ICARUS
@@ -22,6 +23,9 @@ namespace {
       //SBND
       "NEVISTPC",
       "PTB",
+
+      //Simulators
+      "DUMMYGENERATOR",
 
       "UNKNOWN"
       };

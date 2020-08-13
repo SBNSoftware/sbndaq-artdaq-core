@@ -10,6 +10,7 @@ namespace sbndaq {
 	//COMMON
 	CAENV1730,
 	SpectratimeEvent,
+	BERNCRT,
 	BERNCRTZMQ,
 
 	//ICARUS
@@ -19,6 +20,9 @@ namespace sbndaq {
 	//SBND
 	NevisTPC,
 	PTB,
+
+        //Simulators
+        DummyGenerator,
 
         INVALID // Should always be last.
         };

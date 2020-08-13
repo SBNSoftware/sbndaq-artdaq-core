@@ -1,5 +1,5 @@
-#ifndef sbndaq_artdaq_core_Overlays_Common_BernCRTZMQFragment_hh
-#define sbndaq_artdaq_core_Overlays_Common_BernCRTZMQFragment_hh
+#ifndef sbndaq_artdaq_core_Overlays_Common_BernCRTFragment_hh
+#define sbndaq_artdaq_core_Overlays_Common_BernCRTFragment_hh
 
 #include "artdaq-core/Data/Fragment.hh"
 #include "cetlib_except/exception.h"
@@ -13,33 +13,33 @@
 //Please update it whenever you modify the data format
 #define FEBDRV_VERSION 20200120
 
-// Implementation of "BernCRTZMQFragment", an artdaq::Fragment overlay class
+// Implementation of "BernCRTFragment", an artdaq::Fragment overlay class
 
 namespace sbndaq {
 
-  struct BernCRTZMQEvent;
-  std::ostream & operator << (std::ostream &, BernCRTZMQEvent const &);
+  struct BernCRTEvent;
+  std::ostream & operator << (std::ostream &, BernCRTEvent const &);
   
-  struct BernCRTZMQLastEvent;
+  struct BernCRTLastEvent;
 
-  union BernCRTZMQEventUnion;
+  union BernCRTEventUnion;
 
-  class BernCRTZMQFragment;
-  std::ostream & operator << (std::ostream &, BernCRTZMQFragment const &);
+  class BernCRTFragment;
+  std::ostream & operator << (std::ostream &, BernCRTFragment const &);
 
-  class BernCRTZMQFragmentMetadata;
-  std::ostream & operator << (std::ostream &, BernCRTZMQFragmentMetadata const&);
+  class BernCRTFragmentMetadata;
+  std::ostream & operator << (std::ostream &, BernCRTFragmentMetadata const&);
 
-  typedef std::pair<BernCRTZMQEvent,BernCRTZMQFragmentMetadata> BernCRTZMQDataPair;
+  typedef std::pair<BernCRTEvent,BernCRTFragmentMetadata> BernCRTDataPair;
 
-  double GetCorrectedTime(uint32_t const&, BernCRTZMQFragmentMetadata const&);
+  double GetCorrectedTime(uint32_t const&, BernCRTFragmentMetadata const&);
 }
 
-class sbndaq::BernCRTZMQFragmentMetadata {
+class sbndaq::BernCRTFragmentMetadata {
 
 public:
 
-  BernCRTZMQFragmentMetadata()
+  BernCRTFragmentMetadata()
   :
     _run_start_time(0),
     _this_poll_start(0),
@@ -53,7 +53,7 @@ public:
     _last_accepted_timestamp(0)
   {}
 
-  BernCRTZMQFragmentMetadata(uint64_t l_run_start_time,
+  BernCRTFragmentMetadata(uint64_t l_run_start_time,
                              uint64_t l_this_poll_start,
                              uint64_t l_this_poll_end,
                              uint64_t l_last_poll_start,
@@ -102,8 +102,8 @@ public:
     _this_poll_end   = poll_end;
     if(_last_poll_start == 0) {
       //for the very first poll there is no previous poll, yet we need to fill these fields
-      _last_poll_start = poll_start - 200000; //200000ns is an example poll period, should be good enough for the very first poll
-      _last_poll_end   = poll_end   - 200000;
+      _last_poll_start = poll_start - 200000000; //2e8 ns is an example poll period, should be good enough for the very first poll
+      _last_poll_end   = poll_end   - 200000000;
     }
   }
 
@@ -128,7 +128,7 @@ private:
 };
 
 
-struct sbndaq::BernCRTZMQEvent {
+struct sbndaq::BernCRTEvent {
   /*
    * Format of data received from febdrv.
    * If this struct ever changes, please update FEBDRV_VERSION
@@ -159,10 +159,10 @@ struct sbndaq::BernCRTZMQEvent {
   const char* c_str() const { std::ostringstream ss; ss << *this; return ss.str().c_str(); }
 };
 
-struct sbndaq::BernCRTZMQLastEvent {
+struct sbndaq::BernCRTLastEvent {
   /**
    * Last zeromq event in each zmq packet with a special structure containing number of events and timing information
-   * It has the same (or no greater) length as BernCRTZMQEvent, as febdrv sends it as an additional event in the list
+   * It has the same (or no greater) length as BernCRTEvent, as febdrv sends it as an additional event in the list
    * If this struct ever changes, please update FEBDRV_VERSION
    */
   uint16_t mac5;
@@ -179,7 +179,7 @@ struct sbndaq::BernCRTZMQLastEvent {
   int32_t poll_start_deviation;
   int32_t poll_end_deviation;
 
-  //variables to match the size of BernCRTZMQEvent.
+  //variables to match the size of BernCRTEvent.
   //They are not mandatory, but they allow to fill the remainder of the last event with zeros
   uint64_t zero_padding0;
   uint64_t zero_padding1;
@@ -189,24 +189,24 @@ struct sbndaq::BernCRTZMQLastEvent {
   uint32_t zero_padding5;
 };
 
-union sbndaq::BernCRTZMQEventUnion {
+union sbndaq::BernCRTEventUnion {
   /**
-   * Union needed to read the last BernCRTZMQEvent as BernCRTZMQLastEvent
+   * Union needed to read the last BernCRTEvent as BernCRTLastEvent
    */
 
-  sbndaq::BernCRTZMQEvent     event;
-  sbndaq::BernCRTZMQLastEvent last_event;
+  sbndaq::BernCRTEvent     event;
+  sbndaq::BernCRTLastEvent last_event;
 };
 
-class sbndaq::BernCRTZMQFragment {
+class sbndaq::BernCRTFragment {
 public:
 
-  BernCRTZMQFragment(artdaq::Fragment const & f) : artdaq_Fragment_(f) {}
+  BernCRTFragment(artdaq::Fragment const & f) : artdaq_Fragment_(f) {}
 
-  BernCRTZMQFragmentMetadata const * metadata() const { return artdaq_Fragment_.metadata<BernCRTZMQFragmentMetadata>(); }
+  BernCRTFragmentMetadata const * metadata() const { return artdaq_Fragment_.metadata<BernCRTFragmentMetadata>(); }
 
-  BernCRTZMQEvent const* eventdata() const {
-    return ( reinterpret_cast<BernCRTZMQEvent const*>(artdaq_Fragment_.dataBeginBytes()) );
+  BernCRTEvent const* eventdata() const {
+    return ( reinterpret_cast<BernCRTEvent const*>(artdaq_Fragment_.dataBeginBytes()) );
   } 
 
   size_t DataPayloadSize() const { return artdaq_Fragment_.dataSizeBytes(); }
@@ -223,9 +223,9 @@ private:
 
 };
 
-/*double sbndaq::GetCorrectedTime( uint32_t const& t, BernCRTZMQFragmentMetadata const& m)
+/*double sbndaq::GetCorrectedTime( uint32_t const& t, BernCRTFragmentMetadata const& m)
 {
   return (double)(t+m.time_offset()) * (1.0 - ((double)(m.time_correction_diff())/1.0e9));
 }*/
 
-#endif /* sbndaq_artdaq_core_Overlays_Common_BernCRTZMQFragment_hh */
+#endif /* sbndaq_artdaq_core_Overlays_Common_BernCRTFragment_hh */
