@@ -4,24 +4,33 @@
 
 namespace sbndaq {
 
+/*
+   Note, if you add new frament types, the use a new enum number for them, so that the old numbering scheme is not changed
+
+   */
+
   namespace detail {
-    enum FragmentType : artdaq::Fragment::type_t
-    { MISSED = artdaq::Fragment::FirstUserFragmentType,
-	//COMMON
-	CAENV1730,
-	SpectratimeEvent,
-	BERNCRTZMQ,
+    enum FragmentType : artdaq::Fragment::type_t {
+      MISSED           = artdaq::Fragment::FirstUserFragmentType,
+      //COMMON
+      CAENV1730        = artdaq::Fragment::FirstUserFragmentType + 1,
+      SpectratimeEvent = artdaq::Fragment::FirstUserFragmentType + 2,
+      BERNCRT          = artdaq::Fragment::FirstUserFragmentType + 9,
+      BERNCRTZMQ       = artdaq::Fragment::FirstUserFragmentType + 3,
 
-	//ICARUS
-	PHYSCRATEDATA,
-	PHYSCRATESTAT,
+      //ICARUS
+      PHYSCRATEDATA    = artdaq::Fragment::FirstUserFragmentType + 4,
+      PHYSCRATESTAT    = artdaq::Fragment::FirstUserFragmentType + 5,
 
-	//SBND
-	NevisTPC,
-	PTB,
+      //SBND
+      NevisTPC         = artdaq::Fragment::FirstUserFragmentType + 6,
+      PTB              = artdaq::Fragment::FirstUserFragmentType + 7,
 
-        INVALID // Should always be last.
-        };
+      //Simulators
+      DummyGenerator   = artdaq::Fragment::FirstUserFragmentType + 8,
+
+      INVALID          = artdaq::Fragment::FirstUserFragmentType + 10 // Should always be last.
+    };
 
     // Safety check.
     static_assert(artdaq::Fragment::isUserFragmentType(FragmentType::INVALID - 1),
