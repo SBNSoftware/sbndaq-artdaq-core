@@ -1,6 +1,6 @@
 # The parent line must be the first non-comment line in the file
 # This line defines the product name and version
-parent sbndaq_artdaq_core       v0_07_00_f01
+parent sbndaq_artdaq_core       v0_07_00_of0
 defaultqual e19:s97
 
 # These optional lines define the installed directories where
@@ -28,8 +28,8 @@ end_product_list
 qualifier                artdaq_core
 
 #for offline
-e19:prof:s97			 e19:prof:s97
-e19:debug:s97			 e19:debug:s97
+e19:prof			     e19:prof:s97
+e19:debug			     e19:debug:s97
 
 # Note that python3 is now the default for LArSoft with v08_41_00
 e19:prof:s94             e19:prof:s94
