@@ -1,4 +1,7 @@
 #include "sbndaq-artdaq-core/Overlays/FragmentType.hh"
+#include "sbndaq-artdaq-core/Trace/trace_defines.h"
+
+#define TRACE_NAME "SBNDAQ_FRAGMENTTYPE"
 
 #include <algorithm>
 #include <cassert>
@@ -61,7 +64,14 @@ std::map< artdaq::Fragment::type_t, std::string > sbndaq::makeFragmentTypeMap()
       auto output = artdaq::Fragment::MakeSystemTypeMap();
       for (auto name : names)
       {
-               output[name.first] = name.second;
+	TLOG(TR_DEBUG) << "Setting map: " << name.first << " --> " << name.second;
+	output[name.first] = name.second;
       }
+
+      for( auto name : output)
+      {
+	TLOG(TR_DEBUG) << "Verifying map: " << name.first << " --> " << name.second;
+      }
+
       return output;
 }
