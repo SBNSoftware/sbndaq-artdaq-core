@@ -1,32 +1,39 @@
 #include "sbndaq-artdaq-core/Overlays/Common/BernCRTFragment.hh"
 #include <iostream>
+#include <bitset>
 
 #include "cetlib_except/exception.h"
 
 std::ostream & sbndaq::operator << (std::ostream & os, BernCRTFragmentMetadata const& m){
   os << "BernCRTFragmentMetadata:"
      << "\n\tRun start time:   " << sbndaq::BernCRTFragment::print_timestamp(m.run_start_time())
-     << "\n\tLast poll start:  " << sbndaq::BernCRTFragment::print_timestamp(m.last_poll_start())
-     << "\n\tLast poll finish: " << sbndaq::BernCRTFragment::print_timestamp(m.last_poll_end())
      << "\n\tThis poll start:  " << sbndaq::BernCRTFragment::print_timestamp(m.this_poll_start())
      << "\n\tThis poll finish: " << sbndaq::BernCRTFragment::print_timestamp(m.this_poll_end())
-     << "\n\tNumber of events for this FEB in a poll: " << m.feb_events_per_poll()
-     << "\n\tEvent number for this FEB: " << m.feb_event_number();
+     << "\n\tLast poll start:  " << sbndaq::BernCRTFragment::print_timestamp(m.last_poll_start())
+     << "\n\tLast poll finish: " << sbndaq::BernCRTFragment::print_timestamp(m.last_poll_end())
+     << "\n\tClock deviation:  " << m.system_clock_deviation()<<" ns"
+     << "\n\tFEB hits/poll:    " << m.feb_events_per_poll()
+     << "\n\t#hit in this FEB: " << m.feb_event_number()
+     << "\n\tOmitted hits:     " << m.omitted_events()
+     << "\n\tLast timestamp:   " << sbndaq::BernCRTFragment::print_timestamp(m.last_accepted_timestamp());
   os << std::endl;
   return os;
 }
 
-std::ostream & sbndaq::operator << (std::ostream & os, BernCRTEvent const & e){
+std::ostream & sbndaq::operator << (std::ostream & os, BernCRTEvent const & e) {
   os << "\nBernCRTEvent"
-     << "\n\tMAC5: 0x" << std::hex << e.MAC5() << std::dec;
-  os << "\n\tFlags word: s 0x" << std::hex << e.flags << std::dec;
-  os << "\n\tLostCPU: " << e.lostcpu;
-  os << "\n\tLostFPGA: " << e.lostfpga;
+     << "\n\tMAC5:        0x" << std::hex << e.MAC5() << std::dec << " (" << e.MAC5() << ")";
+  os << "\n\tFlags:       " << std::bitset<16>(e.flags);
+  os << "\n\tLostCPU:     " << e.lostcpu;
+  os << "\n\tLostFPGA:    " << e.lostfpga;
   os << "\n\tTime1 (TS0): " << sbndaq::BernCRTFragment::print_timestamp(e.Time_TS0());
   os << "\n\tTime2 (TS1): " << sbndaq::BernCRTFragment::print_timestamp(e.Time_TS1());
+  os << "\n\t[#ch]: ADC  ";
   for(size_t i_c=0; i_c<32; ++i_c) {
-    os << " adc["<<i_c<<"]: " << e.ADC(i_c) << " ";
+    if(!(i_c % 8)) os<<"\n\t";
+    os << " ["<<std::setw(2)<<i_c<<"]: " <<std::setw(4)<< e.ADC(i_c);
   }
+  os << "\n\tCoincidence: " << std::bitset<32>(e.coinc);
   os << std::endl;
   return os;
 }
