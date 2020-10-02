@@ -4,27 +4,34 @@
 #include <cassert>
 #include <string>
 #include <vector>
+#include <map>
 
 namespace {
-  static std::vector<std::string> const
+  static std::map<sbndaq::detail::FragmentType,std::string> const
   names{
-    "MISSED", 
+    {sbndaq::detail::FragmentType::MISSED, "MISSED"}, 
 
       //Common
-      "CAENV1730",
-      "SPECTRATIMEVENT",
-      "BERNCRTZMQ",
+    {sbndaq::detail::FragmentType::CAENV1730, "CAENV1730"},
+    {sbndaq::detail::FragmentType::SpectratimeEvent, "SPECTRATIMEVENT"},
+    {sbndaq::detail::FragmentType::BERNCRT, "BERNCRT"},
+    {sbndaq::detail::FragmentType::BERNCRTZMQ,  "BERNCRTZMQ"},
 
-      //ICARUS
-      "PHYSCRATEDATA",
-      "PHYSCRATESTAT",
+    //ICARUS
+    {sbndaq::detail::FragmentType::PHYSCRATEDATA,  "PHYSCRATEDATA"},
+    {sbndaq::detail::FragmentType::PHYSCRATESTAT, "PHYSCRATESTAT"},
+    {sbndaq::detail::FragmentType::ICARUSTriggerUDP,  "ICARUSTriggerUDP"},
+    {sbndaq::detail::FragmentType::ICARUSPMTGate, "ICARUSPMTGate"},
 
-      //SBND
-      "NEVISTPC",
-      "PTB",
-
-      "UNKNOWN"
-      };
+    //SBND
+    {sbndaq::detail::FragmentType::NevisTPC, "NEVISTPC"},
+    {sbndaq::detail::FragmentType::PTB,  "PTB"},
+    
+      //Simulators
+    {sbndaq::detail::FragmentType::DummyGenerator, "DUMMYGENERATOR"},  
+    
+    {sbndaq::detail::FragmentType::INVALID,  "UNKNOWN"}
+  };
 }
 
 sbndaq::FragmentType
@@ -34,18 +41,25 @@ sbndaq::toFragmentType(std::string t_string)
                  t_string.end(),
                  t_string.begin(),
                  toupper);
+  /*
   auto it = std::find(names.begin(), names.end(), t_string);
   return (it == names.end()) ?
     FragmentType::INVALID :
     static_cast<FragmentType>(artdaq::Fragment::FirstUserFragmentType +
                               (it - names.begin()));
+  */
+  for(auto it = names.begin(); it != names.end(); ++it)
+    if(t_string == it->second)
+      return static_cast<FragmentType>(it->first);
+  return FragmentType::INVALID;
 }
 
 std::string
 sbndaq::fragmentTypeToString(FragmentType val)
 {
   if (val < FragmentType::INVALID) {
-    return names[val - FragmentType::MISSED];
+    //return names[val - FragmentType::MISSED];
+    return names.at(val);
   }
   else {
     return "INVALID/UNKNOWN";
@@ -54,10 +68,18 @@ sbndaq::fragmentTypeToString(FragmentType val)
 
 std::map< artdaq::Fragment::type_t, std::string > sbndaq::makeFragmentTypeMap()
 {
+  /*
 	auto output = artdaq::Fragment::MakeSystemTypeMap();
 	for (auto name : names)
 	{
 		output[toFragmentType(name)] = name;
 	}
 	return output;
+  */
+  auto output = artdaq::Fragment::MakeSystemTypeMap();
+  for (auto name : names)
+  {
+    output[name.first] = name.second;
+  }
+  return output;
 }

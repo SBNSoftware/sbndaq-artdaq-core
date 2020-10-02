@@ -8,20 +8,25 @@ namespace sbndaq {
     enum FragmentType : artdaq::Fragment::type_t
     { MISSED = artdaq::Fragment::FirstUserFragmentType,
 	//COMMON
-	CAENV1730,
-	SpectratimeEvent,
-	BERNCRTZMQ,
+	CAENV1730 = artdaq::Fragment::FirstUserFragmentType + 1,
+	SpectratimeEvent = artdaq::Fragment::FirstUserFragmentType + 2,
+	BERNCRT = artdaq::Fragment::FirstUserFragmentType + 9,
+	BERNCRTZMQ = artdaq::Fragment::FirstUserFragmentType + 3,
 
 	//ICARUS
-	PHYSCRATEDATA,
-	PHYSCRATESTAT,
-	ICARUSTriggerUDP,
+	PHYSCRATEDATA = artdaq::Fragment::FirstUserFragmentType + 4,
+	PHYSCRATESTAT = artdaq::Fragment::FirstUserFragmentType + 5,
+	ICARUSTriggerUDP = artdaq::Fragment::FirstUserFragmentType + 10,
+	ICARUSPMTGate = artdaq::Fragment::FirstUserFragmentType + 11,
 
 	//SBND
-	NevisTPC,
-	PTB,
+	NevisTPC = artdaq::Fragment::FirstUserFragmentType + 6,
+	PTB = artdaq::Fragment::FirstUserFragmentType + 7,
+	
+	//Simulators
+	DummyGenerator = artdaq::Fragment::FirstUserFragmentType + 8,
 
-        INVALID // Should always be last.
+        INVALID = artdaq::Fragment::FirstUserFragmentType + 12 // Should always be last.
         };
 
     // Safety check.

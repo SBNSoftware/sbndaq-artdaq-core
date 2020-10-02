@@ -4,25 +4,27 @@
 #include "artdaq-core/Data/Fragment.hh"
 #include "cetlib_except/exception.h"
 
-namespace sbndaq {
+#include <iostream>
+
+namespace icarus {
 
   class ICARUSTriggerUDPFragment;
+  std::ostream & operator << (std::ostream &, ICARUSTriggerUDPFragment const &);
 
-  struct ICARUSTriggerUDPFragmentMetadata;
-
+  //struct ICARUSTriggerUDPFragmentMetadata;
+  class ICARUSTriggerUDPFragmentMetadata;
+  std::ostream & operator << (std::ostream &, ICARUSTriggerUDPFragmentMetadata const &);
 }
 
-struct sbndaq::ICARUSTriggerUDPFragmentMetadata
+//struct icarus::ICARUSTriggerUDPFragmentMetadata
+class icarus::ICARUSTriggerUDPFragmentMetadata
 {
-  std::string name;
-  int event_no;
-  int seconds;
-  long nanoseconds;
-  
-  ICARUSTriggerUDPFragmentMetadata() {}
-  ICARUSTriggerUDPFragmentMetadata(std::string n, int ev, int sec, long nsec) : name(n), event_no(ev), seconds(sec), nanoseconds(nsec) {}
 
-  std::string getName() const
+public:  
+  ICARUSTriggerUDPFragmentMetadata() {}
+  ICARUSTriggerUDPFragmentMetadata(int n, int ev, int sec, long nsec) : name(n), event_no(ev), seconds(sec), nanoseconds(nsec) {}
+
+  int getName() const
   { return name; }
   
   int getEventNo() const
@@ -33,15 +35,22 @@ struct sbndaq::ICARUSTriggerUDPFragmentMetadata
 
   long getNanoSeconds() const
   { return nanoseconds; }
+
+private:
+  int name;
+  int event_no;
+  int seconds;
+  long nanoseconds;
+
 };
 
-class sbndaq::ICARUSTriggerUDPFragment{
+class icarus::ICARUSTriggerUDPFragment{
 
 public:
   
   ICARUSTriggerUDPFragment(artdaq::Fragment const &f) : fFragment(f) {}
   ICARUSTriggerUDPFragmentMetadata const * Metadata() const
-  { return fFragment.metadata<sbndaq::ICARUSTriggerUDPFragmentMetadata>(); }
+  { return fFragment.metadata<ICARUSTriggerUDPFragmentMetadata>(); }
   
   size_t DataPayloadSize() const
   { return fFragment.dataSizeBytes(); }
@@ -50,7 +59,7 @@ public:
   { return Metadata()->ExpectedDataSize(); }
   */
 
-  std::string getName() const
+  int getName() const
   { return Metadata()->getName(); }
   
   int getEventNo() const
