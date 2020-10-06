@@ -12,9 +12,9 @@ install_source()
 
 add_subdirectory(Common)
 
-IF(ICARUS_BUILD)
+#IF(ICARUS_BUILD)
 add_subdirectory(ICARUS)
-ENDIF()
+#ENDIF()
 
 # Wes will want to fix the following
 #IF(SBND_BUILD)
