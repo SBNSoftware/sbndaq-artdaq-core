@@ -4,6 +4,11 @@
 
 namespace sbndaq {
 
+/*
+   Note, if you add new frament types, the use a new enum number for them, so that the old numbering scheme is not changed
+
+   */
+
   namespace detail {
     enum FragmentType : artdaq::Fragment::type_t
     { MISSED = artdaq::Fragment::FirstUserFragmentType,

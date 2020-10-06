@@ -1,4 +1,7 @@
 #include "sbndaq-artdaq-core/Overlays/FragmentType.hh"
+#include "sbndaq-artdaq-core/Trace/trace_defines.h"
+
+#define TRACE_NAME "SBNDAQ_FRAGMENTTYPE"
 
 #include <algorithm>
 #include <cassert>
@@ -41,13 +44,6 @@ sbndaq::toFragmentType(std::string t_string)
                  t_string.end(),
                  t_string.begin(),
                  toupper);
-  /*
-  auto it = std::find(names.begin(), names.end(), t_string);
-  return (it == names.end()) ?
-    FragmentType::INVALID :
-    static_cast<FragmentType>(artdaq::Fragment::FirstUserFragmentType +
-                              (it - names.begin()));
-  */
   for(auto it = names.begin(); it != names.end(); ++it)
     if(t_string == it->second)
       return static_cast<FragmentType>(it->first);
@@ -58,28 +54,26 @@ std::string
 sbndaq::fragmentTypeToString(FragmentType val)
 {
   if (val < FragmentType::INVALID) {
-    //return names[val - FragmentType::MISSED];
     return names.at(val);
   }
   else {
-    return "INVALID/UNKNOWN";
+    return "INVALID/UNKNOWN"; //AA: why is it INVALID/UNKNOWN rather than UNKNOWN, as defined in the list above?
   }
 }
 
 std::map< artdaq::Fragment::type_t, std::string > sbndaq::makeFragmentTypeMap()
 {
-  /*
-	auto output = artdaq::Fragment::MakeSystemTypeMap();
-	for (auto name : names)
-	{
-		output[toFragmentType(name)] = name;
-	}
-	return output;
-  */
-  auto output = artdaq::Fragment::MakeSystemTypeMap();
-  for (auto name : names)
-  {
-    output[name.first] = name.second;
-  }
-  return output;
+      auto output = artdaq::Fragment::MakeSystemTypeMap();
+      for (auto name : names)
+      {
+	TLOG(TR_DEBUG) << "Setting map: " << name.first << " --> " << name.second;
+	output[name.first] = name.second;
+      }
+
+      for( auto name : output)
+      {
+	TLOG(TR_DEBUG) << "Verifying map: " << name.first << " --> " << name.second;
+      }
+
+      return output;
 }
