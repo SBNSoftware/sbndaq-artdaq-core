@@ -30,6 +30,8 @@ qualifier                artdaq_core
 #for offline
 e19:prof			     e19:prof:s97
 e19:debug			     e19:debug:s97
+c7:debug                 c7:debug:s97
+c7:prof                  c7:prof:s97
 
 # Note that python3 is now the default for LArSoft with v08_41_00
 e19:prof:s94             e19:prof:s94
