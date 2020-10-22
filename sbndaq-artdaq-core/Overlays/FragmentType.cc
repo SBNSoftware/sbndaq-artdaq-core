@@ -1,34 +1,39 @@
 #include "sbndaq-artdaq-core/Overlays/FragmentType.hh"
+#include "sbndaq-artdaq-core/Trace/trace_defines.h"
+
+#define TRACE_NAME "SBNDAQ_FRAGMENTTYPE"
 
 #include <algorithm>
 #include <cassert>
 #include <string>
+#include <vector>
 #include <map>
 
-
 namespace {
-  static std::map<sbndaq::detail::FragmentType, std::string> const
+  static std::map<sbndaq::detail::FragmentType,std::string> const
   names{
-    {sbndaq::detail::FragmentType::MISSED,           "MISSED"}, 
+    {sbndaq::detail::FragmentType::MISSED, "MISSED"}, 
 
-    //Common
-    {sbndaq::detail::FragmentType::CAENV1730,        "CAENV1730"},
+      //Common
+    {sbndaq::detail::FragmentType::CAENV1730, "CAENV1730"},
     {sbndaq::detail::FragmentType::SpectratimeEvent, "SPECTRATIMEVENT"},
-    {sbndaq::detail::FragmentType::BERNCRT,          "BERNCRT"},
-    {sbndaq::detail::FragmentType::BERNCRTZMQ,       "BERNCRTZMQ"},
+    {sbndaq::detail::FragmentType::BERNCRT, "BERNCRT"},
+    {sbndaq::detail::FragmentType::BERNCRTZMQ,  "BERNCRTZMQ"},
 
     //ICARUS
-    {sbndaq::detail::FragmentType::PHYSCRATEDATA,    "PHYSCRATEDATA"},
-    {sbndaq::detail::FragmentType::PHYSCRATESTAT,    "PHYSCRATESTAT"},
+    {sbndaq::detail::FragmentType::PHYSCRATEDATA,  "PHYSCRATEDATA"},
+    {sbndaq::detail::FragmentType::PHYSCRATESTAT, "PHYSCRATESTAT"},
+    {sbndaq::detail::FragmentType::ICARUSTriggerUDP,  "ICARUSTriggerUDP"},
+    {sbndaq::detail::FragmentType::ICARUSPMTGate, "ICARUSPMTGate"},
 
     //SBND
-    {sbndaq::detail::FragmentType::NevisTPC,         "NEVISTPC"},
-    {sbndaq::detail::FragmentType::PTB,              "PTB"},
-
-    //Simulators
-    {sbndaq::detail::FragmentType::DummyGenerator,   "DUMMYGENERATOR"},
-
-    {sbndaq::detail::FragmentType::INVALID,          "UNKNOWN"}
+    {sbndaq::detail::FragmentType::NevisTPC, "NEVISTPC"},
+    {sbndaq::detail::FragmentType::PTB,  "PTB"},
+    
+      //Simulators
+    {sbndaq::detail::FragmentType::DummyGenerator, "DUMMYGENERATOR"},  
+    
+    {sbndaq::detail::FragmentType::INVALID,  "UNKNOWN"}
   };
 }
 
@@ -61,7 +66,14 @@ std::map< artdaq::Fragment::type_t, std::string > sbndaq::makeFragmentTypeMap()
       auto output = artdaq::Fragment::MakeSystemTypeMap();
       for (auto name : names)
       {
-               output[name.first] = name.second;
+	TLOG(TR_DEBUG) << "Setting map: " << name.first << " --> " << name.second;
+	output[name.first] = name.second;
       }
+
+      for( auto name : output)
+      {
+	TLOG(TR_DEBUG) << "Verifying map: " << name.first << " --> " << name.second;
+      }
+
       return output;
 }
