@@ -1,7 +1,7 @@
 # The parent line must be the first non-comment line in the file
 # This line defines the product name and version
-parent sbndaq_artdaq_core       v0_07_00
-defaultqual e19:s94
+parent sbndaq_artdaq_core       v0_07_01
+defaultqual e19:s97
 
 # These optional lines define the installed directories where
 # headers, libraries, and executables will be found
@@ -19,7 +19,7 @@ fcldir      -
 #
 product             version       optional
 
-artdaq_core         v3_06_01
+artdaq_core         v3_06_03
 cetbuildtools       v7_17_01      -       only_for_build
 end_product_list
 
@@ -57,6 +57,22 @@ e19:prof:icarus:s96:py2  e19:prof:s96:py2
 e19:debug:icarus:s96:py2 e19:debug:s96:py2
 e19:prof:sbnd:s96:py2    e19:prof:s96:py2
 e19:debug:sbnd:s96:py2   e19:debug:s96:py2
+
+# Note that python3 is now the default for LArSoft with v08_46_00
+e19:prof:s97             e19:prof:s97
+e19:debug:s97            e19:debug:s97
+e19:prof:icarus:s97      e19:prof:s97
+e19:debug:icarus:s97     e19:debug:s97
+e19:prof:sbnd:s97        e19:prof:s97
+e19:debug:sbnd:s97       e19:debug:s97
+
+# Now we must expliclity set the py2 qualifier
+e19:prof:s97:py2         e19:prof:s97:py2
+e19:debug:s97:py2        e19:debug:s97:py2
+e19:prof:icarus:s97:py2  e19:prof:s97:py2
+e19:debug:icarus:s97:py2 e19:debug:s97:py2
+e19:prof:sbnd:s97:py2    e19:prof:s97:py2
+e19:debug:sbnd:s97:py2   e19:debug:s97:py2
 # Preserve tabs and formatting in emacs and vi / vim:
 
 ### Local Variables:
