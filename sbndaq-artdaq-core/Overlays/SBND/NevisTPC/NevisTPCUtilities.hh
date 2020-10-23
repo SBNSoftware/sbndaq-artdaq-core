@@ -3,16 +3,16 @@
 
 #include "sbndaq-artdaq-core/Overlays/SBND/NevisTPC/NevisTPCTypes.hh"
 
-#include <vector>
 #include <unordered_map>
+#include <vector>
+#include "TRACE/trace.h"
 
-namespace sbndaq{
-  class NevisTPCDecoder;  
+namespace sbndaq {
+class NevisTPCDecoder;
 }
 
 class sbndaq::NevisTPCDecoder {
-
-public:
+ public:
   NevisTPCDecoder() : fReserveWvfmSize(0) {}
   NevisTPCDecoder(size_t wvfm_size) : fReserveWvfmSize(wvfm_size) {}
 
@@ -21,40 +21,28 @@ public:
   // return a header object
   NevisTPCHeader decode_header(const char*);
 
-  //fill a map with uncompressed TPC data
-  //return the number of channels filled
-  size_t decode_data(const NevisTPC_ADC_t*,
-		     size_t,
-		     std::unordered_map< uint16_t,NevisTPC_Data_t >&);
+  // fill a map with uncompressed TPC data
+  // return the number of channels filled
+  size_t decode_data(const NevisTPC_ADC_t*, size_t, std::unordered_map<uint16_t, NevisTPC_Data_t>&);
 
-
-  
-  //char* interface
-  size_t decode_data(const char* data_ptr,
-		     size_t n_words,
-		     std::unordered_map< uint16_t,NevisTPC_Data_t >& wvfm_map)
-  {
-    return 
-      decode_data(reinterpret_cast<NevisTPC_ADC_t const*>(data_ptr),
-		  n_words,
-		  wvfm_map);
+  // char* interface
+  size_t decode_data(const char* data_ptr, size_t n_words, std::unordered_map<uint16_t, NevisTPC_Data_t>& wvfm_map) {
+    return decode_data(reinterpret_cast<NevisTPC_ADC_t const*>(data_ptr), n_words, wvfm_map);
   }
-  
-  
-private:
 
+ private:
   size_t fReserveWvfmSize;
 
-  enum {
-    TERROR=0,
-    TWARNING=1,
-    TINFO=2,
-    TDEBUG=3,
-    TDECODE=4
-  };
+ enum {
+   TERROR = TLVL_ERROR,
+   TWARNING = TLVL_WARNING,
+   TINFO = TLVL_INFO,
+   TDEBUG = TLVL_DEBUG,
+   TDECODE = 9
+ };
 
   NevisTPCWordType_t get_word_type(uint16_t);
-  int decode_huffman(int);  
+  int decode_huffman(int);
 };
 
 #endif
