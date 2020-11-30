@@ -19,6 +19,7 @@ namespace {
     {sbndaq::detail::FragmentType::SpectratimeEvent, "SPECTRATIMEVENT"},
     {sbndaq::detail::FragmentType::BERNCRT, "BERNCRT"},
     {sbndaq::detail::FragmentType::BERNCRTZMQ,  "BERNCRTZMQ"},
+    {sbndaq::detail::FragmentType::WhiteRabbit, "WhiteRabbit"},
 
     //ICARUS
     {sbndaq::detail::FragmentType::PHYSCRATEDATA,  "PHYSCRATEDATA"},
