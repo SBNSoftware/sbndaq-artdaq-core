@@ -1,6 +1,6 @@
 # The parent line must be the first non-comment line in the file
 # This line defines the product name and version
-parent sbndaq_artdaq_core       v0_07_01_of0
+parent sbndaq_artdaq_core       v0_07_02_of0
 defaultqual e19:s97
 
 # These optional lines define the installed directories where
@@ -80,7 +80,6 @@ e19:prof:icarus:s97:py2  e19:prof:s97:py2
 e19:debug:icarus:s97:py2 e19:debug:s97:py2
 e19:prof:sbnd:s97:py2    e19:prof:s97:py2
 e19:debug:sbnd:s97:py2   e19:debug:s97:py2
->>>>>>> v0_07_01
 # Preserve tabs and formatting in emacs and vi / vim:
 
 ### Local Variables:

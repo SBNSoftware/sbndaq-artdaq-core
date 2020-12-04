@@ -78,18 +78,18 @@ cet_report_compiler_flags()
 
 # these are minimum required versions, not the actual product versions
 #find_ups_product( icarus_artdaq_base v0_08_04 )
-find_ups_product( messagefacility v2_06_00)
-find_ups_product( artdaq_core v3_05_07)
-find_ups_product (TRACE v3_15_07)
-find_ups_product( cetlib v3_07_02 )
-find_ups_product( cetlib_except v1_03_03 )
-find_ups_boost( v1_69_0 filesystem
+find_ups_product( messagefacility v2_06_01)
+find_ups_product( artdaq_core )
+find_ups_product (TRACE )
+find_ups_product( cetlib v3_10_00 )
+find_ups_product( cetlib_except v1_04_01 )
+find_ups_boost( v1_70_0 filesystem
                         program_options
                         unit_test_framework
  )
 
 
-find_ups_product( cetbuildtools v7_13_02 )
+find_ups_product( cetbuildtools v7_17_01 )
 
 #experiment specific products needed
 IF(ICARUS_BUILD)

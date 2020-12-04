@@ -17,6 +17,7 @@ namespace sbndaq {
 	SpectratimeEvent = artdaq::Fragment::FirstUserFragmentType + 2,
 	BERNCRT = artdaq::Fragment::FirstUserFragmentType + 9,
 	BERNCRTZMQ = artdaq::Fragment::FirstUserFragmentType + 3,
+	WhiteRabbit = artdaq::Fragment::FirstUserFragmentType + 12,
 
 	//ICARUS
 	PHYSCRATEDATA = artdaq::Fragment::FirstUserFragmentType + 4,
@@ -31,7 +32,7 @@ namespace sbndaq {
 	//Simulators
 	DummyGenerator = artdaq::Fragment::FirstUserFragmentType + 8,
 
-        INVALID = artdaq::Fragment::FirstUserFragmentType + 12 // Should always be last.
+        INVALID = artdaq::Fragment::FirstUserFragmentType + 13 // Should always be last.
         };
 
     // Safety check.
