@@ -87,7 +87,7 @@ struct sbndaq::BernCRTHitV2 {
   uint64_t  feb_hit_number          = 0; //hit counter for individual FEB, including hits lost in FEB or fragment generator
   uint64_t  timestamp               = 0; //absolute timestamp
   uint64_t  last_accepted_timestamp = 0; //timestamp of previous accepted hit
-  uint32_t  lost_hits               = 0;    //number of lost hits from the previous one
+  uint16_t  lost_hits               = 0; //number of lost hits from the previous one
 
 public:
   //get functions

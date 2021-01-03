@@ -7,7 +7,7 @@
 
 std::ostream & sbndaq::operator << (std::ostream & os, BernCRTFragmentMetadataV2 const& m){
   os << "BernCRTFragmentMetadataV2:"
-     << "\n\tMAC5:               0x" << std::hex << m.MAC5() << std::dec << " (" << m.MAC5() << ")"
+     << "\n\tMAC5:              0x" << std::hex << (int)m.MAC5() << std::dec << " (" << (int)m.MAC5() << ")"
      << "\n\tRun start time:    " << sbndaq::BernCRTFragment::print_timestamp(m.run_start_time())
      << "\n\tThis poll start:   " << sbndaq::BernCRTFragment::print_timestamp(m.this_poll_start())
      << "\n\tThis poll finish:  " << sbndaq::BernCRTFragment::print_timestamp(m.this_poll_end())
@@ -22,7 +22,7 @@ std::ostream & sbndaq::operator << (std::ostream & os, BernCRTFragmentMetadataV2
 
 std::ostream & sbndaq::operator << (std::ostream & os, BernCRTHitV2 const & h) {
   os << "\nBernCRTHitV2:"
-     << "\n\tFlags:       " << std::bitset<16>(h.flags)
+     << "\n\tFlags:       " << std::bitset<8>(h.flags)
      <<(h.IsOverflow_TS0() ?" [T0 overflow]" :"")
      <<(h.IsOverflow_TS1() ?" [T1 overflow]" :"")
      <<(h.IsReference_TS0()?" [T0 reference]":"")
@@ -39,7 +39,7 @@ std::ostream & sbndaq::operator << (std::ostream & os, BernCRTHitV2 const & h) {
   os << "\n\tCoincidence: " << std::bitset<32>(h.coinc)
      << "\n"
      << "\n\tTimestamp:        " << sbndaq::BernCRTFragment::print_timestamp(h.timestamp)
-     << "\n\t#hit in this FEB: " << h.feb_hit_number
+     << "\n\tFEB hit number:   " << h.feb_hit_number
      << "\n\tLost hits:        " << h.lost_hits
      << "\n\tLast timestamp:   " << sbndaq::BernCRTFragment::print_timestamp(h.last_accepted_timestamp)
      << std::endl;
