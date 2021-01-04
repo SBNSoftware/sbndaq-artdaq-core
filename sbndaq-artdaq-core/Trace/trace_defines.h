@@ -10,9 +10,4 @@
 
  *****/
 
-#define TR_ERROR 0
-#define TR_WARNING 1
-#define TR_LOG 2
-#define TR_DEBUG 3
-
-#define TR_TIMER 4
+#define TR_TIMER TLVL_DEBUG+1 
