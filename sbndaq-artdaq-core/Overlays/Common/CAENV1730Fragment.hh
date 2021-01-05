@@ -34,7 +34,7 @@ struct sbndaq::CAENV1730EventHeader{
   uint32_t triggerTimeTag : 32;
 
 
-  uint32_t ChannelMask() { return (channelMask_hi << 8) + (channelMask_lo & 0xff) ; }
+  uint32_t ChannelMask() const { return (channelMask_hi << 8) + (channelMask_lo & 0xff) ; }
 
 };
 static_assert(sizeof(sbndaq::CAENV1730EventHeader)==4*sizeof(uint32_t),"CAENV1730EventHeader not correct size.");
