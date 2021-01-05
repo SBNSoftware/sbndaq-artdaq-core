@@ -10,4 +10,4 @@
 
  *****/
 
-#define TR_TIMER TLVL_DEBUG+1 
+#define TLVL_TIMER TLVL_DEBUG+1
