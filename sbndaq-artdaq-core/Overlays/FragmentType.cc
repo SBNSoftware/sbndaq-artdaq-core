@@ -18,6 +18,7 @@ namespace {
     {sbndaq::detail::FragmentType::CAENV1730, "CAENV1730"},
     {sbndaq::detail::FragmentType::SpectratimeEvent, "SPECTRATIMEVENT"},
     {sbndaq::detail::FragmentType::BERNCRT, "BERNCRT"},
+    {sbndaq::detail::FragmentType::BERNCRTV2, "BERNCRTV2"},
     {sbndaq::detail::FragmentType::BERNCRTZMQ,  "BERNCRTZMQ"},
     {sbndaq::detail::FragmentType::WhiteRabbit, "WhiteRabbit"},
 
