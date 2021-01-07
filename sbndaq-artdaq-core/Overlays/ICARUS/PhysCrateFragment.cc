@@ -161,7 +161,7 @@ bool icarus::PhysCrateFragment::Verify() const {
   bool verified=true;
 
   if(!isCompressed()){
-    TRACE(TR_LOG,"Data is compressed, so no verification done.");
+    TRACE(TLVL_INFO,"Data is compressed, so no verification done.");
     return verified;
   }
 
