@@ -1,6 +1,6 @@
 # The parent line must be the first non-comment line in the file
 # This line defines the product name and version
-parent sbndaq_artdaq_core       v0_07_02
+parent sbndaq_artdaq_core       v0_07_02_of0
 defaultqual e19:s97
 
 # These optional lines define the installed directories where
@@ -19,13 +19,20 @@ fcldir      -
 #
 product             version       optional
 
-artdaq_core         v3_06_05
+artdaq_core         v3_06_03
 cetbuildtools       v7_17_01      -       only_for_build
 end_product_list
 
 # -nq- here means there is no qualifier
 # a "-" here means the dependent product is not required by the parent and will not be setup
 qualifier                artdaq_core
+
+#for offline
+e19:prof			     e19:prof:s102
+e19:debug			     e19:debug:s102
+c7:debug                 c7:debug:s102
+c7:prof                  c7:prof:s102
+
 # Note that python3 is now the default for LArSoft with v08_41_00
 e19:prof:s94             e19:prof:s94
 e19:debug:s94            e19:debug:s94
