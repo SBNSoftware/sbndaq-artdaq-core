@@ -34,8 +34,16 @@ struct sbndaq::CAENV1730EventHeader{
   uint32_t triggerTimeTag : 32;
 
 
-  uint32_t ChannelMask() { return (channelMask_hi << 8) + (channelMask_lo & 0xff) ; }
+  uint32_t ChannelMask() const { return (channelMask_hi << 8) + (channelMask_lo & 0xff) ; }
 
+  // with ETTT disabled, trigger tag is 31+1 bits and pattern is used for LVDS info
+  uint32_t triggerTime() const { return triggerTimeTag & 0x7fff'ffffU; }
+  bool triggerTimeRollOver() const { return bool( triggerTimeTag & 0x8000'0000U ); }
+  
+  // with ETTT enabled, trigger tag 48 bits, pattern + triggerTimeTag; no LVDS info
+  uint64_t extendedTriggerTime() const
+    { return triggerTimeTag + (static_cast<uint64_t>(pattern) << 32U); }
+  
 };
 static_assert(sizeof(sbndaq::CAENV1730EventHeader)==4*sizeof(uint32_t),"CAENV1730EventHeader not correct size.");
 

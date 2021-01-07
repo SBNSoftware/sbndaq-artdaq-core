@@ -17,6 +17,7 @@ cet_make_library( LIBRARY_NAME sbndaq-artdaq-core_Overlays_Common
 		  SpectratimeEventFragment.cc
 		  BernCRTZMQFragment.cc
 		  BernCRTFragment.cc
+		  BernCRTFragmentV2.cc
 		  WhiteRabbitFragment.cc
 		  DummyFragment.cc
 		  LIBRARIES

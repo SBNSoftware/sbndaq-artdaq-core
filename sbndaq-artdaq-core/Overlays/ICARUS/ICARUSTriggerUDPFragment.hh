@@ -22,7 +22,7 @@ class icarus::ICARUSTriggerUDPFragmentMetadata
 
 public:  
   ICARUSTriggerUDPFragmentMetadata() {}
-  ICARUSTriggerUDPFragmentMetadata(int n, int ev, int sec, long nsec) : name(n), event_no(ev), seconds(sec), nanoseconds(nsec) {}
+  ICARUSTriggerUDPFragmentMetadata(int n, int ev, int sec, long nsec,int wr_n, int wr_ev, long wr_sec, long wr_nsec) : name(n), event_no(ev), seconds(sec), nanoseconds(nsec), wr_name(wr_n), wr_event_no(wr_ev), wr_seconds(wr_sec), wr_nanoseconds(wr_nsec) {}
 
   int getName() const
   { return name; }
@@ -36,11 +36,27 @@ public:
   long getNanoSeconds() const
   { return nanoseconds; }
 
+  int getWRName() const
+  { return wr_name; }
+
+  int getWREventNo() const
+  { return wr_event_no; }
+
+  int getWRSeconds() const
+  { return wr_seconds; }
+
+  long getWRNanoSeconds() const
+  { return wr_nanoseconds; }
+
 private:
   int name;
   int event_no;
   int seconds;
   long nanoseconds;
+  int wr_name;
+  int wr_event_no;
+  long wr_seconds;
+  long wr_nanoseconds;
 
 };
 
@@ -70,6 +86,18 @@ public:
   
   long getNanoSeconds() const
   { return Metadata()->getNanoSeconds(); }
+
+  int getWRName() const
+  { return Metadata()->getWRName(); }
+
+  int getWREventNo() const
+  { return Metadata()->getWREventNo(); }
+
+  int getWRSeconds() const
+  { return Metadata()->getWRSeconds(); }
+
+  long getWRNanoSeconds() const
+  { return Metadata()->getWRNanoSeconds(); }
   
   bool Verify() const;
   
