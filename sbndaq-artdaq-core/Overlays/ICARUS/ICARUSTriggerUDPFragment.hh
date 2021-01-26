@@ -22,7 +22,7 @@ class icarus::ICARUSTriggerUDPFragmentMetadata
 
 public:  
   ICARUSTriggerUDPFragmentMetadata() {}
-  ICARUSTriggerUDPFragmentMetadata(int n, int ev, int sec, long nsec,int wr_n, int wr_ev, long long wr_sec, long long wr_nsec) : name(n), event_no(ev), seconds(sec), nanoseconds(nsec), wr_name(wr_n), wr_event_no(wr_ev), wr_seconds(wr_sec), wr_nanoseconds(wr_nsec) {}
+  ICARUSTriggerUDPFragmentMetadata(int n, int ev, int sec, long nsec,int wr_n, int wr_ev, long wr_sec, long wr_nsec) : name(n), event_no(ev), seconds(sec), nanoseconds(nsec), wr_name(wr_n), wr_event_no(wr_ev), wr_seconds(wr_sec), wr_nanoseconds(wr_nsec) {}
 
   int getName() const
   { return name; }
