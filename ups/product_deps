@@ -19,7 +19,7 @@ fcldir      -
 #
 product             version       optional
 
-artdaq_core         v3_06_03
+artdaq_core         v3_06_09
 cetbuildtools       v7_17_01      -       only_for_build
 end_product_list
 
@@ -28,10 +28,12 @@ end_product_list
 qualifier                artdaq_core
 
 #for offline
-e19:prof			     e19:prof:s102
-e19:debug			     e19:debug:s102
-c7:debug                 c7:debug:s102
-c7:prof                  c7:prof:s102
+e20:prof			     e20:prof:s106
+e20:debug			     e20:debug:s106
+e19:prof			     e19:prof:s106
+e19:debug			     e19:debug:s106
+c7:debug                 c7:debug:s106
+c7:prof                  c7:prof:s106
 
 # Note that python3 is now the default for LArSoft with v08_41_00
 e19:prof:s94             e19:prof:s94
