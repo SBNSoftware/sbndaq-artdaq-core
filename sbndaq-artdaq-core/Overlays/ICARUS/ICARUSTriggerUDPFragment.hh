@@ -42,7 +42,7 @@ public:
   int getWREventNo() const
   { return wr_event_no; }
 
-  int getWRSeconds() const
+  long getWRSeconds() const
   { return wr_seconds; }
 
   long getWRNanoSeconds() const
@@ -93,7 +93,7 @@ public:
   int getWREventNo() const
   { return Metadata()->getWREventNo(); }
 
-  int getWRSeconds() const
+  long getWRSeconds() const
   { return Metadata()->getWRSeconds(); }
 
   long getWRNanoSeconds() const
