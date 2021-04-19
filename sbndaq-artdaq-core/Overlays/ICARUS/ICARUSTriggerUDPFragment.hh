@@ -22,7 +22,7 @@ class icarus::ICARUSTriggerUDPFragmentMetadata
 
 public:  
   ICARUSTriggerUDPFragmentMetadata() {}
-  ICARUSTriggerUDPFragmentMetadata(int n, int ev, uint64_t sec, long nsec,int wr_n, int wr_ev, long wr_sec, long wr_nsec) : name(n), event_no(ev), seconds(sec), nanoseconds(nsec), wr_name(wr_n), wr_event_no(wr_ev), wr_seconds(wr_sec), wr_nanoseconds(wr_nsec) {}
+  ICARUSTriggerUDPFragmentMetadata(int n, int ev, uint64_t sec, long nsec,int wr_n, int wr_ev, long wr_sec, long wr_nsec, uint64_t last_ts) : name(n), event_no(ev), seconds(sec), nanoseconds(nsec), wr_name(wr_n), wr_event_no(wr_ev), wr_seconds(wr_sec), wr_nanoseconds(wr_nsec), last_timestamp(last_ts) {}
 
   int getName() const
   { return name; }
@@ -47,6 +47,9 @@ public:
 
   long getWRNanoSeconds() const
   { return wr_nanoseconds; }
+  
+  uint64_t getLastTimestamp() const
+  { return last_timestamp; }
 
 private:
   int name;
@@ -57,6 +60,7 @@ private:
   int wr_event_no;
   long wr_seconds;
   long wr_nanoseconds;
+  uint64_t last_timestamp;
 
 };
 
@@ -98,6 +102,9 @@ public:
 
   long getWRNanoSeconds() const
   { return Metadata()->getWRNanoSeconds(); }
+
+  uint64_t getLastTimestamp() const
+  { return Metadata()->getLastTimestamp(); } 
   
   bool Verify() const;
   
