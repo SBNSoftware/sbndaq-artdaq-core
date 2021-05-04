@@ -8,7 +8,7 @@ std::ostream & icarus::operator << (std::ostream & os, ICARUSTriggerUDPFragment 
   os << std::endl;
   return os;
 }
-
+/*
 std::ostream & icarus::operator << (std::ostream & os, ICARUSTriggerUDPFragmentMetadata const & m) {
   os << "\n\t Name: " << m.getName();
   os << "\n\t Event Number: " << m.getEventNo();
@@ -21,7 +21,7 @@ std::ostream & icarus::operator << (std::ostream & os, ICARUSTriggerUDPFragmentM
   os << std::endl;
   return os;
 }
-
+*/
 
 
 bool icarus::ICARUSTriggerUDPFragment::Verify() const {
