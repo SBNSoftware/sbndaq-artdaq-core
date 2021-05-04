@@ -50,16 +50,16 @@ public:
   size_t ExpectedDataSize() const
   { return Metadata()->ExpectedDataSize(); }
   */
-  /*
-  void setHardwareTS_Type(std::string n) const {name = n;} 
-  void setHardwareEventNumber(long ev) const {event_no = ev;}
-  void setHardwareSec(int s) const {seconds = s;}
-  void setHardwareNanoSec(int ns) const {nanoseconds = ns;}
-  void setTS_Type(std::string wr_n) const {wr_name = wr_n;}
-  void setEventNumber(long wr_ev) const {wr_event_no = wr_ev;}
-  void setEventTriggerSec(long wr_s) const {wr_seconds = wr_s;}
-  void setEventTriggerNanoSec(long wr_ns) const {wr_nanoseconds = wr_ns;}
-  */
+  
+  void setHardwareTS_Type(std::string n) {name = n;} 
+  void setHardwareEventNumber(long ev) {event_no = ev;}
+  void setHardwareSec(int s) {seconds = s;}
+  void setHardwareNanoSec(int ns) {nanoseconds = ns;}
+  void setTS_Type(std::string wr_n) {wr_name = wr_n;}
+  void setEventNumber(long wr_ev) {wr_event_no = wr_ev;}
+  void setEventTriggerSec(long wr_s) {wr_seconds = wr_s;}
+  void setEventTriggerNanoSec(long wr_ns) {wr_nanoseconds = wr_ns;}
+  
   std::string getName() const
   { return name; }
 
@@ -88,9 +88,8 @@ public:
   { return Metadata()->getLastTimestamp(); }
 
   //function to parse string
-  int parse() const
+  int parse(char* buffer) const
   {
-    char *buffer = fFragment.dataBeginBytes();
     std::string data_input = buffer;
     size_t pos = 0;
     std::string delimiter = ",";
@@ -103,28 +102,17 @@ public:
     }
     sections.push_back(data_input);
     //std::string trig_name = sections[0];
-    /*
-    setHardwareTS_Type(trig_name);
-    setHardwareEventNumber(std::stol(sections[1]));
-    setHardwareSec(std::stoi(sections[2]));
-    setHardwareNanoSec(std::stol(sections[3]));
-    */
-    name = sections[0];
-    event_no = std::stol(sections[1]);
-    seconds = std::stoi(sections[2]);
-    nanoseconds = std::stol(sections[3]);
+    
+    this->setHardwareTS_Type(sections[0]);
+    this->setHardwareEventNumber(std::stol(sections[1]));
+    this->setHardwareSec(std::stoi(sections[2]));
+    this->setHardwareNanoSec(std::stol(sections[3]));
     if(sections.size() > 5)
     {
-      wr_name = sections[4];
-      wr_event_no = std::stol(sections[5]);
-      wr_seconds = std::stol(sections[6]);
-      wr_nanoseconds = std::stol(sections[7]);
-      /*
-      setTS_Type(wr_name);
-      setEventNumber(std::stol(sections[5]));
-      setEventTriggerSec(std::stol(sections[6]));
-      setEventTriggerNanoSec(std::stol(sections[7]));
-      */
+      this->setTS_Type(sections[0]);
+      this->setEventNumber(std::stol(sections[5]));
+      this->setEventTriggerSec(std::stol(sections[6]));
+      this->setEventTriggerNanoSec(std::stol(sections[7]));
     }
 
     return 1;
