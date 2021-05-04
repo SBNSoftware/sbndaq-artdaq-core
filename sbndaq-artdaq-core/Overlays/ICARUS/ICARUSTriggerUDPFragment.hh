@@ -5,16 +5,82 @@
 #include "cetlib_except/exception.h"
 
 #include <iostream>
+#include <chrono>
+
 
 namespace icarus {
 
+  struct ICARUSTriggerInfo;
+  ICARUSTriggerInfo parse_ICARUSTriggerString(const char*);
   class ICARUSTriggerUDPFragment;
   std::ostream & operator << (std::ostream &, ICARUSTriggerUDPFragment const &);
 
   //struct ICARUSTriggerUDPFragmentMetadata;
   class ICARUSTriggerUDPFragmentMetadata;
-  std::ostream & operator << (std::ostream &, ICARUSTriggerUDPFragmentMetadata const &);
+  //std::ostream & operator << (std::ostream &, ICARUSTriggerUDPFragmentMetadata const &);
 }
+
+struct icarus::ICARUSTriggerInfo
+{
+  std::string name;
+  long event_no;
+  uint64_t seconds;
+  long nanoseconds;
+  std::string wr_name;
+  long wr_event_no;
+  long wr_seconds;
+  long wr_nanoseconds;
+  ICARUSTriggerInfo() {
+    name = ""; 
+    event_no = -1; 
+    seconds = -2; 
+    nanoseconds = -3; 
+    wr_name = ""; 
+    wr_event_no = -1; 
+    wr_seconds = -2; 
+    wr_nanoseconds = -3;  
+  }
+  uint64_t getNanoseconds_since_UTC_epoch() {
+    if(wr_seconds == -2 || wr_nanoseconds == -3)
+      return 0;
+    int correction = 0;
+    if(wr_seconds >= 1483228800)
+      correction = 37;
+    return (wr_seconds-correction)*1e9 + wr_nanoseconds;
+  }
+  
+};
+
+icarus::ICARUSTriggerInfo icarus::parse_ICARUSTriggerString(const char* buffer)
+{
+  std::string data_input = buffer;
+  size_t pos = 0;
+  std::string delimiter = ",";
+  std::vector<std::string> sections;
+  std::string token = "";
+  while ((pos = data_input.find(delimiter)) != std::string::npos) {
+    token = data_input.substr(0, pos);
+    sections.push_back(token);
+    data_input.erase(0, pos + delimiter.length());
+  }
+  sections.push_back(data_input);
+  //std::string trig_name = sections[0];                                                                                      
+  ICARUSTriggerInfo info;
+  info.name = sections[0];
+  //t->setHardwareTS_Type(sections[0]);                                                                                       
+  info.event_no = std::stol(sections[1]);
+  info.seconds = std::stoi(sections[2]);
+  info.nanoseconds = std::stol(sections[3]);
+  if(sections.size() > 5)
+    {
+      info.wr_name = sections[4];
+      info.wr_event_no = std::stol(sections[5]);
+      info.wr_seconds = std::stol(sections[6]);
+      info.wr_nanoseconds = std::stol(sections[7]);
+    }
+  return info;
+}
+
 
 //struct icarus::ICARUSTriggerUDPFragmentMetadata
 class icarus::ICARUSTriggerUDPFragmentMetadata
@@ -40,97 +106,65 @@ class icarus::ICARUSTriggerUDPFragment{
 
 public:
   
-  ICARUSTriggerUDPFragment(artdaq::Fragment const &f) : fFragment(f) {}
+  ICARUSTriggerUDPFragment(artdaq::Fragment const &f) : fFragment(f) {info = parse_ICARUSTriggerString((const char*)fFragment.dataBeginBytes());}
   ICARUSTriggerUDPFragmentMetadata const * Metadata() const
   { return fFragment.metadata<ICARUSTriggerUDPFragmentMetadata>(); }
   
   size_t DataPayloadSize() const
   { return fFragment.dataSizeBytes(); }
+
+  std::string GetDataString() const
+  { 
+    std::string data((char*)fFragment.dataBeginBytes(), fFragment.dataSizeBytes());
+    return data;
+  }
+
   /*
   size_t ExpectedDataSize() const
   { return Metadata()->ExpectedDataSize(); }
   */
   
-  void setHardwareTS_Type(std::string n) {name = n;} 
-  void setHardwareEventNumber(long ev) {event_no = ev;}
-  void setHardwareSec(int s) {seconds = s;}
-  void setHardwareNanoSec(int ns) {nanoseconds = ns;}
-  void setTS_Type(std::string wr_n) {wr_name = wr_n;}
-  void setEventNumber(long wr_ev) {wr_event_no = wr_ev;}
-  void setEventTriggerSec(long wr_s) {wr_seconds = wr_s;}
-  void setEventTriggerNanoSec(long wr_ns) {wr_nanoseconds = wr_ns;}
-  
   std::string getName() const
-  { return name; }
+  { return info.name; }
 
   long getEventNo() const
-  { return event_no; }
+  { return info.event_no; }
 
   int getSeconds() const
-  { return seconds; }
+  { return info.seconds; }
 
   long getNanoSeconds() const
-  { return nanoseconds; }
+  { return info.nanoseconds; }
 
   std::string getWRName() const
-  { return wr_name; }
+  { return info.wr_name; }
 
   long getWREventNo() const
-  { return wr_event_no; }
+  { return info.wr_event_no; }
 
   long getWRSeconds() const
-  { return wr_seconds; }
+  { return info.wr_seconds; }
 
   long getWRNanoSeconds() const
-  { return wr_nanoseconds; }
+  { return info.wr_nanoseconds; }
 
   uint64_t getLastTimestamp() const
   { return Metadata()->getLastTimestamp(); }
 
-  //function to parse string
-  int parse(char* buffer) const
+  /*
+  uint64_t tai_to_utc(uint64_t tstamp)
   {
-    std::string data_input = buffer;
-    size_t pos = 0;
-    std::string delimiter = ",";
-    std::vector<std::string> sections;
-    std::string token = "";
-    while ((pos = data_input.find(delimiter)) != std::string::npos) {
-      token = data_input.substr(0, pos);
-      sections.push_back(token);
-      data_input.erase(0, pos + delimiter.length());
-    }
-    sections.push_back(data_input);
-    //std::string trig_name = sections[0];
-    
-    this->setHardwareTS_Type(sections[0]);
-    this->setHardwareEventNumber(std::stol(sections[1]));
-    this->setHardwareSec(std::stoi(sections[2]));
-    this->setHardwareNanoSec(std::stol(sections[3]));
-    if(sections.size() > 5)
-    {
-      this->setTS_Type(sections[0]);
-      this->setEventNumber(std::stol(sections[5]));
-      this->setEventTriggerSec(std::stol(sections[6]));
-      this->setEventTriggerNanoSec(std::stol(sections[7]));
-    }
-
-    return 1;
+    using timestamp = std::chrono::duration<uint64_t, std::chrono::nanoseconds>;
+    std::chrono::duration<uint64_t, std::nanoseconds> conv_ts = std::chrono::tai_clock::to_utc(timestamp(tstamp));
+    uint64_t ret_ts = conv_ts.count();
+    return ret_ts;
   }
-  
+  */
   bool Verify() const;
   
 private:
   artdaq::Fragment const & fFragment;
-  std::string name;
-  long event_no;
-  uint64_t seconds;
-  long nanoseconds;
-  std::string wr_name;
-  long wr_event_no;
-  long wr_seconds;
-  long wr_nanoseconds;
-
+  ICARUSTriggerInfo info;
 };
 
 #endif /* sbndaq_datatypes_Overlays_ICARUSTriggerUDPFragment_hh */

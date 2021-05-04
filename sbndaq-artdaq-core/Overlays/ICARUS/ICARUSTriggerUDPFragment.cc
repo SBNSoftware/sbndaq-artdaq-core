@@ -4,7 +4,8 @@
 
 
 std::ostream & icarus::operator << (std::ostream & os, ICARUSTriggerUDPFragment const & f) {
-  os << "ICARUSTriggerUDPFragment: " << *(f.Metadata());
+ 
+  os << "ICARUSTriggerUDPFragment: " << f.GetDataString();
   os << std::endl;
   return os;
 }
