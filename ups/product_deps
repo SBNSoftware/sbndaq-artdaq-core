@@ -1,6 +1,6 @@
 # The parent line must be the first non-comment line in the file
 # This line defines the product name and version
-parent sbndaq_artdaq_core       v0_07_04
+parent sbndaq_artdaq_core       v0_07_05
 defaultqual e19:s97
 
 # These optional lines define the installed directories where
@@ -19,7 +19,7 @@ fcldir      -
 #
 product             version       optional
 
-artdaq_core         v3_06_10
+artdaq_core         v3_06_12
 cetbuildtools       v7_17_01      -       only_for_build
 end_product_list
 
@@ -89,6 +89,13 @@ e19:debug:icarus:s106     e19:debug:s106
 e19:prof:sbnd:s106        e19:prof:s106
 e19:debug:sbnd:s106       e19:debug:s106
 
+# Note that python3 is now the default for LArSoft with v???
+e20:prof:s106             e20:prof:s106
+e20:debug:s106            e20:debug:s106
+e20:prof:icarus:s106      e20:prof:s106
+e20:debug:icarus:s106     e20:debug:s106
+e20:prof:sbnd:s106        e20:prof:s106
+e20:debug:sbnd:s106       e20:debug:s106
 # Preserve tabs and formatting in emacs and vi / vim:
 
 ### Local Variables:
