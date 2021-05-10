@@ -24,12 +24,14 @@ struct icarus::ICARUSTriggerInfo
 {
   std::string name;
   long event_no;
-  uint64_t seconds;
+  long seconds;
   long nanoseconds;
   std::string wr_name;
   long wr_event_no;
   long wr_seconds;
   long wr_nanoseconds;
+  long gate_id;
+  int gate_type;
   ICARUSTriggerInfo() {
     name = ""; 
     event_no = -1; 
@@ -38,7 +40,9 @@ struct icarus::ICARUSTriggerInfo
     wr_name = ""; 
     wr_event_no = -1; 
     wr_seconds = -2; 
-    wr_nanoseconds = -3;  
+    wr_nanoseconds = -3;
+    gate_id = -4;
+    gate_type = 0;
   }
   uint64_t getNanoseconds_since_UTC_epoch() {
     if(wr_seconds == -2 || wr_nanoseconds == -3)
@@ -77,6 +81,8 @@ icarus::ICARUSTriggerInfo icarus::parse_ICARUSTriggerString(const char* buffer)
       info.wr_event_no = std::stol(sections[5]);
       info.wr_seconds = std::stol(sections[6]);
       info.wr_nanoseconds = std::stol(sections[7]);
+      info.gate_id = std::stol(sections[9]);
+      info.gate_type = std::stoi(sections[11]);
     }
   return info;
 }
@@ -88,17 +94,21 @@ class icarus::ICARUSTriggerUDPFragmentMetadata
 
 public:  
   ICARUSTriggerUDPFragmentMetadata() {}
-  ICARUSTriggerUDPFragmentMetadata(uint64_t ntp_t, uint64_t last_ts) : ntp_time(ntp_t), last_timestamp(last_ts) {}
+  ICARUSTriggerUDPFragmentMetadata(uint64_t ntp_t, uint64_t last_ts, long dg) : ntp_time(ntp_t), last_timestamp(last_ts), delta_gates(dg) {}
   
   uint64_t getNTPTime() const
   { return ntp_time; } 
 
   uint64_t getLastTimestamp() const
   { return last_timestamp; }
+  
+  long getDeltaGates() const
+  { return delta_gates; }
 
 private:
   uint64_t ntp_time;
   uint64_t last_timestamp;
+  long delta_gates;
 
 };
 
@@ -130,7 +140,7 @@ public:
   long getEventNo() const
   { return info.event_no; }
 
-  int getSeconds() const
+  long getSeconds() const
   { return info.seconds; }
 
   long getNanoSeconds() const
@@ -147,19 +157,19 @@ public:
 
   long getWRNanoSeconds() const
   { return info.wr_nanoseconds; }
+  
+  long getGateID() const
+  { return info.gate_id; }
+
+  int getGateType() const
+  { return info.gate_type; }
 
   uint64_t getLastTimestamp() const
   { return Metadata()->getLastTimestamp(); }
 
-  /*
-  uint64_t tai_to_utc(uint64_t tstamp)
-  {
-    using timestamp = std::chrono::duration<uint64_t, std::chrono::nanoseconds>;
-    std::chrono::duration<uint64_t, std::nanoseconds> conv_ts = std::chrono::tai_clock::to_utc(timestamp(tstamp));
-    uint64_t ret_ts = conv_ts.count();
-    return ret_ts;
-  }
-  */
+  uint64_t getNTPTime() const
+  { return Metadata()->getNTPTime(); } 
+
   bool Verify() const;
   
 private:
