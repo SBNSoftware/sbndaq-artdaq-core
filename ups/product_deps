@@ -1,7 +1,7 @@
 # The parent line must be the first non-comment line in the file
 # This line defines the product name and version
-parent sbndaq_artdaq_core       v0_07_04_of0
-defaultqual e19:s97
+parent sbndaq_artdaq_core       v0_07_05_of0
+defaultqual e20
 
 # These optional lines define the installed directories where
 # headers, libraries, and executables will be found
@@ -91,6 +91,13 @@ e19:debug:icarus:s106     e19:debug:s106
 e19:prof:sbnd:s106        e19:prof:s106
 e19:debug:sbnd:s106       e19:debug:s106
 
+# Note that python3 is now the default for LArSoft with v???
+e20:prof:s106             e20:prof:s106
+e20:debug:s106            e20:debug:s106
+e20:prof:icarus:s106      e20:prof:s106
+e20:debug:icarus:s106     e20:debug:s106
+e20:prof:sbnd:s106        e20:prof:s106
+e20:debug:sbnd:s106       e20:debug:s106
 # Preserve tabs and formatting in emacs and vi / vim:
 
 ### Local Variables:
