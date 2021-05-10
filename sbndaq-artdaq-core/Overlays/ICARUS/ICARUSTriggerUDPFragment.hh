@@ -170,6 +170,9 @@ public:
   uint64_t getNTPTime() const
   { return Metadata()->getNTPTime(); } 
 
+  long getDeltaGates() const
+  { return Metadata()->getDeltaGates(); }
+
   bool Verify() const;
   
 private:
