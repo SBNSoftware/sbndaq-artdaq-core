@@ -94,21 +94,61 @@ class icarus::ICARUSTriggerUDPFragmentMetadata
 
 public:  
   ICARUSTriggerUDPFragmentMetadata() {}
-  ICARUSTriggerUDPFragmentMetadata(uint64_t ntp_t, uint64_t last_ts, long dg) : ntp_time(ntp_t), last_timestamp(last_ts), delta_gates(dg) {}
+  ICARUSTriggerUDPFragmentMetadata(uint64_t ntp_t, 
+				   uint64_t last_ts, 
+				   uint64_t last_ts_bnb, uint64_t last_ts_numi, uint64_t last_ts_other,
+				   long dg,
+				   long dg_bnb, long dg_numi, long dg_other) 
+    : ntp_time(ntp_t)
+    , last_timestamp(last_ts)
+    , last_timestamp_bnb(last_ts_bnb)
+    , last_timestamp_numi(last_ts_numi)
+    , last_timestamp_other(last_ts_other)
+    , delta_gates(dg) 
+    , delta_gates_bnb(dg_bnb) 
+    , delta_gates_numi(dg_numi) 
+    , delta_gates_other(dg_other) 
+  {}
   
   uint64_t getNTPTime() const
   { return ntp_time; } 
 
   uint64_t getLastTimestamp() const
   { return last_timestamp; }
+
+  uint64_t getLastTimestampBNB() const
+  { return last_timestamp_bnb; }
   
+  uint64_t getLastTimestampNuMI() const
+  { return last_timestamp_numi; }
+
+  uint64_t getLastTimestampOther() const
+  { return last_timestamp_other; }
+
   long getDeltaGates() const
   { return delta_gates; }
+
+  long getDeltaGatesBNB() const
+  { return delta_gates_bnb; }
+
+  long getDeltaGatesNuMI() const
+  { return delta_gates_numi; }
+
+  long getDeltaGatesOther() const
+  { return delta_gates_other; }
 
 private:
   uint64_t ntp_time;
   uint64_t last_timestamp;
+  uint64_t last_timestamp_bnb;
+  uint64_t last_timestamp_numi;
+  uint64_t last_timestamp_other;
+
   long delta_gates;
+  long delta_gates_bnb;
+  long delta_gates_numi;
+  long delta_gates_other;
+
 
 };
 
@@ -161,6 +201,12 @@ public:
   long getGateID() const
   { return info.gate_id; }
 
+  bool isBNB() const
+  { return getGateID()==1; }
+
+  bool isNuMI() const
+  { return getGateID()==2; }
+
   int getGateType() const
   { return info.gate_type; }
 
@@ -172,6 +218,20 @@ public:
 
   long getDeltaGates() const
   { return Metadata()->getDeltaGates(); }
+
+  uint64_t getLastTimestampBNB() const
+  { return Metadata()->getLastTimestampBNB(); }
+  uint64_t getLastTimestampNuMI() const
+  { return Metadata()->getLastTimestampNuMI(); }
+  uint64_t getLastTimestampOther() const
+  { return Metadata()->getLastTimestampOther(); }
+  
+  long getDeltaGatesBNB() const
+  { return Metadata()->getDeltaGatesBNB(); }
+  long getDeltaGatesNuMI() const
+  { return Metadata()->getDeltaGatesNuMI(); }
+  long getDeltaGatesOther() const
+  { return Metadata()->getDeltaGatesOther(); }
 
   bool Verify() const;
   
