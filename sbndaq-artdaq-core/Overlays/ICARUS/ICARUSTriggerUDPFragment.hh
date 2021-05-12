@@ -205,7 +205,7 @@ public:
   { return getGateID()==1; }
 
   bool isNuMI() const
-  { return getGateID()==2; }
+  { return getGateID()==3; }
 
   int getGateType() const
   { return info.gate_type; }
