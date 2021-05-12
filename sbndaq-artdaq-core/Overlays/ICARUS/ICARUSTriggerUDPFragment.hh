@@ -202,10 +202,10 @@ public:
   { return info.gate_id; }
 
   bool isBNB() const
-  { return getGateID()==1; }
+  { return getGateType()==1; }
 
   bool isNuMI() const
-  { return getGateID()==3; }
+  { return getGateType()==3; }
 
   int getGateType() const
   { return info.gate_type; }

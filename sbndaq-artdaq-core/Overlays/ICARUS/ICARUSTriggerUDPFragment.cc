@@ -6,7 +6,7 @@
 std::ostream & icarus::operator << (std::ostream & os, ICARUSTriggerUDPFragment const & f) {
  
   os << "ICARUSTriggerUDPFragment: " << f.GetDataString();
-  os << "\n\t Event Number: " << f.getWRName();
+  os << "\n\t Event Number: " << f.getWREventNo();
   os << "\n\t Seconds since UTC epoch: " << f.getWRSeconds();
   os << "\n\t Nanoseconds: " << f.getWRNanoSeconds();
   os << "\n\t Gate ID: " << f.getGateID();
