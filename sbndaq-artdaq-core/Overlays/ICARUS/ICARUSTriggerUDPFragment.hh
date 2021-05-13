@@ -24,12 +24,14 @@ struct icarus::ICARUSTriggerInfo
 {
   std::string name;
   long event_no;
-  uint64_t seconds;
+  long seconds;
   long nanoseconds;
   std::string wr_name;
   long wr_event_no;
   long wr_seconds;
   long wr_nanoseconds;
+  long gate_id;
+  int gate_type;
   ICARUSTriggerInfo() {
     name = ""; 
     event_no = -1; 
@@ -38,7 +40,9 @@ struct icarus::ICARUSTriggerInfo
     wr_name = ""; 
     wr_event_no = -1; 
     wr_seconds = -2; 
-    wr_nanoseconds = -3;  
+    wr_nanoseconds = -3;
+    gate_id = -4;
+    gate_type = 0;
   }
   uint64_t getNanoseconds_since_UTC_epoch() {
     if(wr_seconds == -2 || wr_nanoseconds == -3)
@@ -77,6 +81,8 @@ icarus::ICARUSTriggerInfo icarus::parse_ICARUSTriggerString(const char* buffer)
       info.wr_event_no = std::stol(sections[5]);
       info.wr_seconds = std::stol(sections[6]);
       info.wr_nanoseconds = std::stol(sections[7]);
+      info.gate_id = std::stol(sections[9]);
+      info.gate_type = std::stoi(sections[11]);
     }
   return info;
 }
@@ -88,7 +94,21 @@ class icarus::ICARUSTriggerUDPFragmentMetadata
 
 public:  
   ICARUSTriggerUDPFragmentMetadata() {}
-  ICARUSTriggerUDPFragmentMetadata(uint64_t ntp_t, uint64_t last_ts) : ntp_time(ntp_t), last_timestamp(last_ts) {}
+  ICARUSTriggerUDPFragmentMetadata(uint64_t ntp_t, 
+				   uint64_t last_ts, 
+				   uint64_t last_ts_bnb, uint64_t last_ts_numi, uint64_t last_ts_other,
+				   long dg,
+				   long dg_bnb, long dg_numi, long dg_other) 
+    : ntp_time(ntp_t)
+    , last_timestamp(last_ts)
+    , last_timestamp_bnb(last_ts_bnb)
+    , last_timestamp_numi(last_ts_numi)
+    , last_timestamp_other(last_ts_other)
+    , delta_gates(dg) 
+    , delta_gates_bnb(dg_bnb) 
+    , delta_gates_numi(dg_numi) 
+    , delta_gates_other(dg_other) 
+  {}
   
   uint64_t getNTPTime() const
   { return ntp_time; } 
@@ -96,9 +116,39 @@ public:
   uint64_t getLastTimestamp() const
   { return last_timestamp; }
 
+  uint64_t getLastTimestampBNB() const
+  { return last_timestamp_bnb; }
+  
+  uint64_t getLastTimestampNuMI() const
+  { return last_timestamp_numi; }
+
+  uint64_t getLastTimestampOther() const
+  { return last_timestamp_other; }
+
+  long getDeltaGates() const
+  { return delta_gates; }
+
+  long getDeltaGatesBNB() const
+  { return delta_gates_bnb; }
+
+  long getDeltaGatesNuMI() const
+  { return delta_gates_numi; }
+
+  long getDeltaGatesOther() const
+  { return delta_gates_other; }
+
 private:
   uint64_t ntp_time;
   uint64_t last_timestamp;
+  uint64_t last_timestamp_bnb;
+  uint64_t last_timestamp_numi;
+  uint64_t last_timestamp_other;
+
+  long delta_gates;
+  long delta_gates_bnb;
+  long delta_gates_numi;
+  long delta_gates_other;
+
 
 };
 
@@ -130,7 +180,7 @@ public:
   long getEventNo() const
   { return info.event_no; }
 
-  int getSeconds() const
+  long getSeconds() const
   { return info.seconds; }
 
   long getNanoSeconds() const
@@ -147,19 +197,42 @@ public:
 
   long getWRNanoSeconds() const
   { return info.wr_nanoseconds; }
+  
+  long getGateID() const
+  { return info.gate_id; }
+
+  bool isBNB() const
+  { return getGateType()==1; }
+
+  bool isNuMI() const
+  { return getGateType()==3; }
+
+  int getGateType() const
+  { return info.gate_type; }
 
   uint64_t getLastTimestamp() const
   { return Metadata()->getLastTimestamp(); }
 
-  /*
-  uint64_t tai_to_utc(uint64_t tstamp)
-  {
-    using timestamp = std::chrono::duration<uint64_t, std::chrono::nanoseconds>;
-    std::chrono::duration<uint64_t, std::nanoseconds> conv_ts = std::chrono::tai_clock::to_utc(timestamp(tstamp));
-    uint64_t ret_ts = conv_ts.count();
-    return ret_ts;
-  }
-  */
+  uint64_t getNTPTime() const
+  { return Metadata()->getNTPTime(); } 
+
+  long getDeltaGates() const
+  { return Metadata()->getDeltaGates(); }
+
+  uint64_t getLastTimestampBNB() const
+  { return Metadata()->getLastTimestampBNB(); }
+  uint64_t getLastTimestampNuMI() const
+  { return Metadata()->getLastTimestampNuMI(); }
+  uint64_t getLastTimestampOther() const
+  { return Metadata()->getLastTimestampOther(); }
+  
+  long getDeltaGatesBNB() const
+  { return Metadata()->getDeltaGatesBNB(); }
+  long getDeltaGatesNuMI() const
+  { return Metadata()->getDeltaGatesNuMI(); }
+  long getDeltaGatesOther() const
+  { return Metadata()->getDeltaGatesOther(); }
+
   bool Verify() const;
   
 private:
