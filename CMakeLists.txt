@@ -7,13 +7,11 @@
 # ======================================================================
 
 
+cmake_minimum_required (VERSION 3.16)
 
-# use cmake 3.7 or later
-cmake_minimum_required (VERSION 3.7)
+find_package(cetbuildtools)
 
-project(sbndaq-artdaq-core)
-
-#optional build setup
+project(sbndaq_artdaq_core VERSION 3.08.00)
 
 string(FIND $ENV{MRB_QUALS} "icarus" ICARUS_FOUND)
 IF (ICARUS_FOUND EQUAL -1)
