@@ -51,7 +51,7 @@ struct icarus::ICARUSTriggerInfo
     if(wr_seconds >= 1483228800)
       correction = 37;
     uint64_t const corrected_ts
-      { (wr_seconds-correction)*1'000'000'000 + wr_nanoseconds };
+      { (wr_seconds-correction)*1'000'000'000ULL + wr_nanoseconds };
     return corrected_ts;
   }
   
