@@ -29,11 +29,12 @@ namespace sbndaq {
 	//SBND
 	NevisTPC = artdaq::Fragment::FirstUserFragmentType + 6,
 	PTB = artdaq::Fragment::FirstUserFragmentType + 7,
+	DAPHNE = artdaq::Fragment::FirstUserFragmentType + 14,
 	
 	//Simulators
 	DummyGenerator = artdaq::Fragment::FirstUserFragmentType + 8,
 
-        INVALID = artdaq::Fragment::FirstUserFragmentType + 14 // Should always be last.
+        INVALID = artdaq::Fragment::FirstUserFragmentType + 15 // Should always be last.
         };
 
     // Safety check.
