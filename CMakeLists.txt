@@ -11,7 +11,7 @@ cmake_minimum_required (VERSION 3.16)
 
 find_package(cetbuildtools)
 
-project(sbndaq_artdaq_core VERSION 3.08.00)
+project(sbndaq_artdaq_core VERSION 0.08.00)
 
 string(FIND $ENV{MRB_QUALS} "icarus" ICARUS_FOUND)
 IF (ICARUS_FOUND EQUAL -1)
@@ -76,18 +76,18 @@ cet_report_compiler_flags()
 
 # these are minimum required versions, not the actual product versions
 #find_ups_product( icarus_artdaq_base v0_08_04 )
-find_ups_product( messagefacility v2_06_01)
+find_ups_product( messagefacility )
 find_ups_product( artdaq_core )
 find_ups_product (TRACE )
-find_ups_product( cetlib v3_10_00 )
-find_ups_product( cetlib_except v1_04_01 )
-find_ups_boost( v1_70_0 filesystem
+find_ups_product( cetlib v3_13_01 )
+find_ups_product( cetlib_except v1_07_01 )
+find_ups_boost( v1_75_0 filesystem
                         program_options
                         unit_test_framework
  )
 
 
-find_ups_product( cetbuildtools v7_17_01 )
+find_ups_product( cetbuildtools v2_18_03 )
 
 #experiment specific products needed
 IF(ICARUS_BUILD)
