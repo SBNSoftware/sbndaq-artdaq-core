@@ -28,10 +28,10 @@ end_product_list
 qualifier                artdaq_core
 
 #for offline
-e19:prof                 e19:prof:s102
-e19:debug                e19:debug:s102
-c7:debug                 c7:debug:s102
-c7:prof                  c7:prof:s102
+e20:debug                e20:debug:s110
+e20:prof                 e20:prof:s110
+c7:debug                 c7:debug:s110
+c7:prof                  c7:prof:s110
 
 # Note that python3 is now the default for LArSoft with v08_41_00
 e19:prof:s94             e19:prof:s94
