@@ -7,11 +7,9 @@
 # ======================================================================
 
 
+cmake_minimum_required (VERSION 3.12...3.18 FATAL_ERROR)
 
-# use cmake 3.7 or later
-cmake_minimum_required (VERSION 3.7)
-
-project(sbndaq-artdaq-core)
+project(sbndaq-artdaq-core LANGUAGES CXX)
 
 #optional build setup
 
@@ -38,16 +36,9 @@ IF (NOT(SBND_BUILD OR ICARUS_BUILD))
 ENDIF()
 
 # cetbuildtools contains our cmake modules
-SET ( CETBUILDTOOLS_VERSION $ENV{CETBUILDTOOLS_VERSION} )
-IF (NOT CETBUILDTOOLS_VERSION)
-    MESSAGE (FATAL_ERROR "ERROR: setup cetbuildtools to get the cmake modules")
-ENDIF()
+find_package(cetbuildtools REQUIRED)
 
-set(CMAKE_MODULE_PATH 
-        $ENV{ART_DIR}/Modules
-        $ENV{CETBUILDTOOLS_DIR}/Modules
-        ${CMAKE_MODULE_PATH})
-
+list(APPEND CMAKE_MODULE_PATH $ENV{CANVAS_ROOT_IO_DIR}/Modules)
 
 include(CetCMakeEnv)
 cet_cmake_env()
@@ -88,8 +79,6 @@ find_ups_boost( v1_70_0 filesystem
                         unit_test_framework
  )
 
-
-find_ups_product( cetbuildtools v7_17_01 )
 
 #experiment specific products needed
 IF(ICARUS_BUILD)
