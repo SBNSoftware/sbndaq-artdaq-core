@@ -14,7 +14,7 @@ namespace {
   names{
     {sbndaq::detail::FragmentType::MISSED, "MISSED"}, 
 
-      //Common
+     //Common
     {sbndaq::detail::FragmentType::CAENV1730, "CAENV1730"},
     {sbndaq::detail::FragmentType::SpectratimeEvent, "SPECTRATIMEVENT"},
     {sbndaq::detail::FragmentType::BERNCRT, "BERNCRT"},
@@ -30,7 +30,8 @@ namespace {
 
     //SBND
     {sbndaq::detail::FragmentType::NevisTPC, "NEVISTPC"},
-    {sbndaq::detail::FragmentType::PTB,  "PTB"},
+    {sbndaq::detail::FragmentType::PTB,      "PTB"},
+    {sbndaq::detail::FragmentType::DAPHNE,   "DAPHNE"},
     
       //Simulators
     {sbndaq::detail::FragmentType::DummyGenerator, "DUMMYGENERATOR"},  

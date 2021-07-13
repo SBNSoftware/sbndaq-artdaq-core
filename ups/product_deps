@@ -1,6 +1,9 @@
 # The parent line must be the first non-comment line in the file
 # This line defines the product name and version
-parent sbndaq_artdaq_core       v0_07_06_01_of0
+
+parent sbndaq_artdaq_core       v0_07_08_of0
+defaultqual e19:s106
+
 
 # These optional lines define the installed directories where
 # headers, libraries, and executables will be found
@@ -16,9 +19,12 @@ bindir      fq_dir      bin
 fcldir      -
 
 #
-product             version       optional
 
-artdaq_core         v3_06_09
+product             version      optional
+artdaq_core         v3_06_13     s110
+artdaq_core         v3_06_12      -default-
+
+
 cetbuildtools       v7_17_01      -       only_for_build
 end_product_list
 
@@ -27,12 +33,12 @@ end_product_list
 qualifier                artdaq_core
 
 #for offline
-e20:prof			     e20:prof:s106
-e20:debug			     e20:debug:s106
-e19:prof			     e19:prof:s106
-e19:debug			     e19:debug:s106
-c7:debug                 c7:debug:s106
-c7:prof                  c7:prof:s106
+
+e19:prof                 e19:prof:s102
+e19:debug                e19:debug:s102
+c7:debug                 c7:debug:s102
+c7:prof                  c7:prof:s102
+
 
 # Note that python3 is now the default for LArSoft with v08_41_00
 e19:prof:s94             e19:prof:s94
@@ -97,6 +103,22 @@ e20:prof:icarus:s106      e20:prof:s106
 e20:debug:icarus:s106     e20:debug:s106
 e20:prof:sbnd:s106        e20:prof:s106
 e20:debug:sbnd:s106       e20:debug:s106
+
+# Note that python3 is now the default for LArSoft with v09_26_00
+c7:prof:s110             c7:prof:s110
+c7:debug:s110            c7:debug:s110
+c7:prof:icarus:s110      c7:prof:s110
+c7:debug:icarus:s110     c7:debug:s110
+c7:prof:sbnd:s110        c7:prof:s110
+c7:debug:sbnd:s110       c7:debug:s110
+
+# Note that python3 is now the default for LArSoft with v09_26_00
+e20:prof:s110             e20:prof:s110
+e20:debug:s110            e20:debug:s110
+e20:prof:icarus:s110      e20:prof:s110
+e20:debug:icarus:s110     e20:debug:s110
+e20:prof:sbnd:s110        e20:prof:s110
+e20:debug:sbnd:s110       e20:debug:s110
 # Preserve tabs and formatting in emacs and vi / vim:
 
 ### Local Variables:
