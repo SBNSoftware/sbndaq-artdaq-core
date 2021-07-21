@@ -1,11 +1,12 @@
 add_definitions(-Wno-nested-anon-types)
 cet_make_library( LIBRARY_NAME sbndaq-artdaq-core_Overlays
-		  SOURCE 
-		  FragmentType.cc
-		  LIBRARIES
-		  ${ARTDAQ_DAQDATA}
-		  ${CETLIB}
-		  ${CETLIB_EXCEPT}
+      SOURCE 
+      FragmentType.cc
+      LIBRARIES
+      artdaq_core::artdaq-core_Data
+      artdaq_core::artdaq-core_Utilities
+      cetlib
+      cetlib_except
 )
 
 install_headers()

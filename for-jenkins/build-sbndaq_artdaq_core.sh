@@ -6,7 +6,7 @@ PROJECT_NAME=sbndaq-artdaq-core
 PROJECT_SOURCE_GIT_PREFIX=${PROJECT_SOURCE_GIT_PREFIX:-'https://github.com/sbnsoftware'}
 PRODUCTS=${PRODUCTS:-'/cvmfs/fermilab.opensciencegrid.org/products/artdaq:/cvmfs/fermilab.opensciencegrid.org/products/larsoft'}
 
-ARTDAQ_VERSION=${ARTDAQ_VERSION:-"v3_10_01"}
+ARTDAQ_VERSION=${ARTDAQ_VERSION:-"v3_10_02"}
 
 #main script
 PRODUCTS=$(for d in $(echo $PRODUCTS | tr ":" " "); do [[ -d $d ]] && echo -n "$d:"; done)
@@ -52,7 +52,7 @@ for onequal in "${quals[@]}"; do
     e19|e20|c[0-9])
       basequal=${onequal}
       ;;
-    s10[0-9])
+    s1[0-1][0-9])
       squal=${onequal}
       ;;
     py2|py3)

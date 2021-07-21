@@ -1,7 +1,7 @@
 # The parent line must be the first non-comment line in the file
 # This line defines the product name and version
 parent sbndaq_artdaq_core
-defaultqual e19:s108
+defaultqual e19:s110
 
 # These optional lines define the installed directories where
 # headers, libraries, and executables will be found
@@ -19,13 +19,25 @@ fcldir      -
 #
 product             version       optional
 
-artdaq_core         v3_07_01
-cetbuildtools       v8_08_02     -       only_for_build
+artdaq_core         v3_07_03
+cetbuildtools       v8_11_00     -       only_for_build
 end_product_list
 
 # -nq- here means there is no qualifier
 # a "-" here means the dependent product is not required by the parent and will not be setup
 qualifier                artdaq_core
+e19:prof:s106             e19:prof:s106
+e19:debug:s106            e19:debug:s106
+e19:prof:icarus:s106      e19:prof:s106
+e19:debug:icarus:s106     e19:debug:s106
+e19:prof:sbnd:s106        e19:prof:s106
+e19:debug:sbnd:s106       e19:debug:s106
+e20:prof:s106             e20:prof:s106
+e20:debug:s106            e20:debug:s106
+e20:prof:icarus:s106      e20:prof:s106
+e20:debug:icarus:s106     e20:debug:s106
+e20:prof:sbnd:s106        e20:prof:s106
+e20:debug:sbnd:s106       e20:debug:s106
 e19:prof:s108             e19:prof:s108
 e19:debug:s108            e19:debug:s108
 e19:prof:icarus:s108      e19:prof:s108
@@ -50,6 +62,30 @@ e20:prof:icarus:s109      e20:prof:s109
 e20:debug:icarus:s109     e20:debug:s109
 e20:prof:sbnd:s109        e20:prof:s109
 e20:debug:sbnd:s109       e20:debug:s109
+e19:prof:s110             e19:prof:s110
+e19:debug:s110            e19:debug:s110
+e19:prof:icarus:s110      e19:prof:s110
+e19:debug:icarus:s110     e19:debug:s110
+e19:prof:sbnd:s110        e19:prof:s110
+e19:debug:sbnd:s110       e19:debug:s110
+e20:prof:s110             e20:prof:s110
+e20:debug:s110            e20:debug:s110
+e20:prof:icarus:s110      e20:prof:s110
+e20:debug:icarus:s110     e20:debug:s110
+e20:prof:sbnd:s110        e20:prof:s110
+e20:debug:sbnd:s110       e20:debug:s110
+e19:prof:s111             e19:prof:s111
+e19:debug:s111            e19:debug:s111
+e19:prof:icarus:s111      e19:prof:s111
+e19:debug:icarus:s111     e19:debug:s111
+e19:prof:sbnd:s111        e19:prof:s111
+e19:debug:sbnd:s111       e19:debug:s111
+e20:prof:s111             e20:prof:s111
+e20:debug:s111            e20:debug:s111
+e20:prof:icarus:s111      e20:prof:s111
+e20:debug:icarus:s111     e20:debug:s111
+e20:prof:sbnd:s111        e20:prof:s111
+e20:debug:sbnd:s111       e20:debug:s111
 # Preserve tabs and formatting in emacs and vi / vim:
 
 ### Local Variables:
