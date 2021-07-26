@@ -1,7 +1,7 @@
 # The parent line must be the first non-comment line in the file
 # This line defines the product name and version
 
-parent sbndaq_artdaq_core       v0_07_08_of0
+parent sbndaq_artdaq_core       v0_07_07
 defaultqual e19:s106
 
 
