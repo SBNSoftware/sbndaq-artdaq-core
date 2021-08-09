@@ -9,7 +9,7 @@
 
 cmake_minimum_required (VERSION 3.12...3.18 FATAL_ERROR)
 
-project(sbndaq-artdaq-core LANGUAGES CXX)
+project(sbndaq-artdaq-core VERSION 0.07.07.01 LANGUAGES CXX)
 
 #optional build setup
 

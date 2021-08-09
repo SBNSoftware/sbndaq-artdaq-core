@@ -1,8 +1,8 @@
 # The parent line must be the first non-comment line in the file
 # This line defines the product name and version
 
-parent sbndaq_artdaq_core       v0_07_07
-defaultqual e19:s106
+parent sbndaq_artdaq_core       v0_07_07_01
+defaultqual e20:s112
 
 
 # These optional lines define the installed directories where
@@ -21,11 +21,10 @@ fcldir      -
 #
 
 product             version      optional
-artdaq_core         v3_06_13     s110
+artdaq_core         v3_07_04     s112
 artdaq_core         v3_06_12      -default-
 
-
-cetbuildtools       v7_17_01      -       only_for_build
+cetbuildtools       v8_14_02      -       only_for_build
 end_product_list
 
 # -nq- here means there is no qualifier
@@ -120,6 +119,11 @@ e20:debug:icarus:s110     e20:debug:s110
 e20:prof:sbnd:s110        e20:prof:s110
 e20:debug:sbnd:s110       e20:debug:s110
 # Preserve tabs and formatting in emacs and vi / vim:
+e20:prof:s112             e20:prof:s112
+e20:debug:s112            e20:debug:s112
+c7:prof:s112             c7:prof:s112
+c7:debug:s112            c7:debug:s112
+end_qualifier_list
 
 ### Local Variables:
 ### tab-width: 4
