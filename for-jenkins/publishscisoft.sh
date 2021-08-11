@@ -31,6 +31,9 @@ function publishscisoft(){
 -q s111-c7  \
 -q s111-e19 \
 -q s111-e20 \
+-q s112-c7  \
+-q s112-e19 \
+-q s112-e20 \
  sbndaq_artdaq_core-build
 
 
