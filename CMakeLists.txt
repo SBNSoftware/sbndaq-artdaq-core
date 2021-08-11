@@ -87,7 +87,7 @@ find_ups_boost( v1_73_0 filesystem
  )
 
 
-find_ups_product( cetbuildtools v8_11_00 )
+find_ups_product( cetbuildtools v8_13_04 )
 
 #experiment specific products needed
 IF(ICARUS_BUILD)
