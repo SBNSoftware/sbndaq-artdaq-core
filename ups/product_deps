@@ -1,7 +1,7 @@
 # The parent line must be the first non-comment line in the file
 # This line defines the product name and version
 parent sbndaq_artdaq_core
-defaultqual e19:s110
+defaultqual e19:s112
 
 # These optional lines define the installed directories where
 # headers, libraries, and executables will be found
@@ -19,8 +19,8 @@ fcldir      -
 #
 product             version       optional
 
-artdaq_core         v3_07_03
-cetbuildtools       v8_11_00     -       only_for_build
+artdaq_core         v3_07_05
+cetbuildtools       v8_13_04     -       only_for_build
 end_product_list
 
 # -nq- here means there is no qualifier
@@ -96,6 +96,20 @@ e20:prof:icarus:s111      e20:prof:s111
 e20:debug:icarus:s111     e20:debug:s111
 e20:prof:sbnd:s111        e20:prof:s111
 e20:debug:sbnd:s111       e20:debug:s111
+c7:prof:s112              c7:prof:s112
+c7:debug:s112             c7:debug:s112
+e19:prof:s112             e19:prof:s112
+e19:debug:s112            e19:debug:s112
+e19:prof:icarus:s112      e19:prof:s112
+e19:debug:icarus:s112     e19:debug:s112
+e19:prof:sbnd:s112        e19:prof:s112
+e19:debug:sbnd:s112       e19:debug:s112
+e20:prof:s112             e20:prof:s112
+e20:debug:s112            e20:debug:s112
+e20:prof:icarus:s112      e20:prof:s112
+e20:debug:icarus:s112     e20:debug:s112
+e20:prof:sbnd:s112        e20:prof:s112
+e20:debug:sbnd:s112       e20:debug:s112
 # Preserve tabs and formatting in emacs and vi / vim:
 
 ### Local Variables:
