@@ -144,64 +144,65 @@ std::vector<icarus::crt::BernCRTTranslator> icarus::crt::BernCRTTranslator::anal
   return OUT;
 } 
 
-std::vector<icarus::crt::BernCRTTranslator> icarus::crt::BernCRTTranslator::getCRTData(art::Event const & evt) {
+//std::vector<icarus::crt::BernCRTTranslator> icarus::crt::BernCRTTranslator::getCRTData(art::Event const & evt) {
+std::vector<icarus::crt::BernCRTTranslator> icarus::crt::BernCRTTranslator::getCRTData(std::vector<artdaq::Fragment> const & frags) {
   std::vector<icarus::crt::BernCRTTranslator> out;
+  
+  //std::vector<art::Handle<artdaq::Fragments>> fragmentHandles;
+  //evt.getManyByType(fragmentHandles);
+  //for (auto  : fragmentHandles) {
+  //if (!handle.isValid() || handle->size() == 0)
+  //continue;
+  
+  if (frags.front().type() == artdaq::Fragment::ContainerFragmentType) {
 
-  std::vector<art::Handle<artdaq::Fragments>> fragmentHandles;
-  evt.getManyByType(fragmentHandles);
-  for (auto handle : fragmentHandles) {
-    if (!handle.isValid() || handle->size() == 0)
-      continue;
-    
-    if (handle->front().type() == artdaq::Fragment::ContainerFragmentType) {
-      //Container fragment
-      for (auto cont : *handle) {
-        artdaq::ContainerFragment contf(cont);
-        switch(contf.fragment_type()) {
-          case sbndaq::detail::FragmentType::BERNCRTZMQ:
-            out.reserve(out.size() + contf.block_count());
-            for (size_t ii = 0; ii < contf.block_count(); ++ii) {
-              out.push_back(analyze_BernCRTZMQFragment(*contf[ii].get()));
-            }
-            break;
-          case sbndaq::detail::FragmentType::BERNCRT:
-            out.reserve(out.size() + contf.block_count());
-            for (size_t ii = 0; ii < contf.block_count(); ++ii) {
-              out.push_back(analyze_BernCRTFragment(*contf[ii].get()));
-            }
-            break;
-          case sbndaq::detail::FragmentType::BERNCRTV2:
-            for (size_t ii = 0; ii < contf.block_count(); ++ii) {
-              std::vector<icarus::crt::BernCRTTranslator> v = analyze_BernCRTFragmentV2(*contf[ii].get());
-              out.insert( out.end(), v.begin(), v.end() );
-            }
-            break; 
-        }
+    //Container fragment
+    for (auto cont : frags) {
+      artdaq::ContainerFragment contf(cont);
+      switch(contf.fragment_type()) {
+      case sbndaq::detail::FragmentType::BERNCRTZMQ:
+	out.reserve(out.size() + contf.block_count());
+	for (size_t ii = 0; ii < contf.block_count(); ++ii) {
+	  out.push_back(analyze_BernCRTZMQFragment(*contf[ii].get()));
+	}
+	break;
+      case sbndaq::detail::FragmentType::BERNCRT:
+	out.reserve(out.size() + contf.block_count());
+	for (size_t ii = 0; ii < contf.block_count(); ++ii) {
+	  out.push_back(analyze_BernCRTFragment(*contf[ii].get()));
+	}
+	break;
+      case sbndaq::detail::FragmentType::BERNCRTV2:
+	for (size_t ii = 0; ii < contf.block_count(); ++ii) {
+	  std::vector<icarus::crt::BernCRTTranslator> v = analyze_BernCRTFragmentV2(*contf[ii].get());
+	  out.insert( out.end(), v.begin(), v.end() );
+	}
+	break; 
       }
     }
-    else {
-      //normal fragment
-      switch(handle->front().type()) {
-        case sbndaq::detail::FragmentType::BERNCRTZMQ:
-          out.reserve(out.size() + handle->size());
-          for (auto frag : *handle) {
-            out.push_back(analyze_BernCRTZMQFragment(frag));
-          }
-          break;
-        case sbndaq::detail::FragmentType::BERNCRT:
-          out.reserve(out.size() + handle->size());
-          for (auto frag : *handle) {
-            out.push_back(analyze_BernCRTFragment(frag));
-          }
-          break;
-        case sbndaq::detail::FragmentType::BERNCRTV2:
-          out.reserve(out.size() + handle->size());
-          for (auto frag : *handle) {
-            std::vector<icarus::crt::BernCRTTranslator> v = analyze_BernCRTFragmentV2(frag);
-            out.insert( out.end(), v.begin(), v.end() );
-          }
-          break; 
+  }
+  else {
+    //normal fragment
+    switch(frags.front().type()) {
+    case sbndaq::detail::FragmentType::BERNCRTZMQ:
+      out.reserve(out.size() + frags.size());
+      for (auto frag : frags) {
+	out.push_back(analyze_BernCRTZMQFragment(frag));
       }
+      break;
+    case sbndaq::detail::FragmentType::BERNCRT:
+      out.reserve(out.size() + frags.size());
+      for (auto frag : frags) {
+	out.push_back(analyze_BernCRTFragment(frag));
+      }
+      break;
+    case sbndaq::detail::FragmentType::BERNCRTV2:
+      out.reserve(out.size() + frags.size());
+      for (auto frag : frags) {
+	std::vector<icarus::crt::BernCRTTranslator> v = analyze_BernCRTFragmentV2(frag);
+	out.insert( out.end(), v.begin(), v.end() );
+      }
+      break; 
     }
   } 
 

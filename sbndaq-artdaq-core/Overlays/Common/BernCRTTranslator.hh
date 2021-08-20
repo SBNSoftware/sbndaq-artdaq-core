@@ -11,7 +11,7 @@
 #ifndef icaruscode_CRT_CRTDecoder_BERNCRTTranslator_hh
 #define icaruscode_CRT_CRTDecoder_BERNCRTTranslator_hh
 
-#include "art/Framework/Principal/Event.h"
+//#include "art/Framework/Principal/Event.h"
 
 #include <vector>
 
@@ -56,8 +56,8 @@ public:
   bool IsReference_TS0() const { return   flags&4; }
   bool IsReference_TS1() const { return   flags&8; }
   
-  static std::vector<BernCRTTranslator> getCRTData(art::Event const & evt);
-
+  //static std::vector<BernCRTTranslator> getCRTData(art::Event const & evt);
+  static std::vector<icarus::crt::BernCRTTranslator> getCRTData(std::vector<artdaq::Fragment> const & frags);
 
 private:
   static BernCRTTranslator analyze_BernCRTZMQFragment(artdaq::Fragment & frag); 
