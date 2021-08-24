@@ -32,6 +32,8 @@ struct icarus::ICARUSTriggerInfo
   long wr_nanoseconds;
   long gate_id;
   int gate_type;
+  //long beam_seconds;
+  //long beam_nanoseconds;
   ICARUSTriggerInfo() {
     name = ""; 
     event_no = -1; 
@@ -43,6 +45,8 @@ struct icarus::ICARUSTriggerInfo
     wr_nanoseconds = -3;
     gate_id = -4;
     gate_type = 0;
+    //beam_seconds = 0;
+    //beam_nanoseconds = 0;
   }
   uint64_t getNanoseconds_since_UTC_epoch() {
     if(wr_seconds == -2 || wr_nanoseconds == -3)
@@ -84,6 +88,13 @@ icarus::ICARUSTriggerInfo icarus::parse_ICARUSTriggerString(const char* buffer)
       info.gate_id = std::stol(sections[9]);
       info.gate_type = std::stoi(sections[11]);
     }
+  /*
+  if(sections.size() > 12)
+  {
+    info.beam_seconds = std::stol(sections[14]);
+    info.beam_nanoseconds = std::stol(sections[15]);
+  }
+  */
   return info;
 }
 
@@ -209,7 +220,13 @@ public:
 
   int getGateType() const
   { return info.gate_type; }
+  /*
+  long getBeamSeconds() const
+  { return info.beam_seconds; }
 
+  long getBeamNanoSeconds() const
+  { return info.beam_nanoseconds; }
+  */
   uint64_t getLastTimestamp() const
   { return Metadata()->getLastTimestamp(); }
 
