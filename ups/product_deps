@@ -24,7 +24,7 @@ product             version      optional
 artdaq_core         v3_07_04     s112
 artdaq_core         v3_06_12      -default-
 
-cetbuildtools       v8_14_02      -       only_for_build
+cetbuildtools       v8_15_00      -       only_for_build
 end_product_list
 
 # -nq- here means there is no qualifier
