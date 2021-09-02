@@ -20,12 +20,17 @@ cet_make_library( LIBRARY_NAME sbndaq-artdaq-core_Overlays_Common
 		  BernCRTFragmentV2.cc
 		  WhiteRabbitFragment.cc
 		  DummyFragment.cc
+		  BernCRTTranslator.cc
 		  LIBRARIES
 		  ${ARTDAQ_DAQDATA}
 		  ${ARTDAQ-CORE_UTILITIES}
 		  ${CETLIB}
 		  ${CETLIB_EXCEPT}
+		  ${ROOT_BASIC_LIB_LIST}
+		  ${ARTDAQ-CORE_UTILITIES}
+                  artdaq-core_Data
 )
+
 
 install_headers()
 install_source()
