@@ -2,8 +2,7 @@
 # This line defines the product name and version
 
 parent sbndaq_artdaq_core       v0_07_08_of0
-defaultqual e19:s106
-
+defaultqual e20:s110
 
 # These optional lines define the installed directories where
 # headers, libraries, and executables will be found
@@ -21,10 +20,7 @@ fcldir      -
 #
 
 product             version      optional
-artdaq_core         v3_06_13     s110
-artdaq_core         v3_06_12      -default-
-
-
+artdaq_core         v3_06_13
 cetbuildtools       v7_17_01      -       only_for_build
 end_product_list
 
@@ -34,10 +30,10 @@ qualifier                artdaq_core
 
 #for offline
 
-e19:prof                 e19:prof:s102
-e19:debug                e19:debug:s102
-c7:debug                 c7:debug:s102
-c7:prof                  c7:prof:s102
+e20:prof                 e20:prof:s110
+e20:debug                e20:debug:s110
+c7:debug                 c7:debug:s110
+c7:prof                  c7:prof:s110
 
 
 # Note that python3 is now the default for LArSoft with v08_41_00
