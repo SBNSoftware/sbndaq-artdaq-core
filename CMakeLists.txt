@@ -11,7 +11,7 @@ cmake_minimum_required (VERSION 3.17)
 
 find_package(cetbuildtools)
 
-project(sbndaq_artdaq_core VERSION 0.08.02)
+project(sbndaq_artdaq_core VERSION 0.08.03)
 
 string(FIND $ENV{MRB_QUALS} "icarus" ICARUS_FOUND)
 IF (ICARUS_FOUND EQUAL -1)
@@ -41,7 +41,7 @@ IF (NOT CETBUILDTOOLS_VERSION)
     MESSAGE (FATAL_ERROR "ERROR: setup cetbuildtools to get the cmake modules")
 ENDIF()
 
-set(CMAKE_MODULE_PATH 
+set(CMAKE_MODULE_PATH
         $ENV{ART_DIR}/Modules
         $ENV{CETBUILDTOOLS_DIR}/Modules
         ${CMAKE_MODULE_PATH})
