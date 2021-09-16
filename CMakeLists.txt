@@ -25,7 +25,7 @@ cet_cmake_env()
 cet_set_compiler_flags(DIAGS VIGILANT
   WERROR
   NO_UNDEFINED
-  EXTRA_FLAGS -DRTI_UNIX -DRTI_LINUX -DRTI_64BIT -m64
+  EXTRA_FLAGS -pedantic -pthread
 )
 
 string(TOUPPER ${CMAKE_BUILD_TYPE} BTYPE_UC)
@@ -110,7 +110,7 @@ IF(SBND_BUILD)
 
 ENDIF()
 
-# macros for art_dictionary and simple_plugin
+# macros for art_dictionary and basic_plugin
 #include(ArtMake)
 include(CetTest)
 
