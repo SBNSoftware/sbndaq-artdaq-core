@@ -1,7 +1,7 @@
 add_subdirectory(NevisTPC)
 
 cet_make_library( LIBRARY_NAME sbndaq-artdaq-core_Overlays_SBND
-      SOURCE 
+      SOURCE
       PTB_content.cc
       PTBFragment.cc
       NevisTPCFragment.cc
@@ -13,7 +13,6 @@ cet_make_library( LIBRARY_NAME sbndaq-artdaq-core_Overlays_SBND
       cetlib
       cetlib_except
 )
-
 
 install_headers()
 install_source()

@@ -1,6 +1,7 @@
 add_definitions(-Wno-nested-anon-types)
+
 cet_make_library( LIBRARY_NAME sbndaq-artdaq-core_Overlays
-      SOURCE 
+      SOURCE
       FragmentType.cc
       LIBRARIES
       artdaq_core::artdaq-core_Data

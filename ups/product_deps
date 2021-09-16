@@ -19,55 +19,13 @@ fcldir      -
 #
 product             version       optional
 
-artdaq_core         v3_07_05
-cetbuildtools       v8_13_04     -       only_for_build
+artdaq_core         v3_08_00
+cetmodules          v2_26_00      -       only_for_build
 end_product_list
 
 # -nq- here means there is no qualifier
 # a "-" here means the dependent product is not required by the parent and will not be setup
 qualifier                artdaq_core
-c7:prof:s106              c7:prof:s106
-c7:debug:s106             c7:debug:s106
-e19:prof:s106             e19:prof:s106
-e19:debug:s106            e19:debug:s106
-e19:prof:icarus:s106      e19:prof:s106
-e19:debug:icarus:s106     e19:debug:s106
-e19:prof:sbnd:s106        e19:prof:s106
-e19:debug:sbnd:s106       e19:debug:s106
-e20:prof:s106             e20:prof:s106
-e20:debug:s106            e20:debug:s106
-e20:prof:icarus:s106      e20:prof:s106
-e20:debug:icarus:s106     e20:debug:s106
-e20:prof:sbnd:s106        e20:prof:s106
-e20:debug:sbnd:s106       e20:debug:s106
-c7:prof:s108              c7:prof:s108
-c7:debug:s108             c7:debug:s108
-e19:prof:s108             e19:prof:s108
-e19:debug:s108            e19:debug:s108
-e19:prof:icarus:s108      e19:prof:s108
-e19:debug:icarus:s108     e19:debug:s108
-e19:prof:sbnd:s108        e19:prof:s108
-e19:debug:sbnd:s108       e19:debug:s108
-e20:prof:s108             e20:prof:s108
-e20:debug:s108            e20:debug:s108
-e20:prof:icarus:s108      e20:prof:s108
-e20:debug:icarus:s108     e20:debug:s108
-e20:prof:sbnd:s108        e20:prof:s108
-e20:debug:sbnd:s108       e20:debug:s108
-c7:prof:s109              c7:prof:s109
-c7:debug:s109             c7:debug:s109
-e19:prof:s109             e19:prof:s109
-e19:debug:s109            e19:debug:s109
-e19:prof:icarus:s109      e19:prof:s109
-e19:debug:icarus:s109     e19:debug:s109
-e19:prof:sbnd:s109        e19:prof:s109
-e19:debug:sbnd:s109       e19:debug:s109
-e20:prof:s109             e20:prof:s109
-e20:debug:s109            e20:debug:s109
-e20:prof:icarus:s109      e20:prof:s109
-e20:debug:icarus:s109     e20:debug:s109
-e20:prof:sbnd:s109        e20:prof:s109
-e20:debug:sbnd:s109       e20:debug:s109
 c7:prof:s110              c7:prof:s110
 c7:debug:s110             c7:debug:s110
 e19:prof:s110             e19:prof:s110
@@ -82,20 +40,6 @@ e20:prof:icarus:s110      e20:prof:s110
 e20:debug:icarus:s110     e20:debug:s110
 e20:prof:sbnd:s110        e20:prof:s110
 e20:debug:sbnd:s110       e20:debug:s110
-c7:prof:s111              c7:prof:s111
-c7:debug:s111             c7:debug:s111
-e19:prof:s111             e19:prof:s111
-e19:debug:s111            e19:debug:s111
-e19:prof:icarus:s111      e19:prof:s111
-e19:debug:icarus:s111     e19:debug:s111
-e19:prof:sbnd:s111        e19:prof:s111
-e19:debug:sbnd:s111       e19:debug:s111
-e20:prof:s111             e20:prof:s111
-e20:debug:s111            e20:debug:s111
-e20:prof:icarus:s111      e20:prof:s111
-e20:debug:icarus:s111     e20:debug:s111
-e20:prof:sbnd:s111        e20:prof:s111
-e20:debug:sbnd:s111       e20:debug:s111
 c7:prof:s112              c7:prof:s112
 c7:debug:s112             c7:debug:s112
 e19:prof:s112             e19:prof:s112

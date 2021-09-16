@@ -1,5 +1,5 @@
 cet_make_library( LIBRARY_NAME sbndaq-artdaq-core_Overlays_Common_Utilities
-      SOURCE 
+      SOURCE
       Utilities.cc
       LIBRARIES
       artdaq_core::artdaq-core_Data
@@ -7,12 +7,12 @@ cet_make_library( LIBRARY_NAME sbndaq-artdaq-core_Overlays_Common_Utilities
       cetlib
       cetlib_except
       MF_MessageLogger
-                  ${Boost_SYSTEM_LIBRARY}
-                  ${MF_UTILITIES}
+      ${Boost_SYSTEM_LIBRARY}
+      ${MF_UTILITIES}
 )
 
 cet_make_library( LIBRARY_NAME sbndaq-artdaq-core_Overlays_Common
-      SOURCE 
+      SOURCE
       CAENV1730Fragment.cc
       SpectratimeEventFragment.cc
       BernCRTZMQFragment.cc
