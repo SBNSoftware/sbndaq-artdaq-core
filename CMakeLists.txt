@@ -25,7 +25,7 @@ cet_cmake_env()
 cet_set_compiler_flags(DIAGS VIGILANT
   WERROR
   NO_UNDEFINED
-  EXTRA_FLAGS -pedantic -pthread
+  EXTRA_FLAGS -pedantic
 )
 
 string(TOUPPER ${CMAKE_BUILD_TYPE} BTYPE_UC)
@@ -87,19 +87,18 @@ IF (NOT(SBND_BUILD OR ICARUS_BUILD))
 ENDIF()
 
 
-# these are minimum required versions, not the actual product versions
-find_ups_product( messagefacility )
+#find_ups_product( messagefacility )
 find_ups_product( artdaq_core )
 find_ups_product( TRACE )
-find_ups_product( cetlib v3_13_01 )
-find_ups_product( cetlib_except v1_07_01 )
-find_ups_boost( v1_73_0 filesystem
-                        program_options
-                        unit_test_framework
- )
+find_ups_product( cetlib )
+find_ups_product( cetlib_except)
+#find_ups_boost( v1_73_0 filesystem
+#                        program_options
+#                        unit_test_framework
+# )
 
 
-find_ups_product( cetbuildtools v8_13_04 )
+#find_ups_product( cetbuildtools v8_13_04 )
 
 #experiment specific products needed
 IF(ICARUS_BUILD)
@@ -111,7 +110,6 @@ IF(SBND_BUILD)
 ENDIF()
 
 # macros for art_dictionary and basic_plugin
-#include(ArtMake)
 include(CetTest)
 
 # source
