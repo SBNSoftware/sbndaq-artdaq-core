@@ -11,8 +11,8 @@ artdaq::PackageBuildInfo GetPackageBuildInfo::getPackageBuildInfo()
     artdaq::PackageBuildInfo pkg;
 
     pkg.setPackageName ( "sbndaq-artdaq-core" );
-    pkg.setPackageVersion ( "@version@" );
-    pkg.setBuildTimestamp ( "@utcDateTime@" );
+    pkg.setPackageVersion( "@version_with_git@" );
+    pkg.setBuildTimestamp( "@utcDateTime@" );
 
     return pkg;
 }

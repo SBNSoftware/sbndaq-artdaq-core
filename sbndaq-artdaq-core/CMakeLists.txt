@@ -1,6 +1,10 @@
-# Main library.
+set ( LIBRARY_CORE_LIB_LIST
+    artdaq_core::artdaq-core_Data
+    artdaq_core::artdaq-core_Utilities
+    cetlib
+    cetlib_except
+)
 
-# Subdirectories.
 add_subdirectory(BuildInfo)
 add_subdirectory(Trace)
 add_subdirectory(Overlays)
