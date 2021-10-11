@@ -1,5 +1,3 @@
-#include "canvas/Utilities/Exception.h"
-
 #include "BernCRTZMQFragment.hh"
 #include "BernCRTFragment.hh"
 #include "BernCRTFragmentV2.hh"
