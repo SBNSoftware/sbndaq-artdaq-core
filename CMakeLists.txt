@@ -6,28 +6,79 @@
 #  buildtool
 # ======================================================================
 
+cmake_minimum_required (VERSION 3.18.2)
 
-cmake_minimum_required (VERSION 3.12...3.18 FATAL_ERROR)
+find_package(cetmodules)
+set(CET_CETBUILDTOOLS_COMPAT TRUE)
+include(Compatibility)
+set(CET_WARN_DEPRECATED)
 
-project(sbndaq-artdaq-core LANGUAGES CXX)
+project(sbndaq_artdaq_core VERSION 1.00.00)
 
-#optional build setup
+set(CMAKE_MODULE_PATH
+  $ENV{ARTDAQ_UTILITIES_DIR}/Modules
+  ${CMAKE_MODULE_PATH})
+include(CetCMakeEnv)
 
-string(FIND $ENV{MRB_QUALS} "icarus" ICARUS_FOUND)
-IF (ICARUS_FOUND EQUAL -1)
-   MESSAGE ("No ICARUS_BUILD?")
-ELSE()
-   SET(ICARUS_BUILD 1)
-   MESSAGE ("Performing ICARUS_BUILD")
-ENDIF()
+cet_cmake_env()
 
-string(FIND $ENV{MRB_QUALS} "sbnd" SBND_FOUND)
-IF (SBND_FOUND EQUAL -1)
-   MESSAGE ("No SBND_BUILD?")
-ELSE()
-   SET(SBND_BUILD 1)
-   MESSAGE ("Performing SBND_BUILD")
-ENDIF()
+cet_set_compiler_flags(DIAGS VIGILANT
+  WERROR
+  NO_UNDEFINED
+  EXTRA_FLAGS -pedantic
+)
+
+string(TOUPPER ${CMAKE_BUILD_TYPE} BTYPE_UC)
+if(BTYPE_UC STREQUAL DEBUG)
+  add_definitions(-DDEBUGME)
+  if(DEFINED ENV{USE_ASAN})
+    if($ENV{USE_ASAN} GREATER 0)
+      message("!!! Address Sanitizer Activated!!!")
+      add_compile_options(-fsanitize=address -Wno-unused-command-line-argument)
+      add_link_options(-lasan)
+    endif()
+  endif()
+  if(DEFINED ENV{USE_TSAN})
+    if($ENV{USE_TSAN} GREATER 0)
+      message("!!! Thread Sanitizer Activated!!!")
+      add_compile_options(-fsanitize=thread -Wno-unused-command-line-argument)
+      add_link_options(-ltsan)
+    endif()
+  endif()
+  if(DEFINED ENV{USE_GCOV})
+    add_compile_options(-fprofile-arcs -ftest-coverage --coverage)
+    add_link_options(--coverage)
+  endif()
+endif()
+
+#exeption stack trace
+if(DEFINED ENV{USE_EXCEPTIONSTACKTRACE})
+  if($ENV{USE_EXCEPTIONSTACKTRACE} GREATER 0)
+    message("!!! Exception StackTrace Activated!!!")
+    add_definitions(-D EXCEPTIONSTACKTRACE)
+    set( EXCEPTIONSTACKTRACE_LIB  artdaq-core_Utilities_ExceptionStackTrace )
+    add_compile_options( -rdynamic -Wno-unused-command-line-argument )
+    add_link_options( -rdynamic )
+  endif()
+endif()
+
+if(DEFINED $ENV{MRB_QUALS})
+  string(FIND $ENV{MRB_QUALS} "icarus" ICARUS_FOUND)
+  IF (ICARUS_FOUND EQUAL -1)
+     MESSAGE ("No ICARUS_BUILD?")
+  ELSE()
+     SET(ICARUS_BUILD 1)
+     MESSAGE ("Performing ICARUS_BUILD")
+  ENDIF()
+
+  string(FIND $ENV{MRB_QUALS} "sbnd" SBND_FOUND)
+  IF (SBND_FOUND EQUAL -1)
+     MESSAGE ("No SBND_BUILD?")
+  ELSE()
+     SET(SBND_BUILD 1)
+     MESSAGE ("Performing SBND_BUILD")
+  ENDIF()
+endif()
 
 IF (NOT(SBND_BUILD OR ICARUS_BUILD))
    MESSAGE("No experiment-specific build specified. Building all.")
@@ -35,50 +86,19 @@ IF (NOT(SBND_BUILD OR ICARUS_BUILD))
    SET(ICARUS_BUILD 1)
 ENDIF()
 
-# cetbuildtools contains our cmake modules
-find_package(cetbuildtools REQUIRED)
 
-list(APPEND CMAKE_MODULE_PATH $ENV{CANVAS_ROOT_IO_DIR}/Modules)
-
-include(CetCMakeEnv)
-cet_cmake_env()
-
-cet_set_compiler_flags(DIAGS VIGILANT
- WERROR
- NO_UNDEFINED
- EXTRA_FLAGS -pedantic -pthread
- )
-
-SET ( SANITIZE_ADDRESS $ENV{SANITIZE_ADDRESS} )
-IF ( SANITIZE_ADDRESS )
-    MESSAGE (STATUS "Enable  -fsanitize=address -Wno-unused-command-line-argument -fno-omit-frame-pointer")
-    cet_add_compiler_flags(-fsanitize=address -Wno-unused-command-line-argument -fno-omit-frame-pointer)
-ENDIF()
-
-#exception stack trace
-if(DEFINED ENV{USE_EXCEPTIONSTACKTRACE})
-        if($ENV{USE_EXCEPTIONSTACKTRACE} GREATER 0)
-                message("!!! Exception StackTrace Activated!!!")
-                add_definitions(-D EXCEPTIONSTACKTRACE)
-                set( EXCEPTIONSTACKTRACE_LIB  artdaq-core_Utilities_ExceptionStackTrace )
-                cet_add_compiler_flags( -rdynamic )
-        endif()
-endif()
-
-cet_report_compiler_flags()
-
-# these are minimum required versions, not the actual product versions
-#find_ups_product( icarus_artdaq_base v0_08_04 )
-find_ups_product( messagefacility v2_06_01)
+#find_ups_product( messagefacility )
 find_ups_product( artdaq_core )
-find_ups_product (TRACE )
-find_ups_product( cetlib v3_10_00 )
-find_ups_product( cetlib_except v1_04_01 )
-find_ups_boost( v1_70_0 filesystem
-                        program_options
-                        unit_test_framework
- )
+find_ups_product( TRACE )
+find_ups_product( cetlib )
+find_ups_product( cetlib_except)
+#find_ups_boost( v1_73_0 filesystem
+#                        program_options
+#                        unit_test_framework
+# )
 
+
+#find_ups_product( cetbuildtools v8_13_04 )
 
 #experiment specific products needed
 IF(ICARUS_BUILD)
@@ -89,21 +109,10 @@ IF(SBND_BUILD)
 
 ENDIF()
 
-# macros for art_dictionary and simple_plugin
-#include(ArtMake)
+# macros for art_dictionary and basic_plugin
 include(CetTest)
 
 # source
 add_subdirectory(sbndaq-artdaq-core)
 
-# JCF, 8/19/14
-# As of yet, no tests exist for this package
-
-# testing
-# add_subdirectory(test)
-
-# ups - table and config files
-add_subdirectory(ups)
-
-# packaging utility
-include(UseCPack)
+cet_cmake_config()

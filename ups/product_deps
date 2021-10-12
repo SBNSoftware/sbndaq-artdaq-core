@@ -1,7 +1,7 @@
 # The parent line must be the first non-comment line in the file
 # This line defines the product name and version
-parent sbndaq_artdaq_core       v0_07_09
-defaultqual e19:s106
+parent sbndaq_artdaq_core
+defaultqual e19:s112
 
 # These optional lines define the installed directories where
 # headers, libraries, and executables will be found
@@ -17,103 +17,43 @@ bindir      fq_dir      bin
 fcldir      -
 
 #
+product             version       optional
 
-product             version      optional
-artdaq_core         v3_06_13
-cetbuildtools       v7_17_01      -       only_for_build
+artdaq_core         v3_08_00
+cetmodules          v2_26_00      -       only_for_build
 end_product_list
 
 # -nq- here means there is no qualifier
 # a "-" here means the dependent product is not required by the parent and will not be setup
 qualifier                artdaq_core
-
-#for offline
-
-e19:prof                 e19:prof:s102
-e19:debug                e19:debug:s102
-c7:debug                 c7:debug:s102
-c7:prof                  c7:prof:s102
-
-
-# Note that python3 is now the default for LArSoft with v08_41_00
-e19:prof:s94             e19:prof:s94
-e19:debug:s94            e19:debug:s94
-e19:prof:icarus:s94      e19:prof:s94
-e19:debug:icarus:s94     e19:debug:s94
-e19:prof:sbnd:s94        e19:prof:s94
-e19:debug:sbnd:s94       e19:debug:s94
-
-# Now we must expliclity set the py2 qualifier
-e19:prof:s94:py2         e19:prof:s94:py2
-e19:debug:s94:py2        e19:debug:s94:py2
-e19:prof:icarus:s94:py2  e19:prof:s94:py2
-e19:debug:icarus:s94:py2 e19:debug:s94:py2
-e19:prof:sbnd:s94:py2    e19:prof:s94:py2
-e19:debug:sbnd:s94:py2   e19:debug:s94:py2
-
-# Note that python3 is now the default for LArSoft with v08_46_00
-e19:prof:s96             e19:prof:s96
-e19:debug:s96            e19:debug:s96
-e19:prof:icarus:s96      e19:prof:s96
-e19:debug:icarus:s96     e19:debug:s96
-e19:prof:sbnd:s96        e19:prof:s96
-e19:debug:sbnd:s96       e19:debug:s96
-
-# Now we must expliclity set the py2 qualifier
-e19:prof:s96:py2         e19:prof:s96:py2
-e19:debug:s96:py2        e19:debug:s96:py2
-e19:prof:icarus:s96:py2  e19:prof:s96:py2
-e19:debug:icarus:s96:py2 e19:debug:s96:py2
-e19:prof:sbnd:s96:py2    e19:prof:s96:py2
-e19:debug:sbnd:s96:py2   e19:debug:s96:py2
-
-# Note that python3 is now the default for LArSoft with v08_46_00
-e19:prof:s97             e19:prof:s97
-e19:debug:s97            e19:debug:s97
-e19:prof:icarus:s97      e19:prof:s97
-e19:debug:icarus:s97     e19:debug:s97
-e19:prof:sbnd:s97        e19:prof:s97
-e19:debug:sbnd:s97       e19:debug:s97
-
-# Now we must expliclity set the py2 qualifier
-e19:prof:s97:py2         e19:prof:s97:py2
-e19:debug:s97:py2        e19:debug:s97:py2
-e19:prof:icarus:s97:py2  e19:prof:s97:py2
-e19:debug:icarus:s97:py2 e19:debug:s97:py2
-e19:prof:sbnd:s97:py2    e19:prof:s97:py2
-e19:debug:sbnd:s97:py2   e19:debug:s97:py2
-
-# Note that python3 is now the default for LArSoft with v???
-e19:prof:s106             e19:prof:s106
-e19:debug:s106            e19:debug:s106
-e19:prof:icarus:s106      e19:prof:s106
-e19:debug:icarus:s106     e19:debug:s106
-e19:prof:sbnd:s106        e19:prof:s106
-e19:debug:sbnd:s106       e19:debug:s106
-
-# Note that python3 is now the default for LArSoft with v???
-e20:prof:s106             e20:prof:s106
-e20:debug:s106            e20:debug:s106
-e20:prof:icarus:s106      e20:prof:s106
-e20:debug:icarus:s106     e20:debug:s106
-e20:prof:sbnd:s106        e20:prof:s106
-e20:debug:sbnd:s106       e20:debug:s106
-
-# Note that python3 is now the default for LArSoft with v09_26_00
-c7:prof:s110             c7:prof:s110
-c7:debug:s110            c7:debug:s110
-c7:prof:icarus:s110      c7:prof:s110
-c7:debug:icarus:s110     c7:debug:s110
-c7:prof:sbnd:s110        c7:prof:s110
-c7:debug:sbnd:s110       c7:debug:s110
-
-# Note that python3 is now the default for LArSoft with v09_26_00
+c7:prof:s110              c7:prof:s110
+c7:debug:s110             c7:debug:s110
+e19:prof:s110             e19:prof:s110
+e19:debug:s110            e19:debug:s110
+e19:prof:icarus:s110      e19:prof:s110
+e19:debug:icarus:s110     e19:debug:s110
+e19:prof:sbnd:s110        e19:prof:s110
+e19:debug:sbnd:s110       e19:debug:s110
 e20:prof:s110             e20:prof:s110
 e20:debug:s110            e20:debug:s110
 e20:prof:icarus:s110      e20:prof:s110
 e20:debug:icarus:s110     e20:debug:s110
 e20:prof:sbnd:s110        e20:prof:s110
 e20:debug:sbnd:s110       e20:debug:s110
+c7:prof:s112              c7:prof:s112
+c7:debug:s112             c7:debug:s112
+e19:prof:s112             e19:prof:s112
+e19:debug:s112            e19:debug:s112
+e19:prof:icarus:s112      e19:prof:s112
+e19:debug:icarus:s112     e19:debug:s112
+e19:prof:sbnd:s112        e19:prof:s112
+e19:debug:sbnd:s112       e19:debug:s112
+e20:prof:s112             e20:prof:s112
+e20:debug:s112            e20:debug:s112
+e20:prof:icarus:s112      e20:prof:s112
+e20:debug:icarus:s112     e20:debug:s112
+e20:prof:sbnd:s112        e20:prof:s112
+e20:debug:sbnd:s112       e20:debug:s112
 # Preserve tabs and formatting in emacs and vi / vim:
 
 ### Local Variables:
