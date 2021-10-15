@@ -14,8 +14,9 @@ include(Compatibility)
 set(CET_WARN_DEPRECATED)
 
 project(sbndaq_artdaq_core)
+set(${PROJECT_NAME}_CMAKE_PROJECT_VERSION_STRING 1.00.00.of0)
 
-set(${PROJECT_NAME}_CMAKE_PROJECT_VERSION_STRING 0.07.09.of2)
+#project(sbndaq_artdaq_core VERSION 1.00.00.of0)
 
 set(CMAKE_MODULE_PATH
   $ENV{ARTDAQ_UTILITIES_DIR}/Modules
