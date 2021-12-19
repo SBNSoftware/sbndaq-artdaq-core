@@ -5,6 +5,7 @@ cet_make_library( LIBRARY_NAME sbndaq-artdaq-core_Overlays_SBND
 		  PTB_content.cc
 		  PTBFragment.cc
 		  NevisTPCFragment.cc
+		  NevisTBFragment.cc
 		  LIBRARIES
 		  sbndaq-artdaq-core_Overlays_SBND_NevisTPC
 		  ${ARTDAQ_DAQDATA}
