@@ -31,9 +31,13 @@ struct icarus::ICARUSTriggerInfo
   long wr_seconds;
   long wr_nanoseconds;
   long gate_id;
+  long gate_id_BNB;
+  long gate_id_NuMI;
+  long gate_id_BNBOff;
+  long gate_id_NuMIOff;
   int gate_type;
-  //long beam_seconds;
-  //long beam_nanoseconds;
+  long beam_seconds;
+  long beam_nanoseconds;
   ICARUSTriggerInfo() {
     name = ""; 
     event_no = -1; 
@@ -45,8 +49,12 @@ struct icarus::ICARUSTriggerInfo
     wr_nanoseconds = -3;
     gate_id = -4;
     gate_type = 0;
-    //beam_seconds = 0;
-    //beam_nanoseconds = 0;
+    gate_id_BNB = -4;
+    gate_id_NuMI = -4;
+    gate_id_BNBOff = -4;
+    gate_id_NuMIOff = -4;
+    beam_seconds = 0;
+    beam_nanoseconds = 0;
   }
   uint64_t getNanoseconds_since_UTC_epoch() {
     if(wr_seconds == -2 || wr_nanoseconds == -3)
@@ -88,15 +96,15 @@ icarus::ICARUSTriggerInfo icarus::parse_ICARUSTriggerString(const char* buffer)
       info.wr_seconds = std::stol(sections[6]);
       info.wr_nanoseconds = std::stol(sections[7]);
       info.gate_id = std::stol(sections[9]);
-      info.gate_type = std::stoi(sections[11]);
+      info.gate_id_BNB = std::stol(sections[11]);
+      info.gate_id_NuMI = std::stol(sections[13]);
+      info.gate_id_BNBOff = std::stol(sections[15]);
+      info.gate_id_NuMIOff = std::stol(sections[17]);
+      info.gate_type = std::stoi(sections[19]);
+      info.beam_seconds = std::stol(sections[22]);
+      info.beam_nanoseconds = std::stol(sections[23]); 
+ 
     }
-  /*
-  if(sections.size() > 12)
-  {
-    info.beam_seconds = std::stol(sections[14]);
-    info.beam_nanoseconds = std::stol(sections[15]);
-  }
-  */
   return info;
 }
 
@@ -109,17 +117,22 @@ public:
   ICARUSTriggerUDPFragmentMetadata() {}
   ICARUSTriggerUDPFragmentMetadata(uint64_t ntp_t, 
 				   uint64_t last_ts, 
-				   uint64_t last_ts_bnb, uint64_t last_ts_numi, uint64_t last_ts_other,
+				   uint64_t last_ts_bnb, uint64_t last_ts_numi, uint64_t last_ts_bnboff,
+				   uint64_t last_ts_numioff,uint64_t last_ts_other,
 				   long dg,
-				   long dg_bnb, long dg_numi, long dg_other) 
+				   long dg_bnb, long dg_numi, long dg_bnboff, long dg_numioff,  long dg_other) 
     : ntp_time(ntp_t)
     , last_timestamp(last_ts)
     , last_timestamp_bnb(last_ts_bnb)
     , last_timestamp_numi(last_ts_numi)
+    , last_timestamp_bnboff(last_ts_bnboff)
+    , last_timestamp_numioff(last_ts_numioff)  
     , last_timestamp_other(last_ts_other)
     , delta_gates(dg) 
     , delta_gates_bnb(dg_bnb) 
-    , delta_gates_numi(dg_numi) 
+    , delta_gates_numi(dg_numi)
+    , delta_gates_bnboff(dg_bnboff)
+    , delta_gates_numioff(dg_numioff)
     , delta_gates_other(dg_other) 
   {}
   
@@ -135,6 +148,12 @@ public:
   uint64_t getLastTimestampNuMI() const
   { return last_timestamp_numi; }
 
+  uint64_t getLastTimestampBNBOff() const
+  { return last_timestamp_bnboff; }
+  
+  uint getLastTimestampNuMIOff() const
+  { return last_timestamp_numioff; }
+  
   uint64_t getLastTimestampOther() const
   { return last_timestamp_other; }
 
@@ -147,6 +166,12 @@ public:
   long getDeltaGatesNuMI() const
   { return delta_gates_numi; }
 
+  long getDeltaGatesBNBOff() const
+  { return delta_gates_bnboff; }
+  
+  long getDeltaGatesNuMIOff() const
+  { return delta_gates_numioff; }
+
   long getDeltaGatesOther() const
   { return delta_gates_other; }
 
@@ -155,11 +180,15 @@ private:
   uint64_t last_timestamp;
   uint64_t last_timestamp_bnb;
   uint64_t last_timestamp_numi;
+  uint64_t last_timestamp_bnboff;
+  uint64_t last_timestamp_numioff;
   uint64_t last_timestamp_other;
 
   long delta_gates;
   long delta_gates_bnb;
   long delta_gates_numi;
+  long delta_gates_bnboff;
+  long delta_gates_numioff;
   long delta_gates_other;
 
 
@@ -214,21 +243,39 @@ public:
   long getGateID() const
   { return info.gate_id; }
 
+  long getGateIDBNB() const
+  { return info.gate_id_BNB; }
+  
+  long getGateIDNuMI() const
+  { return info.gate_id_NuMI; }
+  
+  long getGateIDBNBOff() const
+  { return info.gate_id_BNBOff; }
+  
+  long gateGateIDNuMIOff() const
+  { return info.gate_id_NuMIOff; }
+
   bool isBNB() const
   { return getGateType()==1; }
 
   bool isNuMI() const
   { return getGateType()==2; }
 
+  bool isBNBOff() const
+  { return getGateType()==3; }
+  
+  bool isNuMIOff() const
+  { return getGateType()==4; }
+
   int getGateType() const
   { return info.gate_type; }
-  /*
+  
   long getBeamSeconds() const
   { return info.beam_seconds; }
 
   long getBeamNanoSeconds() const
   { return info.beam_nanoseconds; }
-  */
+  
   uint64_t getLastTimestamp() const
   { return Metadata()->getLastTimestamp(); }
 
@@ -242,6 +289,10 @@ public:
   { return Metadata()->getLastTimestampBNB(); }
   uint64_t getLastTimestampNuMI() const
   { return Metadata()->getLastTimestampNuMI(); }
+  uint64_t getLastTimestampBNBOff() const
+  { return Metadata()->getLastTimestampBNBOff(); }
+  uint64_t getLastTimestampNuMIOff() const
+  { return Metadata()->getLastTimestampNuMIOff(); }
   uint64_t getLastTimestampOther() const
   { return Metadata()->getLastTimestampOther(); }
   
@@ -249,6 +300,10 @@ public:
   { return Metadata()->getDeltaGatesBNB(); }
   long getDeltaGatesNuMI() const
   { return Metadata()->getDeltaGatesNuMI(); }
+  long getDeltaGatesBNBOff() const
+  { return Metadata()->getDeltaGatesBNBOff(); }
+  long getDeltaGatesNuMIOff() const
+  { return Metadata()->getDeltaGatesNuMIOff(); }
   long getDeltaGatesOther() const
   { return Metadata()->getDeltaGatesOther(); }
 
