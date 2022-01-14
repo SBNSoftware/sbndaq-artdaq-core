@@ -36,7 +36,8 @@ std::ostream & sbndaq::operator << (std::ostream & os, BernCRTHitV2 const & h) {
     if(!(i_c % 8)) os<<"\n\t";
     os << " ["<<std::setw(2)<<i_c<<"]: " <<std::setw(4)<< h.adc[i_c];
   }
-  os << "\n\tCoincidence:      " << std::bitset<32>(h.coinc)
+  os
+//     << "\n\tCoincidence:      " << std::bitset<32>(h.coinc)
      << "\n\tTimestamp:        " << sbndaq::BernCRTFragment::print_timestamp(h.timestamp)
      << "\n\tFEB hit number:   " << h.feb_hit_number
      << "\n\tLost hits:        " << h.lost_hits

@@ -81,7 +81,7 @@ struct sbndaq::BernCRTHitV2 {
   uint32_t ts0      = 0;
   uint32_t ts1      = 0;
   uint16_t adc[32]  = {0};
-  uint32_t coinc    = 0; //NOTE: only 16 bits seem to be used. We could make it uint16_t
+//  uint32_t coinc    = 0; //AA Jan 14: commenting out for the purpose of tests at DAB
 
   //Data added by fragment generator
   uint64_t  feb_hit_number          = 0; //hit counter for individual FEB, including hits lost in FEB or fragment generator
