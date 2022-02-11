@@ -18,6 +18,7 @@ icarus::crt::BernCRTTranslator icarus::crt::BernCRTTranslator::analyze_BernCRTZM
 
   out.timestamp        = frag.timestamp();
   out.sequence_id      = frag.sequenceID();
+  out.fragment_ID      = frag.fragmentID();
 
   //event data
   const sbndaq::BernCRTZMQEvent* bevt = bern_fragment.eventdata();
@@ -60,7 +61,7 @@ icarus::crt::BernCRTTranslator icarus::crt::BernCRTTranslator::analyze_BernCRTFr
 
   out.timestamp        = frag.timestamp();
   out.sequence_id      = frag.sequenceID();
-
+  out.fragment_ID      = frag.fragmentID();
   //event data
   const sbndaq::BernCRTEvent* bevt = bern_fragment.eventdata();
 //  TLOG(TLVL_INFO)<<*bevt;
@@ -124,6 +125,7 @@ std::vector<icarus::crt::BernCRTTranslator> icarus::crt::BernCRTTranslator::anal
     for(int ch=0; ch<32; ch++) out.adc[ch] = bevt->adc[ch];
 
     out.sequence_id               = frag.sequenceID();
+    out.fragment_ID		  = frag.fragmentID();
 
     //metadata
     out.mac5                      = md->MAC5();
@@ -209,6 +211,7 @@ std::vector<icarus::crt::BernCRTTranslator> icarus::crt::BernCRTTranslator::getC
 
 std::ostream & icarus::crt::operator << (std::ostream & os, icarus::crt::BernCRTTranslator const& t){
   os <<"\n\tMAC5:              0x" << std::hex << (int)t.mac5 << std::dec << " (" << (int)t.mac5 << ")"
+     << "\n\tFragment ID:	" << t.fragment_ID 
      << "\n\tRun start time:    " << sbndaq::BernCRTFragment::print_timestamp(t.run_start_time)
      << "\n\tThis poll start:   " << sbndaq::BernCRTFragment::print_timestamp(t.this_poll_start)
      << "\n\tThis poll finish:  " << sbndaq::BernCRTFragment::print_timestamp(t.this_poll_end)
