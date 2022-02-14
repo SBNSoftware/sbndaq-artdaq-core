@@ -14,7 +14,7 @@ include(Compatibility)
 set(CET_WARN_DEPRECATED)
 
 project(sbndaq_artdaq_core)
-set(${PROJECT_NAME}_CMAKE_PROJECT_VERSION_STRING 1.00.00.of0)
+set(${PROJECT_NAME}_CMAKE_PROJECT_VERSION_STRING 1.00.00.of1)
 
 #project(sbndaq_artdaq_core VERSION 1.00.00.of0)
 
