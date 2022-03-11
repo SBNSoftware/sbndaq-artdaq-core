@@ -21,6 +21,6 @@ namespace sbndaq {
 
   };
 
-} // namespace sbnd::comm
+} // namespace sbndaq
 
 #endif
