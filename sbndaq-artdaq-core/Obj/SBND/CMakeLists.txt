@@ -3,7 +3,6 @@ cet_make_library(
     sbndaq-artdaq-core_Obj_SBND
   SOURCE
     testStandTrigger.cc
-    pmtTrigger.cc
   LIBRARIES
     ${LIBRARY_CORE_LIB_LIST}
 )

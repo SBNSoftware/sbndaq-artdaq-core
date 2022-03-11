@@ -1,6 +1,4 @@
 <lcgdict>
   <class name="sbndaq::testStandTrigger"/>
   <class name="art::Wrapper<sbndaq::testStandTrigger>"/>
-  <class name="sbndaq::pmtTrigger"/>
-  <class name="art::Wrapper<sbndaq::pmtTrigger>"/>
 </lcgdict>
