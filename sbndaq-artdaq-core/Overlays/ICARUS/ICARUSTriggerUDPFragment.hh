@@ -6,6 +6,8 @@
 
 #include <iostream>
 #include <chrono>
+#include <string>
+#include <map>
 
 
 namespace icarus {
@@ -22,6 +24,7 @@ namespace icarus {
 
 struct icarus::ICARUSTriggerInfo
 {
+  int version;
   std::string name;
   long event_no;
   long seconds;
@@ -30,6 +33,9 @@ struct icarus::ICARUSTriggerInfo
   long wr_event_no;
   long wr_seconds;
   long wr_nanoseconds;
+  int enable_type;
+  long enable_seconds;
+  long enable_nanoseconds;
   long gate_id;
   long gate_id_BNB;
   long gate_id_NuMI;
@@ -38,7 +44,17 @@ struct icarus::ICARUSTriggerInfo
   int gate_type;
   long beam_seconds;
   long beam_nanoseconds;
+  int trigger_type;
+  int trigger_source;
+  std::string cryo1_e_conn_0;
+  std::string cryo1_e_conn_2;
+  std::string cryo2_w_conn_0;
+  std::string cryo2_w_conn_2;
+  long cryo1_east_counts;
+  long cryo2_west_counts;
+
   ICARUSTriggerInfo() {
+    version = 0;
     name = ""; 
     event_no = -1; 
     seconds = -2; 
@@ -47,6 +63,9 @@ struct icarus::ICARUSTriggerInfo
     wr_event_no = -1; 
     wr_seconds = -2; 
     wr_nanoseconds = -3;
+    enable_type = -1;
+    enable_seconds = 0;
+    enable_nanoseconds = 0;
     gate_id = -4;
     gate_type = 0;
     gate_id_BNB = -4;
@@ -55,6 +74,15 @@ struct icarus::ICARUSTriggerInfo
     gate_id_NuMIOff = -4;
     beam_seconds = 0;
     beam_nanoseconds = 0;
+    trigger_type = 0;
+    trigger_source = 0;
+    cryo1_e_conn_0 = "";
+    cryo1_e_conn_2 = "";
+    cryo2_w_conn_0 = "";
+    cryo2_w_conn_2 = "";
+    cryo1_east_counts = -1;
+    cryo2_west_counts = -1;
+    
   }
   uint64_t getNanoseconds_since_UTC_epoch() {
     if(wr_seconds == -2 || wr_nanoseconds == -3)
@@ -76,6 +104,12 @@ icarus::ICARUSTriggerInfo icarus::parse_ICARUSTriggerString(const char* buffer)
   std::string delimiter = ",";
   std::vector<std::string> sections;
   std::string token = "";
+  std::map<std::string, std::string> elements;
+  std::string beam_ts = "Beam_TS";
+  std::string wr_ts = "WR_TS";
+  std::string local_ts = "Local_TS";
+  std::string enable_ts = "Enable_TS";
+  
   while ((pos = data_input.find(delimiter)) != std::string::npos) {
     token = data_input.substr(0, pos);
     sections.push_back(token);
@@ -84,6 +118,99 @@ icarus::ICARUSTriggerInfo icarus::parse_ICARUSTriggerString(const char* buffer)
   sections.push_back(data_input);
   //std::string trig_name = sections[0];                                                                                      
   ICARUSTriggerInfo info;
+  //this should be agnostic to any length (and order) string that follows the key, value, format unless another timestamp is added
+  for(unsigned int i = 0; i < sections.size(); i = i + 2)
+  {
+    //large or statement should do this just fine, need to separate out TS stuff
+    //string.contains is not accessible with the gcc versions we use for this...
+    if(sections[i].find(local_ts) != std::string::npos || sections[i].find(wr_ts) != std::string::npos || sections[i].find(beam_ts) != std::string::npos || sections[i].find(enable_ts) != std::string::npos) 
+    {
+      //event number
+      elements.insert(std::pair<std::string, std::string>(sections[i], sections[i+1]));
+      std::string seco = "sec_" + sections[i];
+      //seconds 
+      elements.insert(std::pair<std::string, std::string>(seco, sections[i+2]));
+      std::string nanoseco = "nanosec_" + sections[i];
+      //nanoseconds
+      elements.insert(std::pair<std::string, std::string>(nanoseco, sections[i+3]));
+      i += 2;
+    }
+    else
+      elements.insert(std::pair<std::string, std::string>(sections[i], sections[i+1]));
+  }
+  //read back map and store values
+  std::map<std::string,std::string>::iterator it = elements.begin();
+  for (it = elements.begin(); it != elements.end(); ++it)
+  {
+    //std::cout << it->first << " => " << it->second << '\n';
+    //lots of if statements based on what's in there now, should stay agnostic if something isn't stored just set to a dummy value that is known, write up defaults here
+    //string.contains not accessible with gcc versions we currently use, implement a workaround to find string within string 
+    if(it->first.find("Version") != std::string::npos)
+      info.version = std::stoi(it->second);
+    if(it->first.find("Local_TS") != std::string::npos)
+    {
+      info.name = it->first;
+      info.event_no = std::stol(it->second);
+    }
+    if(it->first.find("sec_Local") != std::string::npos)
+      info.seconds = std::stol(it->second);
+    if(it->first.find("nanosec_Local") != std::string::npos)
+      info.nanoseconds = std::stol(it->second);
+    if(it->first.find("WR_TS") != std::string::npos)
+    {
+      info.wr_name = it->first;
+      info.wr_event_no = std::stol(it->second);
+    }
+    if(it->first.find("sec_WR") != std::string::npos)
+      info.wr_seconds = std::stol(it->second);
+    if(it->first.find("nanosec_WR") != std::string::npos)
+      info.wr_nanoseconds = std::stol(it->second);
+    if(it->first.find("Enable_Type") != std::string::npos)
+      info.enable_type = std::stoi(it->second);
+    if(it->first.find("sec_Enable") != std::string::npos)
+      info.enable_seconds = std::stol(it->second);
+    if(it->first.find("nanosec_Enable") != std::string::npos)
+      info.enable_nanoseconds = std::stol(it->second);
+    if(it->first.find("Gate ID") != std::string::npos && it->first.find("Beam") == std::string::npos && it->first.find("Offbeam") == std::string::npos ) //only store overall gate ID
+      info.gate_id = std::stol(it->second);
+    if(it->first.find("BNB Beam Gate ID") != std::string::npos)
+       info.gate_id_BNB = std::stol(it->second);
+    if(it->first.find("NuMI Beam Gate ID") != std::string::npos)
+      info.gate_id_NuMI = std::stol(it->second);
+    if(it->first.find("Offbeam BNB Beam Gate ID") != std::string::npos)
+      info.gate_id_BNBOff = std::stol(it->second);
+    if(it->first.find("Offbeam NuMI Beam Gate ID") != std::string::npos)
+      info.gate_id_NuMIOff = std::stol(it->second);
+    if(it->first.find("Gate Type") != std::string::npos)
+      info.gate_type = std::stoi(it->second);
+    if(it->first.find("sec_Beam") != std::string::npos)
+      info.beam_seconds = std::stol(it->second);
+    if(it->first.find("nanosec_Beam") != std::string::npos)
+      info.beam_nanoseconds = std::stol(it->second);
+    if(it->first.find("Trigger Type") != std::string::npos)
+      info.trigger_type = std::stoi(it->second);
+    if(it->first.find("Trigger Source") != std::string::npos)
+      info.trigger_source = std::stoi(it->second);
+   
+    //leave these as strings, figure out how to decode them correctly in decoder program. Do they go into binary or a 64-bit unsigned int directly? (I'd think binary for 1 or 0 if given PMT fired)  
+    if(it->first.find("Cryo1 EAST Connector 0") != std::string::npos)
+      info.cryo1_e_conn_0 = it->second;
+    if(it->first.find("Cryo1 EAST Connector 2") != std::string::npos)
+      info.cryo1_e_conn_2 = it->second;
+    if(it->first.find("Cryo2 WEST Connector 0") != std::string::npos)
+      info.cryo2_w_conn_0 = it->second;
+    if(it->first.find("Cryo2 WEST Connector 2") != std::string::npos)
+      info.cryo2_w_conn_2 = it->second;
+
+    //end PMT hex strings
+    if(it->first.find("Cryo1 EAST Counts") != std::string::npos)
+      info.cryo1_east_counts = std::stol(it->second);
+    if(it->first.find("Cryo2 WEST Counts") != std::string::npos)
+      info.cryo2_west_counts = std::stol(it->second);
+      
+  }
+  //old implementation preserved in case of emergency, rigid hardcoded version where string must appear in a specific order
+  /*
   info.name = sections[0];
   //t->setHardwareTS_Type(sections[0]);                                                                                       
   info.event_no = std::stol(sections[3]);
@@ -105,6 +232,7 @@ icarus::ICARUSTriggerInfo icarus::parse_ICARUSTriggerString(const char* buffer)
       info.beam_nanoseconds = std::stol(sections[31]); 
  
     }
+  */
   return info;
 }
 
