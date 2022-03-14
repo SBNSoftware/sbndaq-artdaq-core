@@ -86,23 +86,23 @@ icarus::ICARUSTriggerInfo icarus::parse_ICARUSTriggerString(const char* buffer)
   ICARUSTriggerInfo info;
   info.name = sections[0];
   //t->setHardwareTS_Type(sections[0]);                                                                                       
-  info.event_no = std::stol(sections[1]);
-  info.seconds = std::stoi(sections[2]);
-  info.nanoseconds = std::stol(sections[3]);
+  info.event_no = std::stol(sections[3]);
+  info.seconds = std::stoi(sections[4]);
+  info.nanoseconds = std::stol(sections[5]);
   if(sections.size() > 5)
     {
-      info.wr_name = sections[4];
-      info.wr_event_no = std::stol(sections[5]);
-      info.wr_seconds = std::stol(sections[6]);
-      info.wr_nanoseconds = std::stol(sections[7]);
-      info.gate_id = std::stol(sections[9]);
-      info.gate_id_BNB = std::stol(sections[11]);
-      info.gate_id_NuMI = std::stol(sections[13]);
-      info.gate_id_BNBOff = std::stol(sections[15]);
-      info.gate_id_NuMIOff = std::stol(sections[17]);
-      info.gate_type = std::stoi(sections[19]);
-      info.beam_seconds = std::stol(sections[22]);
-      info.beam_nanoseconds = std::stol(sections[23]); 
+      info.wr_name = sections[6];
+      info.wr_event_no = std::stol(sections[7]);
+      info.wr_seconds = std::stol(sections[8]);
+      info.wr_nanoseconds = std::stol(sections[9]);
+      info.gate_id = std::stol(sections[17]);
+      info.gate_id_BNB = std::stol(sections[19]);
+      info.gate_id_NuMI = std::stol(sections[21]);
+      info.gate_id_BNBOff = std::stol(sections[23]);
+      info.gate_id_NuMIOff = std::stol(sections[25]);
+      info.gate_type = std::stoi(sections[27]);
+      info.beam_seconds = std::stol(sections[30]);
+      info.beam_nanoseconds = std::stol(sections[31]); 
  
     }
   return info;
