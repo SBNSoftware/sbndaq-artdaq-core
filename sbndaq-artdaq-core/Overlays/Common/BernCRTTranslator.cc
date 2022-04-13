@@ -3,6 +3,7 @@
 #include "BernCRTZMQFragment.hh"
 #include "BernCRTFragment.hh"
 #include "BernCRTFragmentV2.hh"
+#include "BernCRTFragmentV1.hh"
 
 #include "artdaq-core/Data/Fragment.hh"
 #include "artdaq-core/Data/ContainerFragment.hh"
@@ -144,6 +145,53 @@ std::vector<icarus::crt::BernCRTTranslator> icarus::crt::BernCRTTranslator::anal
   return OUT;
 } 
 
+std::vector<icarus::crt::BernCRTTranslator> icarus::crt::BernCRTTranslator::analyze_BernCRTFragmentV1(artdaq::Fragment & frag) {
+  
+  const sbndaq::BernCRTFragmentV1 bern_fragment(frag);
+  const sbndaq::BernCRTFragmentMetadataV1* md = bern_fragment.metadata();
+//  TLOG(TLVL_INFO)<<*bern_fragment;
+
+  const unsigned int nhits      = md->hits_in_fragment();
+  std::vector<icarus::crt::BernCRTTranslator> OUT;
+  OUT.reserve(nhits);
+
+  for(unsigned int iHit = 0; iHit < nhits; iHit++) {
+    icarus::crt::BernCRTTranslator out;
+
+    const sbndaq::BernCRTHitV1* bevt = bern_fragment.eventdata(iHit);
+
+    out.flags                     = bevt->flags;
+    out.lostcpu                   = bevt->lostcpu;
+    out.lostfpga                  = bevt->lostfpga;
+    out.ts0                       = bevt->ts0;
+    out.ts1                       = bevt->ts1;
+    //    out.coinc                     = bevt->coinc;
+    out.feb_hit_number            = bevt->feb_hit_number;
+    out.timestamp                 = bevt->timestamp;
+    out.last_accepted_timestamp   = bevt->last_accepted_timestamp;
+    out.lost_hits                 = bevt->lost_hits;
+
+    for(int ch=0; ch<32; ch++) out.adc[ch] = bevt->adc[ch];
+
+    out.sequence_id               = frag.sequenceID();
+
+    //metadata
+    out.mac5                      = md->MAC5();
+    out.run_start_time            = md->run_start_time();
+    out.this_poll_start           = md->this_poll_start();
+    out.this_poll_end             = md->this_poll_end();
+    out.last_poll_start           = md->last_poll_start();
+    out.last_poll_end             = md->last_poll_end();
+    out.system_clock_deviation    = md->system_clock_deviation();
+    out.hits_in_poll              = md->hits_in_poll();
+ 
+    out.hits_in_fragment          = nhits;
+
+    OUT.push_back(out);
+  }
+  return OUT;
+} 
+
 //std::vector<icarus::crt::BernCRTTranslator> icarus::crt::BernCRTTranslator::getCRTData(art::Event const & evt) {
 std::vector<icarus::crt::BernCRTTranslator> icarus::crt::BernCRTTranslator::getCRTData(std::vector<artdaq::Fragment> const & frags) {
   std::vector<icarus::crt::BernCRTTranslator> out;
@@ -172,6 +220,12 @@ std::vector<icarus::crt::BernCRTTranslator> icarus::crt::BernCRTTranslator::getC
 	  out.push_back(analyze_BernCRTFragment(*contf[ii].get()));
 	}
 	break;
+      case sbndaq::detail::FragmentType::BERNCRTV1:
+	for (size_t ii = 0; ii < contf.block_count(); ++ii) {
+	  std::vector<icarus::crt::BernCRTTranslator> v = analyze_BernCRTFragmentV1(*contf[ii].get());
+	  out.insert( out.end(), v.begin(), v.end() );
+	}
+	break; 
       case sbndaq::detail::FragmentType::BERNCRTV2:
 	for (size_t ii = 0; ii < contf.block_count(); ++ii) {
 	  std::vector<icarus::crt::BernCRTTranslator> v = analyze_BernCRTFragmentV2(*contf[ii].get());
@@ -200,6 +254,13 @@ std::vector<icarus::crt::BernCRTTranslator> icarus::crt::BernCRTTranslator::getC
       out.reserve(out.size() + frags.size());
       for (auto frag : frags) {
 	std::vector<icarus::crt::BernCRTTranslator> v = analyze_BernCRTFragmentV2(frag);
+	out.insert( out.end(), v.begin(), v.end() );
+      }
+      break; 
+    case sbndaq::detail::FragmentType::BERNCRTV1:
+      out.reserve(out.size() + frags.size());
+      for (auto frag : frags) {
+	std::vector<icarus::crt::BernCRTTranslator> v = analyze_BernCRTFragmentV1(frag);
 	out.insert( out.end(), v.begin(), v.end() );
       }
       break; 

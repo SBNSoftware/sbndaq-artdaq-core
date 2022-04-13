@@ -1,5 +1,5 @@
-#ifndef sbndaq_artdaq_core_Overlays_Common_BernCRTFragmentV2_hh
-#define sbndaq_artdaq_core_Overlays_Common_BernCRTFragmentV2_hh
+#ifndef sbndaq_artdaq_core_Overlays_Common_BernCRTFragmentV1_hh
+#define sbndaq_artdaq_core_Overlays_Common_BernCRTFragmentV1_hh
 
 #include "artdaq-core/Data/Fragment.hh"
 #include "cetlib_except/exception.h"
@@ -8,22 +8,22 @@
 #include <sstream>
 #include <string>
 
-// Implementation of "BernCRTFragmentV2", an artdaq::Fragment overlay class
+// Implementation of "BernCRTFragmentV1", an artdaq::Fragment overlay class
 
 namespace sbndaq {
 
-  struct BernCRTHitV2;
-  std::ostream & operator << (std::ostream &, BernCRTHitV2 const &);
+  struct BernCRTHitV1;
+  std::ostream & operator << (std::ostream &, BernCRTHitV1 const &);
 
-  class BernCRTFragmentV2;
-  std::ostream & operator << (std::ostream &, BernCRTFragmentV2 const &);
+  class BernCRTFragmentV1;
+  std::ostream & operator << (std::ostream &, BernCRTFragmentV1 const &);
 
-  class BernCRTFragmentMetadataV2;
-  std::ostream & operator << (std::ostream &, BernCRTFragmentMetadataV2 const&);
+  class BernCRTFragmentMetadataV1;
+  std::ostream & operator << (std::ostream &, BernCRTFragmentMetadataV1 const&);
   
 }
 
-class sbndaq::BernCRTFragmentMetadataV2 {
+class sbndaq::BernCRTFragmentMetadataV1 {
 
 public:
 
@@ -74,7 +74,7 @@ private:
 };
 
 
-struct sbndaq::BernCRTHitV2 {
+struct sbndaq::BernCRTHitV1 {
   uint8_t  flags    = 0;
   uint16_t lostcpu  = 0;
   uint16_t lostfpga = 0; //NOTE: only 8 bits used. We could make it uint8_t
@@ -99,18 +99,18 @@ public:
   const char* c_str() const { std::ostringstream ss; ss << *this; return ss.str().c_str(); }
 };
 
-class sbndaq::BernCRTFragmentV2 {
+class sbndaq::BernCRTFragmentV1 {
 public:
 
-  BernCRTFragmentV2(artdaq::Fragment const & f) : artdaq_Fragment_(f) {}
+  BernCRTFragmentV1(artdaq::Fragment const & f) : artdaq_Fragment_(f) {}
 
-  BernCRTFragmentMetadataV2 const * metadata() const { return artdaq_Fragment_.metadata<BernCRTFragmentMetadataV2>(); }
+  BernCRTFragmentMetadataV1 const * metadata() const { return artdaq_Fragment_.metadata<BernCRTFragmentMetadataV1>(); }
 
-  BernCRTHitV2 const* eventdata(size_t idx) const {
+  BernCRTHitV1 const* eventdata(size_t idx) const {
     if(idx >= metadata()->hits_in_fragment()) {
       throw cet::exception("BernCRTHitOutOfRange") << " Requested Event Index " << std::to_string(idx) << " ≥ " << std::to_string(metadata()->hits_in_fragment());
     }
-    return reinterpret_cast<BernCRTHitV2 const*>(artdaq_Fragment_.dataBeginBytes()) + idx;
+    return reinterpret_cast<BernCRTHitV1 const*>(artdaq_Fragment_.dataBeginBytes()) + idx;
   }
 
   size_t DataPayloadSize() const { return artdaq_Fragment_.dataSizeBytes(); }
@@ -124,4 +124,4 @@ private:
 
 };
 
-#endif /* sbndaq_artdaq_core_Overlays_Common_BernCRTFragmentV2_hh */
+#endif /* sbndaq_artdaq_core_Overlays_Common_BernCRTFragmentV1_hh */

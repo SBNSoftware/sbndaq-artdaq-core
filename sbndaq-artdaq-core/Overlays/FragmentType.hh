@@ -16,6 +16,7 @@ namespace sbndaq {
 	CAENV1730 = artdaq::Fragment::FirstUserFragmentType + 1,
 	SpectratimeEvent = artdaq::Fragment::FirstUserFragmentType + 2,
 	BERNCRT = artdaq::Fragment::FirstUserFragmentType + 9,
+	BERNCRTV1 = artdaq::Fragment::FirstUserFragmentType + 15,
 	BERNCRTV2 = artdaq::Fragment::FirstUserFragmentType + 13,
 	BERNCRTZMQ = artdaq::Fragment::FirstUserFragmentType + 3,
 	WhiteRabbit = artdaq::Fragment::FirstUserFragmentType + 12,
@@ -34,7 +35,7 @@ namespace sbndaq {
 	//Simulators
 	DummyGenerator = artdaq::Fragment::FirstUserFragmentType + 8,
 
-        INVALID = artdaq::Fragment::FirstUserFragmentType + 15 // Should always be last.
+        INVALID = artdaq::Fragment::FirstUserFragmentType + 16 // Should always be last.
         };
 
     // Safety check.

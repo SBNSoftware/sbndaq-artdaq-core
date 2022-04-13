@@ -1,12 +1,12 @@
-#include "sbndaq-artdaq-core/Overlays/Common/BernCRTFragmentV2.hh"
+#include "sbndaq-artdaq-core/Overlays/Common/BernCRTFragmentV1.hh"
 #include "sbndaq-artdaq-core/Overlays/Common/BernCRTFragment.hh" //defines print_timestamp
 #include <iostream>
 #include <bitset>
 
 #include "cetlib_except/exception.h"
 
-std::ostream & sbndaq::operator << (std::ostream & os, BernCRTFragmentMetadataV2 const& m){
-  os << "BernCRTFragmentMetadataV2:"
+std::ostream & sbndaq::operator << (std::ostream & os, BernCRTFragmentMetadataV1 const& m){
+  os << "BernCRTFragmentMetadataV1:"
      << "\n\tMAC5:              0x" << std::hex << (int)m.MAC5() << std::dec << " (" << (int)m.MAC5() << ")"
      << "\n\tRun start time:    " << sbndaq::BernCRTFragment::print_timestamp(m.run_start_time())
      << "\n\tThis poll start:   " << sbndaq::BernCRTFragment::print_timestamp(m.this_poll_start())
@@ -20,8 +20,8 @@ std::ostream & sbndaq::operator << (std::ostream & os, BernCRTFragmentMetadataV2
   return os;
 }
 
-std::ostream & sbndaq::operator << (std::ostream & os, BernCRTHitV2 const & h) {
-  os << "BernCRTHitV2:"
+std::ostream & sbndaq::operator << (std::ostream & os, BernCRTHitV1 const & h) {
+  os << "BernCRTHitV1:"
      << "\n\tFlags:            " << std::bitset<8>(h.flags)
      <<(h.IsOverflow_TS0() ?" [T0 overflow]" :"")
      <<(h.IsOverflow_TS1() ?" [T1 overflow]" :"")
@@ -37,7 +37,7 @@ std::ostream & sbndaq::operator << (std::ostream & os, BernCRTHitV2 const & h) {
     os << " ["<<std::setw(2)<<i_c<<"]: " <<std::setw(4)<< h.adc[i_c];
   }
   os 
-  //  << "\n\tCoincidence:      " << std::bitset<32>(h.coinc)
+    //<< "\n\tCoincidence:      " << std::bitset<32>(h.coinc)
      << "\n\tTimestamp:        " << sbndaq::BernCRTFragment::print_timestamp(h.timestamp)
      << "\n\tFEB hit number:   " << h.feb_hit_number
      << "\n\tLost hits:        " << h.lost_hits
@@ -46,8 +46,8 @@ std::ostream & sbndaq::operator << (std::ostream & os, BernCRTHitV2 const & h) {
   return os;
 }
 
- std::ostream & sbndaq::operator << (std::ostream & os, BernCRTFragmentV2 const & f) {
-  os << "BernCRTFragmentV2: "
+ std::ostream & sbndaq::operator << (std::ostream & os, BernCRTFragmentV1 const & f) {
+  os << "BernCRTFragmentV1: "
      << "\n" << *(f.metadata());
   //Loop over all hits in the fragment
   for(int idx = 0; idx < f.metadata()->hits_in_fragment(); idx++) {
