@@ -91,7 +91,7 @@ struct icarus::ICARUSTriggerInfo
     if(wr_seconds >= 1483228800)
       correction = 37;
     uint64_t const corrected_ts
-      { (wr_seconds-correction)*1'000'000'000ULL + wr_nanoseconds };
+      { (wr_seconds-correction)*1000000000ULL + wr_nanoseconds };
     return corrected_ts;
   }
   
@@ -118,6 +118,7 @@ icarus::ICARUSTriggerInfo icarus::parse_ICARUSTriggerString(const char* buffer)
   sections.push_back(data_input);
   //std::string trig_name = sections[0];                                                                                      
   ICARUSTriggerInfo info;
+  /*
   //this should be agnostic to any length (and order) string that follows the key, value, format unless another timestamp is added
   for(unsigned int i = 0; i < sections.size(); i = i + 2)
   {
@@ -209,9 +210,10 @@ icarus::ICARUSTriggerInfo icarus::parse_ICARUSTriggerString(const char* buffer)
       info.cryo2_west_counts = std::stol(it->second);
       
   }
+  */
   //old implementation preserved in case of emergency, rigid hardcoded version where string must appear in a specific order
-  /*
-  info.name = sections[0];
+ 
+  info.version = std::stoi(sections[1]);
   //t->setHardwareTS_Type(sections[0]);                                                                                       
   info.event_no = std::stol(sections[3]);
   info.seconds = std::stoi(sections[4]);
@@ -222,6 +224,8 @@ icarus::ICARUSTriggerInfo icarus::parse_ICARUSTriggerString(const char* buffer)
       info.wr_event_no = std::stol(sections[7]);
       info.wr_seconds = std::stol(sections[8]);
       info.wr_nanoseconds = std::stol(sections[9]);
+      info.enable_seconds = std::stol(sections[14]);
+      info.enable_nanoseconds = std::stol(sections[15]);
       info.gate_id = std::stol(sections[17]);
       info.gate_id_BNB = std::stol(sections[19]);
       info.gate_id_NuMI = std::stol(sections[21]);
@@ -230,9 +234,13 @@ icarus::ICARUSTriggerInfo icarus::parse_ICARUSTriggerString(const char* buffer)
       info.gate_type = std::stoi(sections[27]);
       info.beam_seconds = std::stol(sections[30]);
       info.beam_nanoseconds = std::stol(sections[31]); 
+      info.trigger_type = std::stoi(sections[33]);
+      info.trigger_source = std::stoi(sections[35]);
+      info.cryo1_east_counts = std::stol(sections[45]);
+      info.cryo2_west_counts = std::stol(sections[47]);
  
     }
-  */
+ 
   return info;
 }
 
@@ -246,21 +254,23 @@ public:
   ICARUSTriggerUDPFragmentMetadata(uint64_t ntp_t, 
 				   uint64_t last_ts, 
 				   uint64_t last_ts_bnb, uint64_t last_ts_numi, uint64_t last_ts_bnboff,
-				   uint64_t last_ts_numioff,uint64_t last_ts_other,
+				   uint64_t last_ts_numioff,uint64_t last_ts_calib, uint64_t last_ts_other,
 				   long dg,
-				   long dg_bnb, long dg_numi, long dg_bnboff, long dg_numioff,  long dg_other) 
+				   long dg_bnb, long dg_numi, long dg_bnboff, long dg_numioff, long dg_calib, long dg_other) 
     : ntp_time(ntp_t)
     , last_timestamp(last_ts)
     , last_timestamp_bnb(last_ts_bnb)
     , last_timestamp_numi(last_ts_numi)
     , last_timestamp_bnboff(last_ts_bnboff)
     , last_timestamp_numioff(last_ts_numioff)  
+    , last_timestamp_calib(last_ts_calib)
     , last_timestamp_other(last_ts_other)
     , delta_gates(dg) 
     , delta_gates_bnb(dg_bnb) 
     , delta_gates_numi(dg_numi)
     , delta_gates_bnboff(dg_bnboff)
     , delta_gates_numioff(dg_numioff)
+    , delta_gates_calib(dg_calib)
     , delta_gates_other(dg_other) 
   {}
   
@@ -279,8 +289,11 @@ public:
   uint64_t getLastTimestampBNBOff() const
   { return last_timestamp_bnboff; }
   
-  uint getLastTimestampNuMIOff() const
+  uint64_t getLastTimestampNuMIOff() const
   { return last_timestamp_numioff; }
+
+  uint64_t getLastTimestampCalib() const
+  { return last_timestamp_calib; }
   
   uint64_t getLastTimestampOther() const
   { return last_timestamp_other; }
@@ -300,6 +313,9 @@ public:
   long getDeltaGatesNuMIOff() const
   { return delta_gates_numioff; }
 
+  long getDeltaGatesCalib() const
+  { return delta_gates_calib; }
+
   long getDeltaGatesOther() const
   { return delta_gates_other; }
 
@@ -310,6 +326,7 @@ private:
   uint64_t last_timestamp_numi;
   uint64_t last_timestamp_bnboff;
   uint64_t last_timestamp_numioff;
+  uint64_t last_timestamp_calib;
   uint64_t last_timestamp_other;
 
   long delta_gates;
@@ -317,6 +334,7 @@ private:
   long delta_gates_numi;
   long delta_gates_bnboff;
   long delta_gates_numioff;
+  long delta_gates_calib;
   long delta_gates_other;
 
 
@@ -343,6 +361,9 @@ public:
   size_t ExpectedDataSize() const
   { return Metadata()->ExpectedDataSize(); }
   */
+
+  int getVersion() const
+  { return info.version; }
   
   std::string getName() const
   { return info.name; }
@@ -367,6 +388,12 @@ public:
 
   long getWRNanoSeconds() const
   { return info.wr_nanoseconds; }
+
+  long getEnableSeconds() const
+  { return info.enable_seconds; }
+  
+  long getEnableNanoSeconds() const
+  { return info.enable_nanoseconds; }
   
   long getGateID() const
   { return info.gate_id; }
@@ -383,6 +410,36 @@ public:
   long gateGateIDNuMIOff() const
   { return info.gate_id_NuMIOff; }
 
+  long getBeamSeconds() const
+  { return info.beam_seconds; } 
+  
+  long getBeamNanoSeconds() const
+  { return info.beam_nanoseconds; } 
+
+  int getTriggerType() const
+  { return info.trigger_type; }
+
+  bool isMajority() const
+  { return getTriggerType()==0; }
+
+  bool isMinBias() const
+  { return getTriggerType()==1; }
+
+  int getTriggerSource() const
+  { return info.trigger_source; }
+  
+  bool isEastTrigger() const
+  { return getTriggerSource()==1; }
+  
+  bool isWestTrigger() const
+  { return getTriggerSource()==2; }
+  
+  bool isBothTrigger() const
+  { return getTriggerSource()==7; }
+  
+  bool isUnknownTrigger() const
+  { return getTriggerSource()==0; }
+
   bool isBNB() const
   { return getGateType()==1; }
 
@@ -395,14 +452,17 @@ public:
   bool isNuMIOff() const
   { return getGateType()==4; }
 
+  bool isCalibration() const
+  { return getGateType()==5; }
+
   int getGateType() const
   { return info.gate_type; }
   
-  long getBeamSeconds() const
-  { return info.beam_seconds; }
+  long getCryoEastCounts() const
+  { return info.cryo1_east_counts; }
 
-  long getBeamNanoSeconds() const
-  { return info.beam_nanoseconds; }
+  long getCryoWestCounts() const
+  { return info.cryo2_west_counts; }
   
   uint64_t getLastTimestamp() const
   { return Metadata()->getLastTimestamp(); }
@@ -421,6 +481,8 @@ public:
   { return Metadata()->getLastTimestampBNBOff(); }
   uint64_t getLastTimestampNuMIOff() const
   { return Metadata()->getLastTimestampNuMIOff(); }
+  uint64_t getLastTimestampCalib() const
+  { return Metadata()->getLastTimestampCalib(); }
   uint64_t getLastTimestampOther() const
   { return Metadata()->getLastTimestampOther(); }
   
@@ -432,6 +494,8 @@ public:
   { return Metadata()->getDeltaGatesBNBOff(); }
   long getDeltaGatesNuMIOff() const
   { return Metadata()->getDeltaGatesNuMIOff(); }
+  long getDeltaGatesCalib() const
+  { return Metadata()->getDeltaGatesCalib(); }
   long getDeltaGatesOther() const
   { return Metadata()->getDeltaGatesOther(); }
 
