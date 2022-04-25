@@ -236,8 +236,8 @@ icarus::ICARUSTriggerInfo icarus::parse_ICARUSTriggerString(const char* buffer)
       info.beam_nanoseconds = std::stol(sections[31]); 
       info.trigger_type = std::stoi(sections[33]);
       info.trigger_source = std::stoi(sections[35]);
-      info.cryo1_east_counts = std::stol(sections[45]);
-      info.cryo2_west_counts = std::stol(sections[47]);
+      //info.cryo1_east_counts = std::stol(sections[45]);
+      //info.cryo2_west_counts = std::stol(sections[47]);
  
     }
  
@@ -255,6 +255,10 @@ public:
 				   uint64_t last_ts, 
 				   uint64_t last_ts_bnb, uint64_t last_ts_numi, uint64_t last_ts_bnboff,
 				   uint64_t last_ts_numioff,uint64_t last_ts_calib, uint64_t last_ts_other,
+				   long last_trig_bnb, long last_trig_numi, long last_trig_bnboff,
+				   long last_trig_numioff, long last_trig_calib,
+				   long total_trig_bnb, long total_trig_numi, long total_trig_bnboff,
+				   long total_trig_numioff, long total_trig_calib,
 				   long dg,
 				   long dg_bnb, long dg_numi, long dg_bnboff, long dg_numioff, long dg_calib, long dg_other) 
     : ntp_time(ntp_t)
@@ -265,6 +269,16 @@ public:
     , last_timestamp_numioff(last_ts_numioff)  
     , last_timestamp_calib(last_ts_calib)
     , last_timestamp_other(last_ts_other)
+    , last_trigger_bnb(last_trig_bnb)
+    , last_trigger_numi(last_trig_numi)
+    , last_trigger_bnboff(last_trig_bnboff)
+    , last_trigger_numioff(last_trig_numioff)
+    , last_trigger_calib(last_trig_calib)
+    , total_trigger_bnb(total_trig_bnb)
+    , total_trigger_numi(total_trig_numi)
+    , total_trigger_bnboff(total_trig_bnboff)
+    , total_trigger_numioff(total_trig_numioff)
+    , total_trigger_calib(total_trig_calib)
     , delta_gates(dg) 
     , delta_gates_bnb(dg_bnb) 
     , delta_gates_numi(dg_numi)
@@ -298,6 +312,36 @@ public:
   uint64_t getLastTimestampOther() const
   { return last_timestamp_other; }
 
+  long getLastTriggerBNB() const
+  { return last_trigger_bnb; }
+  
+  long getLastTriggerNuMI() const
+  { return last_trigger_numi; } 
+  
+  long getLastTriggerBNBOff() const
+  { return last_trigger_bnboff; }
+
+  long getLastTriggerNuMIOff() const
+  { return last_trigger_numioff; }
+
+  long getLastTriggerCalib() const
+  { return last_trigger_calib; }
+
+  long getTotalTriggerBNB() const
+  { return total_trigger_bnb; }
+
+  long getTotalTriggerNuMI() const
+  { return total_trigger_numi; }
+  
+  long getTotalTriggerBNBOff() const
+  { return total_trigger_bnboff; }
+
+  long getTotalTriggerNuMIOff() const
+  { return total_trigger_numioff; }
+
+  long getTotalTriggerCalib() const
+  { return total_trigger_calib; }
+
   long getDeltaGates() const
   { return delta_gates; }
 
@@ -328,6 +372,17 @@ private:
   uint64_t last_timestamp_numioff;
   uint64_t last_timestamp_calib;
   uint64_t last_timestamp_other;
+
+  long last_trigger_bnb;
+  long last_trigger_numi;
+  long last_trigger_bnboff;
+  long last_trigger_numioff;
+  long last_trigger_calib;
+  long total_trigger_bnb;
+  long total_trigger_numi;
+  long total_trigger_bnboff;
+  long total_trigger_numioff;
+  long total_trigger_calib;
 
   long delta_gates;
   long delta_gates_bnb;
@@ -457,13 +512,15 @@ public:
 
   int getGateType() const
   { return info.gate_type; }
-  
+
+  /*
   long getCryoEastCounts() const
   { return info.cryo1_east_counts; }
 
   long getCryoWestCounts() const
   { return info.cryo2_west_counts; }
-  
+  */
+
   uint64_t getLastTimestamp() const
   { return Metadata()->getLastTimestamp(); }
 
@@ -485,6 +542,28 @@ public:
   { return Metadata()->getLastTimestampCalib(); }
   uint64_t getLastTimestampOther() const
   { return Metadata()->getLastTimestampOther(); }
+
+  long getLastTriggerBNB() const
+  { return Metadata()->getLastTriggerBNB(); }
+  long getLastTriggerNuMI() const
+  { return Metadata()->getLastTriggerNuMI(); }
+  long getLastTriggerBNBOff() const
+  { return Metadata()->getLastTriggerBNBOff(); }
+  long getLastTriggerNuMIOff() const
+  { return Metadata()->getLastTriggerNuMIOff(); }
+  long getLastTriggerCalib() const
+  { return Metadata()->getLastTriggerCalib(); }
+
+  long getTotalTriggerBNB() const
+  { return Metadata()->getTotalTriggerBNB(); }
+  long getTotalTriggerNuMI() const
+  { return Metadata()->getTotalTriggerNuMI(); }
+  long getTotalTriggerBNBOff() const
+  { return Metadata()->getTotalTriggerBNBOff(); }
+  long getTotalTriggerNuMIOff() const
+  { return Metadata()->getTotalTriggerNuMIOff(); }
+  long getTotalTriggerCalib() const
+  { return Metadata()->getTotalTriggerCalib(); }
   
   long getDeltaGatesBNB() const
   { return Metadata()->getDeltaGatesBNB(); }
