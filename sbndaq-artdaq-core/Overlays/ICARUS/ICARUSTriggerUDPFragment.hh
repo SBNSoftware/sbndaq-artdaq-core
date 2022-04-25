@@ -2,6 +2,7 @@
 #define sbndaq_artdaq_core_Overlays_ICARUS_ICARUSTriggerUDPFragment_hh
 
 #include "artdaq-core/Data/Fragment.hh"
+#include "sbndaq-artdaq-core/Trace/trace_defines.h"
 #include "cetlib_except/exception.h"
 
 #include <iostream>
@@ -118,12 +119,13 @@ icarus::ICARUSTriggerInfo icarus::parse_ICARUSTriggerString(const char* buffer)
   sections.push_back(data_input);
   //std::string trig_name = sections[0];                                                                                      
   ICARUSTriggerInfo info;
-  /*
   //this should be agnostic to any length (and order) string that follows the key, value, format unless another timestamp is added
+  /*
   for(unsigned int i = 0; i < sections.size(); i = i + 2)
   {
     //large or statement should do this just fine, need to separate out TS stuff
     //string.contains is not accessible with the gcc versions we use for this...
+    TLOG(TLVL_INFO) << "Current section key string is: " << sections[i] << " and current section string value is: " << sections[i+1];
     if(sections[i].find(local_ts) != std::string::npos || sections[i].find(wr_ts) != std::string::npos || sections[i].find(beam_ts) != std::string::npos || sections[i].find(enable_ts) != std::string::npos) 
     {
       //event number
@@ -144,6 +146,7 @@ icarus::ICARUSTriggerInfo icarus::parse_ICARUSTriggerString(const char* buffer)
   for (it = elements.begin(); it != elements.end(); ++it)
   {
     //std::cout << it->first << " => " << it->second << '\n';
+    TLOG(TLVL_INFO) << "Current element key is: " << it->first << " and current element value is: " << it->second;
     //lots of if statements based on what's in there now, should stay agnostic if something isn't stored just set to a dummy value that is known, write up defaults here
     //string.contains not accessible with gcc versions we currently use, implement a workaround to find string within string 
     if(it->first.find("Version") != std::string::npos)
@@ -210,6 +213,7 @@ icarus::ICARUSTriggerInfo icarus::parse_ICARUSTriggerString(const char* buffer)
       info.cryo2_west_counts = std::stol(it->second);
       
   }
+  elements.clear();
   */
   //old implementation preserved in case of emergency, rigid hardcoded version where string must appear in a specific order
  
@@ -219,7 +223,7 @@ icarus::ICARUSTriggerInfo icarus::parse_ICARUSTriggerString(const char* buffer)
   info.seconds = std::stoi(sections[4]);
   info.nanoseconds = std::stol(sections[5]);
   if(sections.size() > 5)
-    {
+   {
       info.wr_name = sections[6];
       info.wr_event_no = std::stol(sections[7]);
       info.wr_seconds = std::stol(sections[8]);
@@ -308,7 +312,7 @@ public:
 
   uint64_t getLastTimestampCalib() const
   { return last_timestamp_calib; }
-  
+    
   uint64_t getLastTimestampOther() const
   { return last_timestamp_other; }
 
@@ -512,7 +516,6 @@ public:
 
   int getGateType() const
   { return info.gate_type; }
-
   /*
   long getCryoEastCounts() const
   { return info.cryo1_east_counts; }
