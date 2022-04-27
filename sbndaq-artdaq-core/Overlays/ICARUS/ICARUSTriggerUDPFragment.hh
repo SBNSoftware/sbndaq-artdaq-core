@@ -259,7 +259,7 @@ public:
 				   uint64_t last_ts, 
 				   uint64_t last_ts_bnb, uint64_t last_ts_numi, uint64_t last_ts_bnboff,
 				   uint64_t last_ts_numioff,uint64_t last_ts_calib, uint64_t last_ts_other,
-				   long last_trig_bnb, long last_trig_numi, long last_trig_bnboff,
+				   int last_trig_type, long last_trig_bnb, long last_trig_numi, long last_trig_bnboff,
 				   long last_trig_numioff, long last_trig_calib,
 				   long total_trig_bnb, long total_trig_numi, long total_trig_bnboff,
 				   long total_trig_numioff, long total_trig_calib,
@@ -273,6 +273,7 @@ public:
     , last_timestamp_numioff(last_ts_numioff)  
     , last_timestamp_calib(last_ts_calib)
     , last_timestamp_other(last_ts_other)
+    , last_trigger_type(last_trig_type)
     , last_trigger_bnb(last_trig_bnb)
     , last_trigger_numi(last_trig_numi)
     , last_trigger_bnboff(last_trig_bnboff)
@@ -315,6 +316,9 @@ public:
     
   uint64_t getLastTimestampOther() const
   { return last_timestamp_other; }
+
+  int getLastTriggerType() const
+  { return last_trigger_type; }
 
   long getLastTriggerBNB() const
   { return last_trigger_bnb; }
@@ -377,6 +381,7 @@ private:
   uint64_t last_timestamp_calib;
   uint64_t last_timestamp_other;
 
+  int last_trigger_type;
   long last_trigger_bnb;
   long last_trigger_numi;
   long last_trigger_bnboff;
@@ -546,6 +551,8 @@ public:
   uint64_t getLastTimestampOther() const
   { return Metadata()->getLastTimestampOther(); }
 
+  int getLastTriggerType() const
+  { return Metadata()->getLastTriggerType(); }
   long getLastTriggerBNB() const
   { return Metadata()->getLastTriggerBNB(); }
   long getLastTriggerNuMI() const
