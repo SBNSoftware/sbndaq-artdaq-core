@@ -111,6 +111,7 @@ ENDIF()
 
 # macros for art_dictionary and basic_plugin
 include(CetTest)
+include(ArtDictionary)
 
 # source
 add_subdirectory(sbndaq-artdaq-core)

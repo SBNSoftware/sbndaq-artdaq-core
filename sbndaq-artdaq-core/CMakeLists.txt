@@ -8,3 +8,4 @@ set ( LIBRARY_CORE_LIB_LIST
 add_subdirectory(BuildInfo)
 add_subdirectory(Trace)
 add_subdirectory(Overlays)
+add_subdirectory(Obj)
