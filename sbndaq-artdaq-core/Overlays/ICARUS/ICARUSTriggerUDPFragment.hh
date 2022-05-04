@@ -2,6 +2,7 @@
 #define sbndaq_artdaq_core_Overlays_ICARUS_ICARUSTriggerUDPFragment_hh
 
 #include "artdaq-core/Data/Fragment.hh"
+#include "sbndaq-artdaq-core/Trace/trace_defines.h"
 #include "cetlib_except/exception.h"
 
 #include <iostream>
@@ -119,6 +120,7 @@ icarus::ICARUSTriggerInfo icarus::parse_ICARUSTriggerString(const char* buffer)
   //std::string trig_name = sections[0];                                                                                      
   ICARUSTriggerInfo info;
   //this should be agnostic to any length (and order) string that follows the key, value, format unless another timestamp is added
+  /*
   for(unsigned int i = 0; i < sections.size(); i = i + 2)
   {
     //large or statement should do this just fine, need to separate out TS stuff
@@ -209,9 +211,10 @@ icarus::ICARUSTriggerInfo icarus::parse_ICARUSTriggerString(const char* buffer)
       info.cryo2_west_counts = std::stol(it->second);
       
   }
+  */
   //old implementation preserved in case of emergency, rigid hardcoded version where string must appear in a specific order
-  /*
-  info.name = sections[0];
+  
+  info.name = sections[2];
   //t->setHardwareTS_Type(sections[0]);                                                                                       
   info.event_no = std::stol(sections[3]);
   info.seconds = std::stoi(sections[4]);
@@ -232,7 +235,7 @@ icarus::ICARUSTriggerInfo icarus::parse_ICARUSTriggerString(const char* buffer)
       info.beam_nanoseconds = std::stol(sections[31]); 
  
     }
-  */
+ 
   return info;
 }
 
