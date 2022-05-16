@@ -16,7 +16,6 @@ cet_make_library(
     BernCRTZMQFragment.cc
     BernCRTFragment.cc
     BernCRTFragmentV2.cc
-    BernCRTTranslator.cc
     WhiteRabbitFragment.cc
     DummyFragment.cc
   LIBRARIES

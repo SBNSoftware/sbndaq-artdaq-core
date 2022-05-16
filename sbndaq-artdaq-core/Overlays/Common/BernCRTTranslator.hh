@@ -27,7 +27,7 @@ class icarus::crt::BernCRTTranslator {
 
 public:
   uint8_t   mac5                    = 0; //last 8 bits of FEB MAC5 address
-  uint16_t  fragment_ID             = 0; //fragment ID for differentiating FEBs between side/top
+  uint8_t   fragment_ID		    = 0; //fragment ID for differentiating FEBs between side/top
   uint64_t  run_start_time          = 0; //absolute timestamp [ns]
   uint64_t  this_poll_start         = 0; //absolute timestamp [ns]
   uint64_t  this_poll_end           = 0; //absolute timestamp [ns]
