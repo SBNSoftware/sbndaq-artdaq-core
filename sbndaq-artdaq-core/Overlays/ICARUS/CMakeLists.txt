@@ -6,6 +6,7 @@ cet_make_library(
     PhysCrateStatFragment.cc
     ICARUSTriggerUDPFragment.cc
     ICARUSPMTGateFragment.cc
+    ICARUSTriggerV2Fragment.cc
   LIBRARIES
     ${LIBRARY_CORE_LIB_LIST}
 )

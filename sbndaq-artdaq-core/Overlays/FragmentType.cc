@@ -27,6 +27,7 @@ namespace {
     {sbndaq::detail::FragmentType::PHYSCRATESTAT, "PHYSCRATESTAT"},
     {sbndaq::detail::FragmentType::ICARUSTriggerUDP,  "ICARUSTriggerUDP"},
     {sbndaq::detail::FragmentType::ICARUSPMTGate, "ICARUSPMTGate"},
+    {sbndaq::detail::FragmentType::ICARUSTriggerV2, "ICARUSTriggerV2"},
 
     //SBND
     {sbndaq::detail::FragmentType::NevisTPC, "NEVISTPC"},
