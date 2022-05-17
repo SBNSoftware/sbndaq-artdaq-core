@@ -19,7 +19,7 @@ fcldir      -
 #
 product             version       optional
 
-artdaq_core         v3_08_01
+artdaq_core         v3_08_04
 cetmodules          v2_26_00      -       only_for_build
 end_product_list
 
