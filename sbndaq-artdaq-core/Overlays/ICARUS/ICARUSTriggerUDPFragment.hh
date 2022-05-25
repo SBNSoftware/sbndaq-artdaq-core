@@ -55,7 +55,7 @@ struct icarus::ICARUSTriggerInfo
     if(wr_seconds >= 1483228800)
       correction = 37;
     uint64_t const corrected_ts
-      { (wr_seconds-correction)*1'000'000'000ULL + wr_nanoseconds };
+    { (wr_seconds-correction)*1000000000ULL + wr_nanoseconds };
     return corrected_ts;
   }
   
@@ -108,10 +108,10 @@ class icarus::ICARUSTriggerUDPFragmentMetadata
 public:  
   ICARUSTriggerUDPFragmentMetadata() {}
   ICARUSTriggerUDPFragmentMetadata(uint64_t ntp_t, 
-				   uint64_t last_ts, 
-				   uint64_t last_ts_bnb, uint64_t last_ts_numi, uint64_t last_ts_other,
-				   long dg,
-				   long dg_bnb, long dg_numi, long dg_other) 
+	uint64_t last_ts, 
+	uint64_t last_ts_bnb, uint64_t last_ts_numi, uint64_t last_ts_other,
+	long dg,
+	long dg_bnb, long dg_numi, long dg_other) 
     : ntp_time(ntp_t)
     , last_timestamp(last_ts)
     , last_timestamp_bnb(last_ts_bnb)
@@ -150,7 +150,7 @@ public:
   long getDeltaGatesOther() const
   { return delta_gates_other; }
 
-private:
+    private:
   uint64_t ntp_time;
   uint64_t last_timestamp;
   uint64_t last_timestamp_bnb;
@@ -163,100 +163,99 @@ private:
   long delta_gates_other;
 
 
-};
+    };
 
-class icarus::ICARUSTriggerUDPFragment{
+ class icarus::ICARUSTriggerUDPFragment{
 
-public:
+    public:
   
-  ICARUSTriggerUDPFragment(artdaq::Fragment const &f) : fFragment(f) {info = parse_ICARUSTriggerString((const char*)fFragment.dataBeginBytes());}
-  ICARUSTriggerUDPFragmentMetadata const * Metadata() const
-  { return fFragment.metadata<ICARUSTriggerUDPFragmentMetadata>(); }
+      ICARUSTriggerUDPFragment(artdaq::Fragment const &f) : fFragment(f) {info = parse_ICARUSTriggerString((const char*)fFragment.dataBeginBytes());}
+      ICARUSTriggerUDPFragmentMetadata const * Metadata() const
+      { return fFragment.metadata<ICARUSTriggerUDPFragmentMetadata>(); }
   
-  size_t DataPayloadSize() const
-  { return fFragment.dataSizeBytes(); }
+      size_t DataPayloadSize() const
+      { return fFragment.dataSizeBytes(); }
 
-  std::string GetDataString() const
-  { 
-    std::string data((char*)fFragment.dataBeginBytes(), fFragment.dataSizeBytes());
-    return data;
-  }
+      std::string GetDataString() const
+      { 
+      std::string data((char*)fFragment.dataBeginBytes(), fFragment.dataSizeBytes());
+      return data;
+    }
 
-  /*
+      /*
   size_t ExpectedDataSize() const
   { return Metadata()->ExpectedDataSize(); }
-  */
+				       */
   
-  std::string getName() const
-  { return info.name; }
+      std::string getName() const
+      { return info.name; }
 
-  long getEventNo() const
-  { return info.event_no; }
+      long getEventNo() const
+      { return info.event_no; }
 
-  long getSeconds() const
-  { return info.seconds; }
+      long getSeconds() const
+      { return info.seconds; }
 
-  long getNanoSeconds() const
-  { return info.nanoseconds; }
+      long getNanoSeconds() const
+      { return info.nanoseconds; }
 
-  std::string getWRName() const
-  { return info.wr_name; }
+      std::string getWRName() const
+      { return info.wr_name; }
 
-  long getWREventNo() const
-  { return info.wr_event_no; }
+      long getWREventNo() const
+      { return info.wr_event_no; }
 
-  long getWRSeconds() const
-  { return info.wr_seconds; }
+      long getWRSeconds() const
+      { return info.wr_seconds; }
 
-  long getWRNanoSeconds() const
-  { return info.wr_nanoseconds; }
+      long getWRNanoSeconds() const
+      { return info.wr_nanoseconds; }
   
-  long getGateID() const
-  { return info.gate_id; }
+      long getGateID() const
+      { return info.gate_id; }
 
-  bool isBNB() const
-  { return getGateType()==1; }
+      bool isBNB() const
+      { return getGateType()==1; }
 
-  bool isNuMI() const
-  { return getGateType()==2; }
+      bool isNuMI() const
+      { return getGateType()==2; }
 
-  int getGateType() const
-  { return info.gate_type; }
-  /*
+      int getGateType() const
+      { return info.gate_type; }
+      /*
   long getBeamSeconds() const
   { return info.beam_seconds; }
-
   long getBeamNanoSeconds() const
   { return info.beam_nanoseconds; }
-  */
-  uint64_t getLastTimestamp() const
-  { return Metadata()->getLastTimestamp(); }
+				       */
+   uint64_t getLastTimestamp() const
+   { return Metadata()->getLastTimestamp(); }
+   
+   uint64_t getNTPTime() const
+   { return Metadata()->getNTPTime(); } 
+   
+   long getDeltaGates() const
+   { return Metadata()->getDeltaGates(); }
+   
+   uint64_t getLastTimestampBNB() const
+   { return Metadata()->getLastTimestampBNB(); }
+   uint64_t getLastTimestampNuMI() const
+   { return Metadata()->getLastTimestampNuMI(); }
+   uint64_t getLastTimestampOther() const
+   { return Metadata()->getLastTimestampOther(); }
+   
+   long getDeltaGatesBNB() const
+   { return Metadata()->getDeltaGatesBNB(); }
+   long getDeltaGatesNuMI() const
+   { return Metadata()->getDeltaGatesNuMI(); }
+   long getDeltaGatesOther() const
+   { return Metadata()->getDeltaGatesOther(); }
 
-  uint64_t getNTPTime() const
-  { return Metadata()->getNTPTime(); } 
-
-  long getDeltaGates() const
-  { return Metadata()->getDeltaGates(); }
-
-  uint64_t getLastTimestampBNB() const
-  { return Metadata()->getLastTimestampBNB(); }
-  uint64_t getLastTimestampNuMI() const
-  { return Metadata()->getLastTimestampNuMI(); }
-  uint64_t getLastTimestampOther() const
-  { return Metadata()->getLastTimestampOther(); }
-  
-  long getDeltaGatesBNB() const
-  { return Metadata()->getDeltaGatesBNB(); }
-  long getDeltaGatesNuMI() const
-  { return Metadata()->getDeltaGatesNuMI(); }
-  long getDeltaGatesOther() const
-  { return Metadata()->getDeltaGatesOther(); }
-
-  bool Verify() const;
-  
-private:
-  artdaq::Fragment const & fFragment;
-  ICARUSTriggerInfo info;
-};
+   bool Verify() const;
+   
+ private:
+   artdaq::Fragment const & fFragment;
+   ICARUSTriggerInfo info;
+ };
 
 #endif /* sbndaq_datatypes_Overlays_ICARUSTriggerUDPFragment_hh */

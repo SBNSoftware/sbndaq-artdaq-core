@@ -25,6 +25,7 @@ namespace sbndaq {
 	PHYSCRATESTAT = artdaq::Fragment::FirstUserFragmentType + 5,
 	ICARUSTriggerUDP = artdaq::Fragment::FirstUserFragmentType + 10,
 	ICARUSPMTGate = artdaq::Fragment::FirstUserFragmentType + 11,
+	ICARUSTriggerV2 = artdaq::Fragment::FirstUserFragmentType + 15,
 
 	//SBND
 	NevisTPC = artdaq::Fragment::FirstUserFragmentType + 6,
@@ -34,7 +35,7 @@ namespace sbndaq {
 	//Simulators
 	DummyGenerator = artdaq::Fragment::FirstUserFragmentType + 8,
 
-        INVALID = artdaq::Fragment::FirstUserFragmentType + 15 // Should always be last.
+        INVALID = artdaq::Fragment::FirstUserFragmentType + 16 // Should always be last.
         };
 
     // Safety check.

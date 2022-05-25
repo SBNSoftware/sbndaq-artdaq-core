@@ -13,7 +13,7 @@ set(CET_CETBUILDTOOLS_COMPAT TRUE)
 include(Compatibility)
 set(CET_WARN_DEPRECATED)
 
-project(sbndaq_artdaq_core VERSION 1.00.00)
+project(sbndaq_artdaq_core VERSION 1.01.00)
 
 set(CMAKE_MODULE_PATH
   $ENV{ARTDAQ_UTILITIES_DIR}/Modules
@@ -111,6 +111,7 @@ ENDIF()
 
 # macros for art_dictionary and basic_plugin
 include(CetTest)
+include(ArtDictionary)
 
 # source
 add_subdirectory(sbndaq-artdaq-core)
