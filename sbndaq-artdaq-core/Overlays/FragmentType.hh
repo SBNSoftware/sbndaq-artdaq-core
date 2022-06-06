@@ -5,50 +5,51 @@
 namespace sbndaq {
 
 /*
-   Note, if you add new frament types, the use a new enum number for them, so that the old numbering scheme is not changed
+   Note, if you add new frament types, the use a new enum number for them, so that the old numbering scheme is not
+   changed
 
    */
 
-  namespace detail {
-    enum FragmentType : artdaq::Fragment::type_t
-    { MISSED = artdaq::Fragment::FirstUserFragmentType,
-	//COMMON
-	CAENV1730 = artdaq::Fragment::FirstUserFragmentType + 1,
-	SpectratimeEvent = artdaq::Fragment::FirstUserFragmentType + 2,
-	BERNCRT = artdaq::Fragment::FirstUserFragmentType + 9,
-	BERNCRTV2 = artdaq::Fragment::FirstUserFragmentType + 13,
-	BERNCRTZMQ = artdaq::Fragment::FirstUserFragmentType + 3,
-	WhiteRabbit = artdaq::Fragment::FirstUserFragmentType + 12,
+namespace detail {
+enum FragmentType : artdaq::Fragment::type_t {
+  MISSED = artdaq::Fragment::FirstUserFragmentType,
+  // COMMON
+  CAENV1730 = artdaq::Fragment::FirstUserFragmentType + 1,
+  SpectratimeEvent = artdaq::Fragment::FirstUserFragmentType + 2,
+  BERNCRT = artdaq::Fragment::FirstUserFragmentType + 9,
+  BERNCRTV2 = artdaq::Fragment::FirstUserFragmentType + 13,
+  BERNCRTZMQ = artdaq::Fragment::FirstUserFragmentType + 3,
+  WhiteRabbit = artdaq::Fragment::FirstUserFragmentType + 12,
 
-	//ICARUS
-	PHYSCRATEDATA = artdaq::Fragment::FirstUserFragmentType + 4,
-	PHYSCRATESTAT = artdaq::Fragment::FirstUserFragmentType + 5,
-	ICARUSTriggerUDP = artdaq::Fragment::FirstUserFragmentType + 10,
-	ICARUSPMTGate = artdaq::Fragment::FirstUserFragmentType + 11,
-	ICARUSTriggerV2 = artdaq::Fragment::FirstUserFragmentType + 15,
+  // ICARUS
+  PHYSCRATEDATA = artdaq::Fragment::FirstUserFragmentType + 4,
+  PHYSCRATESTAT = artdaq::Fragment::FirstUserFragmentType + 5,
+  ICARUSTriggerUDP = artdaq::Fragment::FirstUserFragmentType + 10,
+  ICARUSPMTGate = artdaq::Fragment::FirstUserFragmentType + 11,
+  ICARUSTriggerV2 = artdaq::Fragment::FirstUserFragmentType + 15,
 
-	//SBND
-	NevisTPC = artdaq::Fragment::FirstUserFragmentType + 6,
-	PTB = artdaq::Fragment::FirstUserFragmentType + 7,
-	DAPHNE = artdaq::Fragment::FirstUserFragmentType + 14,
-	
-	//Simulators
-	DummyGenerator = artdaq::Fragment::FirstUserFragmentType + 8,
+  // SBND
+  NevisTPC = artdaq::Fragment::FirstUserFragmentType + 6,
+  PTB = artdaq::Fragment::FirstUserFragmentType + 7,
+  DAPHNE = artdaq::Fragment::FirstUserFragmentType + 14,
+  TDCTIMESTAMP = artdaq::Fragment::FirstUserFragmentType + 16,
 
-        INVALID = artdaq::Fragment::FirstUserFragmentType + 16 // Should always be last.
-        };
+  // Simulators
+  DummyGenerator = artdaq::Fragment::FirstUserFragmentType + 8,
 
-    // Safety check.
-    static_assert(artdaq::Fragment::isUserFragmentType(FragmentType::INVALID - 1),
-                  "Too many user-defined fragments!");
-  }
+  INVALID = artdaq::Fragment::FirstUserFragmentType + 17  // Should always be last.
+};
 
-  using detail::FragmentType;
+// Safety check.
+static_assert(artdaq::Fragment::isUserFragmentType(FragmentType::INVALID - 1), "Too many user-defined fragments!");
+}  // namespace detail
 
-  FragmentType toFragmentType(std::string t_string);
-  std::string fragmentTypeToString(FragmentType val);
-  
-  std::map<artdaq::Fragment::type_t, std::string> makeFragmentTypeMap();
+using detail::FragmentType;
 
-}
+FragmentType toFragmentType(std::string t_string);
+std::string fragmentTypeToString(FragmentType val);
+
+std::map<artdaq::Fragment::type_t, std::string> makeFragmentTypeMap();
+
+}  // namespace sbndaq
 #endif /* sbndaq_artdaq_core_Overlays_FragmentType_hh */
