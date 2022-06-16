@@ -13,12 +13,13 @@ std::ostream& operator<<(std::ostream&, TDCTimestampFragment const&);
 
 struct TDCTimestamp;
 std::ostream& operator<<(std::ostream&, TDCTimestamp const&);
-
+/*
 inline TraceStreamer& operator<<(TraceStreamer& x, sbndaq::TDCTimestampFragment const& r) {
   std::stringstream ss;
   ss << r;
-  return x << ss.str();
+  return x << ss.str().c_str();
 }
+*/
 /**
  * FMC-TDC time-stamp descriptor
  */
