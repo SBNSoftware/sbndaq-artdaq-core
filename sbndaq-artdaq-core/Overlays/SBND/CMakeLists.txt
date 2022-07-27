@@ -8,6 +8,7 @@ cet_make_library(
     PTBFragment.cc
     NevisTPCFragment.cc
     DAPHNEFragment.cc
+    TDCTimestampFragment.cc
   LIBRARIES
     ${LIBRARY_CORE_LIB_LIST}
     sbndaq-artdaq-core_Overlays_SBND_NevisTPC
