@@ -1,3 +1,3 @@
-#include "sbndaq-artdaq-core/Obj/SBND/CRTmetric/CRTmetric.hh"
+#include "sbndaq-artdaq-core/Obj/SBND/CRTmetric.hh"
 
 // nothing here yet
