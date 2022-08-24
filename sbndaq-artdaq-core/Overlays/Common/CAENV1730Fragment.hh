@@ -4,6 +4,8 @@
 #include "artdaq-core/Data/Fragment.hh"
 #include "cetlib_except/exception.h"
 
+#include <boost/serialization/serialization.hpp>
+
 #define CAEN_V1730_MAX_CHANNELS 16
 
 namespace sbndaq {
@@ -13,6 +15,7 @@ namespace sbndaq {
   struct CAENV1730FragmentMetadata;
   struct CAENV1730EventHeader;
   struct CAENV1730Event;
+  struct SerializableTestStruct;
 
 }
 
@@ -44,13 +47,97 @@ struct sbndaq::CAENV1730EventHeader{
   uint64_t extendedTriggerTime() const
     { return triggerTimeTag + (static_cast<uint64_t>(pattern) << 32U); }
   
+  friend class boost::serialization::access;
+  template<class Archive>
+  void save(Archive & ar, const unsigned int /*version*/) const
+  {
+    uint32_t serial_eventSize = eventSize;
+    uint32_t serial_marker = marker;
+    uint32_t serial_channelMask_lo = channelMask_lo;
+    uint32_t serial_pattern = pattern;
+    uint32_t serial_eventFormat = eventFormat;
+    uint32_t serial_reserved = reserved;
+    uint32_t serial_boardFail = boardFail;
+    uint32_t serial_boardID = boardID;
+    uint32_t serial_eventCounter = eventCounter;
+    uint32_t serial_channelMask_hi = channelMask_hi;
+    uint32_t serial_triggerTimeTag = triggerTimeTag;
+
+    ar & serial_eventSize;
+    ar & serial_marker;
+    ar & serial_channelMask_lo;
+    ar & serial_pattern;
+    ar & serial_eventFormat;
+    ar & serial_reserved;
+    ar & serial_boardFail;
+    ar & serial_boardID;
+    ar & serial_eventCounter;
+    ar & serial_channelMask_hi;
+    ar & serial_triggerTimeTag;
+  }
+
+  template<class Archive>
+  void load(Archive & ar, const unsigned int /*version*/)
+  {
+    uint32_t serial_eventSize, serial_marker, serial_channelMask_lo,
+      serial_pattern, serial_eventFormat, serial_reserved, serial_boardFail,
+      serial_boardID, serial_eventCounter, serial_channelMask_hi, serial_triggerTimeTag;
+
+    ar & serial_eventSize;
+    ar & serial_marker;
+    ar & serial_channelMask_lo;
+    ar & serial_pattern;
+    ar & serial_eventFormat;
+    ar & serial_reserved;
+    ar & serial_boardFail;
+    ar & serial_boardID;
+    ar & serial_eventCounter;
+    ar & serial_channelMask_hi;
+    ar & serial_triggerTimeTag;
+
+    eventSize = serial_eventSize;
+    marker = serial_marker;
+    channelMask_lo = serial_channelMask_lo;
+    pattern = serial_pattern;
+    eventFormat = serial_eventFormat;
+    reserved = serial_reserved;
+    boardFail = serial_boardFail;
+    boardID = serial_boardID;
+    eventCounter = serial_eventCounter;
+    channelMask_hi = serial_channelMask_hi;
+    triggerTimeTag = serial_triggerTimeTag;
+  }
+  BOOST_SERIALIZATION_SPLIT_MEMBER()
 };
 static_assert(sizeof(sbndaq::CAENV1730EventHeader)==4*sizeof(uint32_t),"CAENV1730EventHeader not correct size.");
 
+struct sbndaq::SerializableTestStruct{
+  int a;
+  double b;
+
+  SerializableTestStruct(): a(10), b(-100.) {}
+
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int /*version*/)
+  {
+    ar & a;
+    ar & b;
+  }
+};
 
 struct sbndaq::CAENV1730Event{
   CAENV1730EventHeader Header;
   uint16_t             DataBlock;
+
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int /*version*/)
+  {
+    ar & Header;
+    ar & DataBlock;
+  }
 };
 
 struct sbndaq::CAENV1730FragmentMetadata {
@@ -77,6 +164,16 @@ struct sbndaq::CAENV1730FragmentMetadata {
   { return (sizeof(CAENV1730EventHeader) + 
 	    nChannels * nSamples * sizeof(uint16_t)); }
   
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int /*version*/)
+  {
+    ar & nChannels;
+    ar & nSamples;
+    ar & timeStampSec;
+    ar & timeStampNSec;
+    ar & chTemps;
+  }
 };
 
 class sbndaq::CAENV1730Fragment{
@@ -102,7 +199,12 @@ public:
 private:
   artdaq::Fragment fFragment;
 
-
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int /*version*/)
+  {
+    ar & fFragment;
+  }
 };
 
 #endif /* sbndaq_datatypes_Overlays_CAENV1730Fragment_hh */
