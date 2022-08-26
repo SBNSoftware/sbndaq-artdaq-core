@@ -18,6 +18,7 @@ cet_make_library(
     BernCRTFragmentV2.cc
     WhiteRabbitFragment.cc
     DummyFragment.cc
+    BernCRTFragmentSerial.cc
   LIBRARIES
     ${LIBRARY_CORE_LIB_LIST}
 )
