@@ -21,6 +21,7 @@ cet_make_library(
     BernCRTFragmentSerial.cc
   LIBRARIES
     ${LIBRARY_CORE_LIB_LIST}
+    sbndaq-artdaq-core_Overlays
 )
 
 install_headers()

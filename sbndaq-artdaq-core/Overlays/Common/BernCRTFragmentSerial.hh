@@ -1,6 +1,12 @@
+#ifndef sbndaq_Overlays_SBND_TDCTimestampFragment_hh
+#define sbndaq_Overlays_SBND_TDCTimestampFragment_hh
+
 #include "artdaq-core/Data/detail/RawFragmentHeader.hh"
 
 namespace sbndaq {
+
+  class BernCRTFragmentSerial;
+  std::ostream& operator<<(std::ostream&, BernCRTFragmentSerial const&);
 
   class BernCRTFragmentSerial {
   public:
@@ -22,3 +28,5 @@ namespace sbndaq {
     }
   };
 }
+
+#endif
