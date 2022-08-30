@@ -15,8 +15,6 @@ namespace sbndaq {
   struct CAENV1730FragmentMetadata;
   struct CAENV1730EventHeader;
   struct CAENV1730Event;
-  struct SerializableTestStruct;
-
 }
 
 struct sbndaq::CAENV1730EventHeader{
@@ -110,22 +108,6 @@ struct sbndaq::CAENV1730EventHeader{
   BOOST_SERIALIZATION_SPLIT_MEMBER()
 };
 static_assert(sizeof(sbndaq::CAENV1730EventHeader)==4*sizeof(uint32_t),"CAENV1730EventHeader not correct size.");
-
-struct sbndaq::SerializableTestStruct{
-  int a;
-  double b;
-
-  SerializableTestStruct(): a(10), b(-100.) {}
-
-private:
-  friend class boost::serialization::access;
-  template<class Archive>
-  void serialize(Archive & ar, const unsigned int /*version*/)
-  {
-    ar & a;
-    ar & b;
-  }
-};
 
 struct sbndaq::CAENV1730Event{
   CAENV1730EventHeader Header;
