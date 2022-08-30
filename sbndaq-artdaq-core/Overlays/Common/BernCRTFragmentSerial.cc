@@ -1,17 +1,16 @@
 #include "sbndaq-artdaq-core/Overlays/Common/BernCRTFragmentSerial.hh"
-#include "sbndaq-artdaq-core/Overlays/FragmentType.hh"
 
 std::ostream& sbndaq::operator<<(std::ostream& os, BernCRTFragmentSerial const& serial)
 {
-  os << '\n'                                                                          
-     << "Fragment Type: " 
-     << sbndaq::fragmentTypeToString(static_cast<sbndaq::FragmentType>(serial.fragment_type)) 
-     << '\n'                                                                
-     << "Sequence ID:   " << serial.sequence_id << '\n'
-     << "Fragment ID:   " << serial.fragment_id << '\n'
-     << "Timestamp:     " << serial.timestamp << '\n'
-     << std::endl;
-  
+  FragmentSerialBase serial_base(serial);
+
+  os << serial_base
+     << "Data Payload Size: " << serial.data_payload_size
+     << "Number of Hits:    " << serial.n_hits
+     << serial.metadata;
+
+  for(unsigned hit = 0; hit < serial.bern_crt_hits.size(); ++hit)
+    os << "Hit: " << hit << '\n' << serial.bern_crt_hits.at(hit);
+
   return os;
 }
-
