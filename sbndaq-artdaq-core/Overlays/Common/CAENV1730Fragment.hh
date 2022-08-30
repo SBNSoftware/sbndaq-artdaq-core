@@ -11,10 +11,14 @@
 namespace sbndaq {
   
   class CAENV1730Fragment;
+  std::ostream& operator<<(std::ostream&, CAENV1730Fragment const&);
 
   struct CAENV1730FragmentMetadata;
+  std::ostream& operator<<(std::ostream&, CAENV1730FragmentMetadata const&);
   struct CAENV1730EventHeader;
+  std::ostream& operator<<(std::ostream&, CAENV1730EventHeader const&);
   struct CAENV1730Event;
+  std::ostream& operator<<(std::ostream&, CAENV1730Event const&);
 }
 
 struct sbndaq::CAENV1730EventHeader{
