@@ -71,6 +71,16 @@ private:
   int32_t   _system_clock_deviation  = 0; //system clock deviation w.r.t. steady clock, synchronised at the beginning of the run
   uint32_t  _hits_in_poll            = 0; //includes lost ones //NOTE 16 bits might be sufficient
   uint16_t  _hits_in_fragment        = 0; //size of the fragment hit array
+
+  friend class boost::serialization::access;
+
+  template<class Archive>
+  void serialize(Archive& ar, const unsigned int /*version*/)
+  {
+    ar & _mac5 & _run_start_time & _this_poll_start & _this_poll_end
+      & _last_poll_start & _last_poll_end & _system_clock_deviation
+      & _hits_in_poll & _hits_in_fragment;
+  }
 };
 
 
@@ -97,6 +107,16 @@ public:
   bool IsReference_TS1() const { return   flags&8; }
   
   const char* c_str() const { std::ostringstream ss; ss << *this; return ss.str().c_str(); }
+
+private:
+  friend class boost::serialization::access;
+
+  template<class Archive>
+  void serialize(Archive& ar, const unsigned int /*version*/)
+  {
+    ar & flags & lostcpu & lostfpga & ts0 & ts1 & adc & coinc;
+    ar & feb_hit_number & timestamp & last_accepted_timestamp & lost_hits;
+  }
 };
 
 class sbndaq::BernCRTFragmentV2 {
