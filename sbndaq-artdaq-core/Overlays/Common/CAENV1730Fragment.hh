@@ -184,13 +184,6 @@ public:
 
 private:
   artdaq::Fragment fFragment;
-
-  friend class boost::serialization::access;
-  template<class Archive>
-  void serialize(Archive & ar, const unsigned int /*version*/)
-  {
-    ar & fFragment;
-  }
 };
 
 #endif /* sbndaq_datatypes_Overlays_CAENV1730Fragment_hh */
