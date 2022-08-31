@@ -20,6 +20,7 @@ cet_make_library(
     DummyFragment.cc
     FragmentSerialBase.cc
     BernCRTFragmentSerial.cc
+    CAENV1730FragmentSerial.cc
   LIBRARIES
     ${LIBRARY_CORE_LIB_LIST}
     sbndaq-artdaq-core_Overlays
