@@ -5,6 +5,7 @@
 #include "cetlib_except/exception.h"
 
 #include <boost/serialization/serialization.hpp>
+#include <boost/serialization/split_member.hpp>
 
 #define CAEN_V1730_MAX_CHANNELS 16
 
@@ -49,6 +50,7 @@ struct sbndaq::CAENV1730EventHeader{
   uint64_t extendedTriggerTime() const
     { return triggerTimeTag + (static_cast<uint64_t>(pattern) << 32U); }
   
+private:
   friend class boost::serialization::access;
   template<class Archive>
   void save(Archive & ar, const unsigned int /*version*/) const
@@ -117,6 +119,7 @@ struct sbndaq::CAENV1730Event{
   CAENV1730EventHeader Header;
   uint16_t             DataBlock;
 
+private:
   friend class boost::serialization::access;
   template<class Archive>
   void serialize(Archive & ar, const unsigned int /*version*/)
@@ -149,7 +152,8 @@ struct sbndaq::CAENV1730FragmentMetadata {
   size_t ExpectedDataSize() const 
   { return (sizeof(CAENV1730EventHeader) + 
 	    nChannels * nSamples * sizeof(uint16_t)); }
-  
+
+private:
   friend class boost::serialization::access;
   template<class Archive>
   void serialize(Archive & ar, const unsigned int /*version*/)

@@ -28,6 +28,8 @@ cet_set_compiler_flags(DIAGS VIGILANT
   EXTRA_FLAGS -pedantic
 )
 
+find_package(Boost COMPONENTS serialization REQUIRED EXPORT)
+
 string(TOUPPER ${CMAKE_BUILD_TYPE} BTYPE_UC)
 if(BTYPE_UC STREQUAL DEBUG)
   add_definitions(-DDEBUGME)

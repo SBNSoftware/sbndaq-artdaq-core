@@ -4,6 +4,8 @@
 #include "artdaq-core/Data/Fragment.hh"
 #include "cetlib_except/exception.h"
 
+#include <boost/serialization/serialization.hpp>
+
 #include <iostream>
 #include <sstream>
 #include <string>

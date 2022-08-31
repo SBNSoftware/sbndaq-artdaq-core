@@ -2,6 +2,7 @@
 #define sbndaq_Overlays_SBND_FragmentSerialBase_hh
 
 #include "artdaq-core/Data/detail/RawFragmentHeader.hh"
+#include <boost/serialization/serialization.hpp>
 
 namespace sbndaq {
 
