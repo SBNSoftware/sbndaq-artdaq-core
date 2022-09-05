@@ -1,4 +1,4 @@
-#include "sbndaq-artdaq-core/Overlays/Common/CAENV1730FragmentSerial.hh"
+#include "sbndaq-artdaq-core/Overlays/SBND/CAENV1730FragmentSerial.hh"
 
 std::ostream& sbndaq::operator<<(std::ostream& os, CAENV1730FragmentSerial const& serial)
 {

@@ -1,4 +1,4 @@
-#include "sbndaq-artdaq-core/Overlays/Common/BernCRTFragmentSerial.hh"
+#include "sbndaq-artdaq-core/Overlays/SBND/BernCRTFragmentSerial.hh"
 
 std::ostream& sbndaq::operator<<(std::ostream& os, BernCRTFragmentSerial const& serial)
 {

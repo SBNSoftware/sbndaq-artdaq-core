@@ -1,4 +1,4 @@
-#include "sbndaq-artdaq-core/Overlays/Common/FragmentSerialBase.hh"
+#include "sbndaq-artdaq-core/Overlays/SBND/FragmentSerialBase.hh"
 #include "sbndaq-artdaq-core/Overlays/FragmentType.hh"
 
 std::ostream& sbndaq::operator<<(std::ostream& os, FragmentSerialBase const& serial)

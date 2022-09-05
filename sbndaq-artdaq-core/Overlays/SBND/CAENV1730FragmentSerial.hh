@@ -3,7 +3,7 @@
 
 #include "artdaq-core/Data/detail/RawFragmentHeader.hh"
 #include "artdaq-core/Data/Fragment.hh"
-#include "sbndaq-artdaq-core/Overlays/Common/FragmentSerialBase.hh"
+#include "sbndaq-artdaq-core/Overlays/SBND/FragmentSerialBase.hh"
 #include "sbndaq-artdaq-core/Overlays/Common/CAENV1730Fragment.hh"
 
 #include <boost/serialization/base_object.hpp>

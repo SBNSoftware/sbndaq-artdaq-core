@@ -9,9 +9,14 @@ cet_make_library(
     NevisTPCFragment.cc
     DAPHNEFragment.cc
     TDCTimestampFragment.cc
+    FragmentSerialBase.cc
+    BernCRTFragmentSerial.cc
+    CAENV1730FragmentSerial.cc
   LIBRARIES
     ${LIBRARY_CORE_LIB_LIST}
     sbndaq-artdaq-core_Overlays_SBND_NevisTPC
+    sbndaq-artdaq-core_Overlays
+    sbndaq-artdaq-core_Overlays_Common
 )
 
 install_headers()
