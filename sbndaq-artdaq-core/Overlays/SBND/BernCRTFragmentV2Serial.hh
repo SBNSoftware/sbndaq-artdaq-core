@@ -1,5 +1,5 @@
-#ifndef sbndaq_artdaq_core_Overlays_Common_BernCRTFragmentSerial_hh
-#define sbndaq_artdaq_core_Overlays_Common_BernCRTFragmentSerial_hh
+#ifndef sbndaq_artdaq_core_Overlays_Common_BernCRTFragmentV2Serial_hh
+#define sbndaq_artdaq_core_Overlays_Common_BernCRTFragmentV2Serial_hh
 
 #include "artdaq-core/Data/detail/RawFragmentHeader.hh"
 #include "artdaq-core/Data/Fragment.hh"
@@ -11,10 +11,10 @@
 
 namespace sbndaq {
 
-  class BernCRTFragmentSerial;
-  std::ostream& operator<<(std::ostream&, BernCRTFragmentSerial const&);
+  class BernCRTFragmentV2Serial;
+  std::ostream& operator<<(std::ostream&, BernCRTFragmentV2Serial const&);
 
-  class BernCRTFragmentSerial : public sbndaq::FragmentSerialBase {
+  class BernCRTFragmentV2Serial : public sbndaq::FragmentSerialBase {
   public:
     size_t n_hits;
     size_t data_payload_size;

@@ -10,7 +10,7 @@ cet_make_library(
     DAPHNEFragment.cc
     TDCTimestampFragment.cc
     FragmentSerialBase.cc
-    BernCRTFragmentSerial.cc
+    BernCRTFragmentV2Serial.cc
     CAENV1730FragmentSerial.cc
   LIBRARIES
     ${LIBRARY_CORE_LIB_LIST}

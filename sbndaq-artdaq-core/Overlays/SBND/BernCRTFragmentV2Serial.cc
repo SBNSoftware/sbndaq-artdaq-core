@@ -1,6 +1,6 @@
-#include "sbndaq-artdaq-core/Overlays/SBND/BernCRTFragmentSerial.hh"
+#include "sbndaq-artdaq-core/Overlays/SBND/BernCRTFragmentV2Serial.hh"
 
-std::ostream& sbndaq::operator<<(std::ostream& os, BernCRTFragmentSerial const& serial)
+std::ostream& sbndaq::operator<<(std::ostream& os, BernCRTFragmentV2Serial const& serial)
 {
   FragmentSerialBase serial_base(serial);
 
