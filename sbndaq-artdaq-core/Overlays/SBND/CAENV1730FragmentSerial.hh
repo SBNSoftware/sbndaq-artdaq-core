@@ -7,6 +7,7 @@
 #include "sbndaq-artdaq-core/Overlays/Common/CAENV1730Fragment.hh"
 
 #include <boost/serialization/base_object.hpp>
+#include <boost/serialization/vector.hpp>
 
 namespace sbndaq {
 
@@ -17,6 +18,7 @@ namespace sbndaq {
   public:
     CAENV1730FragmentMetadata metadata;
     CAENV1730Event event;
+    std::vector<std::vector<uint16_t> > fWvfmsVec;
     
   private:
     friend class boost::serialization::access;
@@ -27,6 +29,7 @@ namespace sbndaq {
       ar & boost::serialization::base_object<FragmentSerialBase>(*this);
       ar & metadata;
       ar & event;
+      ar & fWvfmsVec;
     }
   };
 }
