@@ -18,7 +18,7 @@ namespace sbndaq {
   public:
     CAENV1730FragmentMetadata metadata;
     CAENV1730Event event;
-    std::vector<std::vector<uint16_t> > fWvfmsVec;
+    std::vector<std::vector<uint16_t> > wvfmvec;
     
   private:
     friend class boost::serialization::access;
@@ -29,7 +29,7 @@ namespace sbndaq {
       ar & boost::serialization::base_object<FragmentSerialBase>(*this);
       ar & metadata;
       ar & event;
-      ar & fWvfmsVec;
+      ar & wvfmvec;
     }
   };
 }
