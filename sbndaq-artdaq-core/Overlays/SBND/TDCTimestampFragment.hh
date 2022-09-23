@@ -51,7 +51,7 @@ struct TDCTimestamp {
   uint64_t nanoseconds() const {
     uint64_t ns = 0;
     ns += vals.coarse * 8;
-    ns += vals.frac * 8 / 4096; //81.03 / 1000;
+    ns += vals.frac * 8 / 4096;
     return ns;
   }
 
