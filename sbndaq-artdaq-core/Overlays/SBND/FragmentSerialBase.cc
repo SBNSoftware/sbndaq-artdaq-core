@@ -9,7 +9,7 @@ std::ostream& sbndaq::operator<<(std::ostream& os, FragmentSerialBase const& ser
      << '\n'                                                                
      << "Sequence ID:   " << serial.sequence_id << '\n'
      << "Fragment ID:   " << serial.fragment_id << '\n'
-     << "Timestamp:     " << serial.timestamp << '\n'
+     << "Timestamp:     " << artdaq::Fragment::print_timestamp(serial.timestamp) << '\n'
      << std::endl;
   
   return os;
