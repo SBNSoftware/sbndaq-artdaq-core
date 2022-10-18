@@ -1,6 +1,7 @@
 #ifndef sbndaq_artdaq_core_Overlays_ICARUS_ICARUSTriggerUDPFragment_hh
 #define sbndaq_artdaq_core_Overlays_ICARUS_ICARUSTriggerUDPFragment_hh
 
+#include "sbndaq-artdaq-core/Overlays/ICARUS/ICARUSTriggerInfo.hh"
 #include "artdaq-core/Data/Fragment.hh"
 #include "cetlib_except/exception.h"
 
@@ -19,47 +20,6 @@ namespace icarus {
   class ICARUSTriggerUDPFragmentMetadata;
   //std::ostream & operator << (std::ostream &, ICARUSTriggerUDPFragmentMetadata const &);
 }
-
-struct icarus::ICARUSTriggerInfo
-{
-  std::string name;
-  long event_no;
-  long seconds;
-  long nanoseconds;
-  std::string wr_name;
-  long wr_event_no;
-  long wr_seconds;
-  long wr_nanoseconds;
-  long gate_id;
-  int gate_type;
-  //long beam_seconds;
-  //long beam_nanoseconds;
-  ICARUSTriggerInfo() {
-    name = ""; 
-    event_no = -1; 
-    seconds = -2; 
-    nanoseconds = -3; 
-    wr_name = ""; 
-    wr_event_no = -1; 
-    wr_seconds = -2; 
-    wr_nanoseconds = -3;
-    gate_id = -4;
-    gate_type = 0;
-    //beam_seconds = 0;
-    //beam_nanoseconds = 0;
-  }
-  uint64_t getNanoseconds_since_UTC_epoch() {
-    if(wr_seconds == -2 || wr_nanoseconds == -3)
-      return 0;
-    int correction = 0;
-    if(wr_seconds >= 1483228800)
-      correction = 37;
-    uint64_t const corrected_ts
-    { (wr_seconds-correction)*1000000000ULL + wr_nanoseconds };
-    return corrected_ts;
-  }
-  
-};
 
 icarus::ICARUSTriggerInfo icarus::parse_ICARUSTriggerString(const char* buffer)
 {

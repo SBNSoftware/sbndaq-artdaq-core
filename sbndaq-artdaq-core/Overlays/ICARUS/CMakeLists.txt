@@ -7,6 +7,7 @@ cet_make_library(
     ICARUSTriggerUDPFragment.cc
     ICARUSPMTGateFragment.cc
     ICARUSTriggerV2Fragment.cc
+    ICARUSTriggerV3Fragment.cc
   LIBRARIES
     ${LIBRARY_CORE_LIB_LIST}
 )
