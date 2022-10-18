@@ -6,7 +6,7 @@
 #include "sbndaq-artdaq-core/Trace/trace_defines.h"
 #include "cetlib_except/exception.h"
 
-#include <iostream>
+#include <ostream>
 #include <chrono>
 #include <string>
 #include <map>
@@ -14,7 +14,6 @@
 
 namespace icarus {
 
-  struct ICARUSTriggerInfo;
   ICARUSTriggerInfo parse_ICARUSTriggerV2String(const char*);
   class ICARUSTriggerV2Fragment;
   std::ostream & operator << (std::ostream &, ICARUSTriggerV2Fragment const &);
@@ -24,7 +23,7 @@ namespace icarus {
   //std::ostream & operator << (std::ostream &, ICARUSTriggerV2FragmentMetadata const &);
 }
 
-icarus::ICARUSTriggerInfo icarus::parse_ICARUSTriggerV2String(const char* buffer)
+inline icarus::ICARUSTriggerInfo icarus::parse_ICARUSTriggerV2String(const char* buffer)
 {
   std::string data_input = buffer;
   size_t pos = 0;

@@ -5,13 +5,13 @@
 #include "artdaq-core/Data/Fragment.hh"
 #include "cetlib_except/exception.h"
 
-#include <iostream>
+#include <ostream>
 #include <chrono>
 
 
 namespace icarus {
 
-  struct ICARUSTriggerInfo;
+  
   ICARUSTriggerInfo parse_ICARUSTriggerString(const char*);
   class ICARUSTriggerUDPFragment;
   std::ostream & operator << (std::ostream &, ICARUSTriggerUDPFragment const &);
@@ -21,7 +21,7 @@ namespace icarus {
   //std::ostream & operator << (std::ostream &, ICARUSTriggerUDPFragmentMetadata const &);
 }
 
-icarus::ICARUSTriggerInfo icarus::parse_ICARUSTriggerString(const char* buffer)
+inline icarus::ICARUSTriggerInfo icarus::parse_ICARUSTriggerString(const char* buffer)
 {
   std::string data_input = buffer;
   size_t pos = 0;
