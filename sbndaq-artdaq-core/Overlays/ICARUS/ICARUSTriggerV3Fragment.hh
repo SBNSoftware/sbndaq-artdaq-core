@@ -23,7 +23,7 @@ namespace icarus {
   //std::ostream & operator << (std::ostream &, ICARUSTriggerV3FragmentMetadata const &);
 }
 
-icarus::ICARUSTriggerInfo icarus::parse_ICARUSTriggerV3String(const char* buffer)
+inline icarus::ICARUSTriggerInfo icarus::parse_ICARUSTriggerV3String(const char* buffer)
 {
   std::string data_input = buffer;
   size_t pos = 0;
@@ -88,29 +88,30 @@ public:
 				   uint64_t last_ts_numimaj, uint64_t last_ts_numiminbias, 
 				   uint64_t last_ts_bnboffmaj, uint64_t last_ts_bnboffminbias,
 				   uint64_t last_ts_numioffmaj, uint64_t last_ts_numioffminbias,
-				   uint64_t last_ts_calib, uint64_t last_ts_other,
+				   uint64_t last_ts_calibmaj, uint64_t last_ts_calibminbias, 
+				   uint64_t last_ts_other,
 				   int last_trig_type, int last_sou_type, 
 				   long last_trig_bnbmaj, long last_trig_bnbminbias, 
 				   long last_trig_numimaj, long last_trig_numiminbias, 
 				   long last_trig_bnboffmaj, long last_trig_bnboffminbias,
 				   long last_trig_numioffmaj, long last_trig_numioffminbias, 
-				   long last_trig_calib,
+				   long last_trig_calibmaj, long last_trig_calibminbias,
 				   long total_trig_bnb, long total_trig_bnbmaj, long total_trig_bnbminbias, 
 				   long total_trig_numi, long total_trig_numimaj, long total_trig_numiminbias, 
 				   long total_trig_bnboff, long total_trig_bnboffmaj, long total_trig_bnboffminbias,
-				   long total_trig_numioff, long total_trig_numioffmaj, long total_trig_numioffminbias, 
-				   long total_trig_calib,
-				   long dg,
+				   long total_trig_numioff, long total_trig_numioffmaj, 
+				   long total_trig_numioffminbias, long total_trig_calibmaj,
+				   long total_trig_calibminbias, long dg,
 				   long dg_bnbmaj, long dg_bnbminbias, 
 				   long dg_numimaj, long dg_numiminbias, 
 				   long dg_bnboffmaj, long dg_bnboffminbias, 
 				   long dg_numioffmaj, long dg_numioffminbias,
-				   long dg_calib, long dg_other,
+				   long dg_calibmaj, long dg_calibminbias, long dg_other,
 				   long totalgates_bnbmaj, long totalgates_bnbminbias,
 				   long totalgates_numimaj, long totalgates_numiminbias,
 				   long totalgates_bnboffmaj, long totalgates_bnboffminbias,
 				   long totalgates_numioffmaj, long totalgates_numioffminbias,
-				   long totalgates_calib) 
+				   long totalgates_calibmaj, long totalgates_calibminbias) 
     : ntp_time(ntp_t)
     , last_timestamp(last_ts)
     , last_timestamp_bnbmaj(last_ts_bnbmaj)
@@ -121,7 +122,8 @@ public:
     , last_timestamp_bnboffminbias(last_ts_bnboffminbias)
     , last_timestamp_numioffmaj(last_ts_numioffmaj)
     , last_timestamp_numioffminbias(last_ts_numioffminbias)
-    , last_timestamp_calib(last_ts_calib)
+    , last_timestamp_calibmaj(last_ts_calibmaj)
+    , last_timestamp_calibminbias(last_ts_calibminbias)
     , last_timestamp_other(last_ts_other)
     , last_trigger_type(last_trig_type)
     , last_source_type(last_sou_type)
@@ -133,7 +135,8 @@ public:
     , last_trigger_bnboffminbias(last_trig_bnboffminbias)
     , last_trigger_numioffmaj(last_trig_numioffmaj)
     , last_trigger_numioffminbias(last_trig_numioffminbias)
-    , last_trigger_calib(last_trig_calib)
+    , last_trigger_calibmaj(last_trig_calibmaj)
+    , last_trigger_calibminbias(last_trig_calibminbias)
     , total_trigger_bnb(total_trig_bnb)
     , total_trigger_bnbmaj(total_trig_bnbmaj)
     , total_trigger_bnbminbias(total_trig_bnbminbias)
@@ -146,7 +149,8 @@ public:
     , total_trigger_numioff(total_trig_numioff)
     , total_trigger_numioffmaj(total_trig_numioffmaj)
     , total_trigger_numioffminbias(total_trig_numioffminbias)
-    , total_trigger_calib(total_trig_calib)
+    , total_trigger_calibmaj(total_trig_calibmaj)
+    , total_trigger_calibminbias(total_trig_calibminbias)
     , delta_gates(dg) 
     , delta_gates_bnbmaj(dg_bnbmaj)
     , delta_gates_bnbminbias(dg_bnbminbias)
@@ -156,7 +160,8 @@ public:
     , delta_gates_bnboffminbias(dg_bnboffminbias)
     , delta_gates_numioffmaj(dg_numioffmaj)
     , delta_gates_numioffminbias(dg_numioffminbias)
-    , delta_gates_calib(dg_calib)
+    , delta_gates_calibmaj(dg_calibmaj)
+    , delta_gates_calibminbias(dg_calibminbias)
     , delta_gates_other(dg_other) 
     , total_gates_bnbmaj(totalgates_bnbmaj)
     , total_gates_bnbminbias(totalgates_bnbminbias)
@@ -166,7 +171,8 @@ public:
     , total_gates_bnboffminbias(totalgates_bnboffminbias)
     , total_gates_numioffmaj(totalgates_numioffmaj)
     , total_gates_numioffminbias(totalgates_numioffminbias)
-    , total_gates_calib(totalgates_calib)
+    , total_gates_calibmaj(totalgates_calibmaj)
+    , total_gates_calibminbias(totalgates_calibminbias)
   {}
   
   uint64_t getNTPTime() const
@@ -199,8 +205,11 @@ public:
   uint64_t getLastTimestampNuMIOffMinbias() const
   { return last_timestamp_numioffminbias; }
 
-  uint64_t getLastTimestampCalib() const
-  { return last_timestamp_calib; }
+  uint64_t getLastTimestampCalibMaj() const
+  { return last_timestamp_calibmaj; }
+  
+  uint64_t getLastTimestampCalibMinbias() const
+  { return last_timestamp_calibminbias; }
     
   uint64_t getLastTimestampOther() const
   { return last_timestamp_other; }
@@ -235,8 +244,11 @@ public:
   long getLastTriggerNuMIOffMinbias() const
   { return last_trigger_numioffminbias; }
 
-  long getLastTriggerCalib() const
-  { return last_trigger_calib; }
+  long getLastTriggerCalibMaj() const
+  { return last_trigger_calibmaj; }
+
+  long getLastTriggerCalibMinbias() const
+  { return last_trigger_calibminbias; }
 
   long getTotalTriggerBNB() const
   { return total_trigger_bnb; }
@@ -274,8 +286,11 @@ public:
   long getTotalTriggerNuMIOffMinbias() const
   { return total_trigger_numioffminbias; }
 
-  long getTotalTriggerCalib() const
-  { return total_trigger_calib; }
+  long getTotalTriggerCalibMaj() const
+  { return total_trigger_calibmaj; }
+
+  long getTotalTriggerCalibMinbias() const
+  { return total_trigger_calibminbias; }
 
   long getDeltaGates() const
   { return delta_gates; }
@@ -304,8 +319,11 @@ public:
   long getDeltaGatesNuMIOffMinbias() const
   { return delta_gates_numioffminbias; }
 
-  long getDeltaGatesCalib() const
-  { return delta_gates_calib; }
+  long getDeltaGatesCalibMaj() const
+  { return delta_gates_calibmaj; }
+
+  long getDeltaGatesCalibMinbias() const
+  { return delta_gates_calibminbias; }
 
   long getDeltaGatesOther() const
   { return delta_gates_other; }
@@ -334,8 +352,11 @@ public:
   long getTotalGatesNuMIOffMinbias() const
   { return total_gates_numioffminbias; }
 
-  long getTotalGatesCalib() const
-  { return total_gates_calib; }
+  long getTotalGatesCalibMaj() const
+  { return total_gates_calibmaj; }
+
+  long getTotalGatesCalibMinbias() const
+  { return total_gates_calibminbias; }
 
 private:
   uint64_t ntp_time;
@@ -348,7 +369,8 @@ private:
   uint64_t last_timestamp_bnboffminbias;
   uint64_t last_timestamp_numioffmaj;
   uint64_t last_timestamp_numioffminbias;
-  uint64_t last_timestamp_calib;
+  uint64_t last_timestamp_calibmaj;
+  uint64_t last_timestamp_calibminbias;
   uint64_t last_timestamp_other;
 
   int last_trigger_type;
@@ -361,7 +383,8 @@ private:
   long last_trigger_bnboffminbias;
   long last_trigger_numioffmaj;
   long last_trigger_numioffminbias;
-  long last_trigger_calib;
+  long last_trigger_calibmaj;
+  long last_trigger_calibminbias;
   
   long total_trigger_bnb;
   long total_trigger_bnbmaj;
@@ -375,7 +398,8 @@ private:
   long total_trigger_numioff;
   long total_trigger_numioffmaj;
   long total_trigger_numioffminbias;
-  long total_trigger_calib;
+  long total_trigger_calibmaj;
+  long total_trigger_calibminbias;
 
   long delta_gates;
   long delta_gates_bnbmaj;
@@ -386,7 +410,8 @@ private:
   long delta_gates_bnboffminbias;
   long delta_gates_numioffmaj;
   long delta_gates_numioffminbias;
-  long delta_gates_calib;
+  long delta_gates_calibmaj;
+  long delta_gates_calibminbias;
   long delta_gates_other;
 
   long total_gates_bnbmaj;
@@ -397,7 +422,8 @@ private:
   long total_gates_bnboffminbias;
   long total_gates_numioffmaj;
   long total_gates_numioffminbias;
-  long total_gates_calib;
+  long total_gates_calibmaj;
+  long total_gates_calibminbias;
 
 
 };
@@ -552,8 +578,10 @@ public:
   { return Metadata()->getLastTimestampNuMIOffMaj(); }
   uint64_t getLastTimestampNuMIOffMinbias() const
   { return Metadata()->getLastTimestampNuMIOffMinbias(); }
-  uint64_t getLastTimestampCalib() const
-  { return Metadata()->getLastTimestampCalib(); }
+  uint64_t getLastTimestampCalibMaj() const
+  { return Metadata()->getLastTimestampCalibMaj(); }
+  uint64_t getLastTimestampCalibMinbias() const
+  { return Metadata()->getLastTimestampCalibMinbias(); }
   uint64_t getLastTimestampOther() const
   { return Metadata()->getLastTimestampOther(); }
 
@@ -577,8 +605,10 @@ public:
   { return Metadata()->getLastTriggerNuMIOffMaj(); }
   long getLastTriggerNuMIOffMinbias() const
   { return Metadata()->getLastTriggerNuMIOffMinbias(); }
-  long getLastTriggerCalib() const
-  { return Metadata()->getLastTriggerCalib(); }
+  long getLastTriggerCalibMaj() const
+  { return Metadata()->getLastTriggerCalibMaj(); }
+  long getLastTriggerCalibMinbias() const
+  { return Metadata()->getLastTriggerCalibMinbias(); }
 
   long getTotalTrigger() const
   { return Metadata()->getTotalTriggerBNB(); }
@@ -604,8 +634,10 @@ public:
   { return Metadata()->getTotalTriggerNuMIOffMaj(); }
   long getTotalTriggerNuMIOffMinbias() const
   { return Metadata()->getTotalTriggerNuMIOffMinbias(); }
-  long getTotalTriggerCalib() const
-  { return Metadata()->getTotalTriggerCalib(); }
+  long getTotalTriggerCalibMaj() const
+  { return Metadata()->getTotalTriggerCalibMaj(); }
+  long getTotalTriggerCalibMinbias() const
+  { return Metadata()->getTotalTriggerCalibMinbias(); }
   
   long getDeltaGatesBNBMaj() const
   { return Metadata()->getDeltaGatesBNBMaj(); }
@@ -623,8 +655,10 @@ public:
   { return Metadata()->getDeltaGatesNuMIOffMaj(); }
   long getDeltaGatesNuMIOffMinbias() const
   { return Metadata()->getDeltaGatesNuMIOffMinbias(); }
-  long getDeltaGatesCalib() const
-  { return Metadata()->getDeltaGatesCalib(); }
+  long getDeltaGatesCalibMaj() const
+  { return Metadata()->getDeltaGatesCalibMaj(); }
+  long getDeltaGatesCalibMinbias() const
+  { return Metadata()->getDeltaGatesCalibMinbias(); }
   long getDeltaGatesOther() const
   { return Metadata()->getDeltaGatesOther(); }
 
@@ -644,8 +678,10 @@ public:
   { return Metadata()->getTotalGatesNuMIOffMaj(); }
   long getTotalGatesNuMIOffMinbias() const
   { return Metadata()->getTotalGatesNuMIOffMinbias(); }
-  long getTotalGatesCalib() const
-  { return Metadata()->getTotalGatesCalib(); }
+  long getTotalGatesCalibMaj() const
+  { return Metadata()->getTotalGatesCalibMaj(); }
+  long getTotalGatesCalibMinbias() const
+  { return Metadata()->getTotalGatesCalibMinbias(); }
 
   bool Verify() const;
   
