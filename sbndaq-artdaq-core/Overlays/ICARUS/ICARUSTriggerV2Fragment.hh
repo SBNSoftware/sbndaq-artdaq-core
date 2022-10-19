@@ -24,7 +24,7 @@ namespace icarus {
   //std::ostream & operator << (std::ostream &, ICARUSTriggerV2FragmentMetadata const &);
 }
 
-icarus::ICARUSTriggerInfo icarus::parse_ICARUSTriggerV2String(const char* buffer)
+inline icarus::ICARUSTriggerInfo icarus::parse_ICARUSTriggerV2String(const char* buffer)
 {
   std::string data_input = buffer;
   size_t pos = 0;
