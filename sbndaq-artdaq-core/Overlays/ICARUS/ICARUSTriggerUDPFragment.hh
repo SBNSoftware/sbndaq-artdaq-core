@@ -11,7 +11,6 @@
 
 namespace icarus {
 
-  
   ICARUSTriggerInfo parse_ICARUSTriggerString(const char*);
   class ICARUSTriggerUDPFragment;
   std::ostream & operator << (std::ostream &, ICARUSTriggerUDPFragment const &);

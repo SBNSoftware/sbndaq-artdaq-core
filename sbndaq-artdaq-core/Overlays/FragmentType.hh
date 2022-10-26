@@ -27,6 +27,7 @@ enum FragmentType : artdaq::Fragment::type_t {
   ICARUSTriggerUDP = artdaq::Fragment::FirstUserFragmentType + 10,
   ICARUSPMTGate = artdaq::Fragment::FirstUserFragmentType + 11,
   ICARUSTriggerV2 = artdaq::Fragment::FirstUserFragmentType + 15,
+  ICARUSTriggerV3 = artdaq::Fragment::FirstUserFragmentType + 17,
 
   // SBND
   NevisTPC = artdaq::Fragment::FirstUserFragmentType + 6,
@@ -37,7 +38,7 @@ enum FragmentType : artdaq::Fragment::type_t {
   // Simulators
   DummyGenerator = artdaq::Fragment::FirstUserFragmentType + 8,
 
-  INVALID = artdaq::Fragment::FirstUserFragmentType + 17  // Should always be last.
+  INVALID = artdaq::Fragment::FirstUserFragmentType + 18  // Should always be last.
 };
 
 // Safety check.

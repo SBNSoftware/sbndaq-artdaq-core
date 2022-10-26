@@ -27,6 +27,7 @@ static std::map<sbndaq::detail::FragmentType, std::string> const names{
     {sbndaq::detail::FragmentType::ICARUSTriggerUDP, "ICARUSTriggerUDP"},
     {sbndaq::detail::FragmentType::ICARUSPMTGate, "ICARUSPMTGate"},
     {sbndaq::detail::FragmentType::ICARUSTriggerV2, "ICARUSTriggerV2"},
+    {sbndaq::detail::FragmentType::ICARUSTriggerV3, "ICARUSTriggerV3"},
 
     // SBND
     {sbndaq::detail::FragmentType::NevisTPC, "NEVISTPC"},
