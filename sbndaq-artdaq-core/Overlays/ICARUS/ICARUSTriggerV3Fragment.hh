@@ -638,7 +638,7 @@ public:
   { return Metadata()->getTotalTriggerCalibMaj(); }
   long getTotalTriggerCalibMinbias() const
   { return Metadata()->getTotalTriggerCalibMinbias(); }
-  
+
   long getDeltaGatesBNBMaj() const
   { return Metadata()->getDeltaGatesBNBMaj(); }
   long getDeltaGatesBNBMinbias() const
