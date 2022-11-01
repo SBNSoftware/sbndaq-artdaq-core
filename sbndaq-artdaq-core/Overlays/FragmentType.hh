@@ -22,6 +22,7 @@ enum FragmentType : artdaq::Fragment::type_t {
   WhiteRabbit = artdaq::Fragment::FirstUserFragmentType + 12,
 
   // ICARUS
+  BottomCRT = artdaq::Fragment::FirstUserFragmentType + 18,
   PHYSCRATEDATA = artdaq::Fragment::FirstUserFragmentType + 4,
   PHYSCRATESTAT = artdaq::Fragment::FirstUserFragmentType + 5,
   ICARUSTriggerUDP = artdaq::Fragment::FirstUserFragmentType + 10,
@@ -38,7 +39,7 @@ enum FragmentType : artdaq::Fragment::type_t {
   // Simulators
   DummyGenerator = artdaq::Fragment::FirstUserFragmentType + 8,
 
-  INVALID = artdaq::Fragment::FirstUserFragmentType + 18  // Should always be last.
+  INVALID = artdaq::Fragment::FirstUserFragmentType + 19  // Should always be last.
 };
 
 // Safety check.
