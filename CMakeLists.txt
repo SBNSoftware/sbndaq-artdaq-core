@@ -14,9 +14,7 @@ include(Compatibility)
 set(CET_WARN_DEPRECATED)
 
 project(sbndaq_artdaq_core)
-set(${PROJECT_NAME}_CMAKE_PROJECT_VERSION_STRING 1.01.00.of0)
-
-#project(sbndaq_artdaq_core VERSION 1.01.00.of0)
+set(${PROJECT_NAME}_CMAKE_PROJECT_VERSION_STRING 1.04.00.of0)
 
 set(CMAKE_MODULE_PATH
   $ENV{ARTDAQ_UTILITIES_DIR}/Modules
@@ -90,18 +88,11 @@ IF (NOT(SBND_BUILD OR ICARUS_BUILD))
 ENDIF()
 
 
-#find_ups_product( messagefacility )
 find_ups_product( artdaq_core )
 find_ups_product( TRACE )
 find_ups_product( cetlib )
 find_ups_product( cetlib_except)
-#find_ups_boost( v1_73_0 filesystem
-#                        program_options
-#                        unit_test_framework
-# )
 
-
-#find_ups_product( cetbuildtools v8_13_04 )
 
 #experiment specific products needed
 IF(ICARUS_BUILD)
@@ -114,6 +105,7 @@ ENDIF()
 
 # macros for art_dictionary and basic_plugin
 include(CetTest)
+include(ArtDictionary)
 
 # source
 add_subdirectory(sbndaq-artdaq-core)
