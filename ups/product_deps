@@ -29,10 +29,10 @@ qualifier                artdaq_core
 
 #for offline
 
-c7:prof              c7:prof:s117
-c7:debug             c7:debug:s117
-e20:prof             e20:prof:s117
-e20:debug            e20:debug:s117
+c7:prof:s117              c7:prof:s117
+c7:debug:s117             c7:debug:s117
+e20:prof:s117             e20:prof:s117
+e20:debug:s117            e20:debug:s117
 
 c7:prof:s112              c7:prof:s112
 c7:debug:s112             c7:debug:s112
