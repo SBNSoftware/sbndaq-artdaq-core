@@ -5,24 +5,36 @@
 #include "cetlib_except/exception.h"
 
 #include <iostream>
-#include <sstream>
-#include <string>
-#include <vector>
-#include <unordered_map>
 
 namespace sbndaq {
+
   class DAPHNEFragment;
   std::ostream & operator << (std::ostream &, DAPHNEFragment const &);
 
-} 
+  struct DAPHNEData;
+  std::ostream& operator<<(std::ostream&, DAPHNEData const&);
 
-class sbndaq::DAPHNEFragment 
-{
-public:
-  struct Metadata {
-    uint64_t fragment_fill_time_;
-  };
+
+struct DAPHNEData {
+
+uint16_t DataBlock; // want datablock to be an array?
+
 };
 
+class DAPHNEFragment 
+{
+public:
+
+  struct Metadata { // includes Header info
+    uint32_t nSamples;
+  };
+
+  explicit DAPHNEFragment(artdaq::Fragment const& f) : artdaq_Fragment_(f) {}
+  Metadata const* metadata() const { return artdaq_Fragment_.metadata<Metadata>(); }
+
+private:
+  artdaq::Fragment const& artdaq_Fragment_;
+};
+} // namespace sbndaq
 
 #endif
