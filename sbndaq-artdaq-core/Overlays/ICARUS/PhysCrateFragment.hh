@@ -4,6 +4,7 @@
 #include "artdaq-core/Data/Fragment.hh"
 #include "cetlib_except/exception.h"
 
+#include <bitset>
 #include <iostream>
 #include <vector>
 
@@ -117,8 +118,6 @@ struct icarus::A2795DataBlock{
   data_t* data;
 };
 
-
-
 class icarus::PhysCrateFragmentMetadata {
   
 public:
@@ -187,7 +186,8 @@ class icarus::PhysCrateFragment {
 
   public:
 
-  PhysCrateFragment(artdaq::Fragment const & f) : artdaq_Fragment_(f) {}
+  PhysCrateFragment(artdaq::Fragment const & f) : artdaq_Fragment_(f), 
+                                                  compressionKeys_(f) {}
 
   PhysCrateFragmentMetadata const * metadata() const { return artdaq_Fragment_.metadata<PhysCrateFragmentMetadata>(); }
 
@@ -198,7 +198,7 @@ class icarus::PhysCrateFragment {
   size_t nChannelsPerBoard() const { return metadata()->channels_per_board(); }
   size_t CompressionScheme() const { return metadata()->compression_scheme(); }
 
-  bool   isCompressed() const { return (CompressionScheme()==0); }
+  bool   isCompressed() const { return (CompressionScheme()!=0); } // check that 0 in the md is compressed
 
   size_t DataPayloadSize() const { return artdaq_Fragment_.dataSizeBytes(); }
 
@@ -218,12 +218,61 @@ class icarus::PhysCrateFragment {
 
   bool Verify() const;
 
+  uint16_t const& CompressionKey(size_t b, size_t s) const
+                                  {
+                                    size_t index = b*this->nSamplesPerChannel() + s;
+                                    return compressionKeys_.keys_[index];
+                                  }
+
+  typedef std::pair<A2795DataBlock::data_t, const A2795DataBlock::data_t*> recursionPair;
+
 private:
 
   artdaq::Fragment const & artdaq_Fragment_;
 
   void   throwIfCompressed() const;
 
+  // here are things helpful for the comrpessed fragments
+  struct Keys
+  {
+     Keys(artdaq::Fragment const& f) : keys_(GenerateKeys(f)) {};
+     std::vector<uint16_t> const keys_;
+  } compressionKeys_;
+
+  static size_t SampleBytesFromKey(uint16_t const& key)
+  {
+    size_t nCompressed = std::bitset<16>(key).count();
+    return 128 - 6*nCompressed + ((nCompressed % 2) == 1)*2;
+  }
+
+  size_t cumulativeSampleSize(size_t b, size_t s, size_t runningTotal = 0) const
+  {
+    // tail recursive function to total the bytes used for each sample
+    // requires the compression keys to function
+    uint16_t const& key = this->CompressionKey(b, s);
+
+    if (s == 0)
+      return runningTotal + this->SampleBytesFromKey(key);
+
+    return this->cumulativeSampleSize(b, s - 1, runningTotal + this->SampleBytesFromKey(key));
+  }
+
+  size_t cumulativeBoardSize(size_t b, size_t runningTotal = 0) const
+  {
+    // tail recursive function to total the bytes used for each board
+    // each board is made up of nSamples samples
+    // requires the compression keys to function
+    size_t nSamples = this->nSamplesPerChannel();
+    
+    if (b == 0)
+      return this->cumulativeSampleSize(0, nSamples - 1, runningTotal);
+
+    return this->cumulativeBoardSize(b - 1, this->cumulativeSampleSize(b, nSamples - 1, runningTotal));
+  }
+
+  static std::vector<uint16_t> GenerateKeys(artdaq::Fragment const& f);
+
+  recursionPair adc_val_recursive_helper(size_t b, size_t c, size_t s, size_t sTarget, recursionPair pair) const;
 };
 
 
