@@ -562,8 +562,6 @@ public:
   long getDeltaGates() const
   { return Metadata()->getDeltaGates(); }
 
-  uint64_t getLastTimestamp() const
-  { return Metadata()->getLastTimestamp(); }
   uint64_t getLastTimestampBNBMaj() const
   { return Metadata()->getLastTimestampBNBMaj(); }
   uint64_t getLastTimestampBNBMinbias() const
@@ -641,8 +639,6 @@ public:
   long getTotalTriggerCalibMinbias() const
   { return Metadata()->getTotalTriggerCalibMinbias(); }
 
-  long getDeltaGates() const
-  { return Metadata()->getDeltaGates(); }
   long getDeltaGatesBNBMaj() const
   { return Metadata()->getDeltaGatesBNBMaj(); }
   long getDeltaGatesBNBMinbias() const
