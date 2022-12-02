@@ -224,7 +224,10 @@ std::vector<uint16_t> icarus::PhysCrateFragment::GenerateKeys(artdaq::Fragment c
   // if there's no compression it's all uncompressed
   // NOTE: double check how compression_scheme() is encoded
   if (f.metadata<icarus::PhysCrateFragmentMetadata>()->compression_scheme() == 0)
+  {
+    TRACEN("PhysCrateFragment",TLVL_DEBUG,"PhysCrateFragment::GenerateKeys : Uncompressed fragement. Return trivial keys.");
     return keys;
+  }
 
   // loop over the fragment data and check the compression
   // each board/sample pair gets one 16-bit key
@@ -257,6 +260,7 @@ std::vector<uint16_t> icarus::PhysCrateFragment::GenerateKeys(artdaq::Fragment c
       nWord += (std::bitset<16>(key).count() % 2);
       cumulativePrevBlockSize += icarus::PhysCrateFragment::SampleBytesFromKey(key);
     }
+    TRACEN("PhysCrateFragment",TLVL_DEBUG,"PhysCrateFragment::GenerateKeys : Compression key for board %d is %s", b, std::bitset<16>(key).to_string().c_str());
   }
   return keys;
 }
