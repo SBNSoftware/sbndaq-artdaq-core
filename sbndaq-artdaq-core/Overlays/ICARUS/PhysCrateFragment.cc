@@ -225,7 +225,7 @@ std::vector<uint16_t> icarus::PhysCrateFragment::GenerateKeys(artdaq::Fragment c
   // NOTE: double check how compression_scheme() is encoded
   if (f.metadata<icarus::PhysCrateFragmentMetadata>()->compression_scheme() == 0)
   {
-    TRACEN("PhysCrateFragment",TLVL_DEBUG,"PhysCrateFragment::GenerateKeys : Uncompressed fragement. Return trivial keys.");
+    TRACEN("PhysCrateFragment",TLVL_DEBUG+3,"PhysCrateFragment::GenerateKeys : Uncompressed fragement. Return trivial keys.");
     return keys;
   }
 
@@ -259,8 +259,8 @@ std::vector<uint16_t> icarus::PhysCrateFragment::GenerateKeys(artdaq::Fragment c
       keys[b*nSamples + s] = key;
       nWord += (std::bitset<16>(key).count() % 2);
       cumulativePrevBlockSize += icarus::PhysCrateFragment::SampleBytesFromKey(key);
+      TRACEN("PhysCrateFragment",TLVL_DEBUG+3,"PhysCrateFragment::GenerateKeys : Compression key for board %d, sample %d is %s", b, s, std::bitset<16>(key).to_string().c_str());
     }
-    TRACEN("PhysCrateFragment",TLVL_DEBUG,"PhysCrateFragment::GenerateKeys : Compression key for board %d is %s", b, std::bitset<16>(key).to_string().c_str());
   }
   return keys;
 }
