@@ -1,12 +1,13 @@
 #ifndef sbndaq_artdaq_core_Overlays_ICARUS_ICARUSTriggerV2Fragment_hh
 #define sbndaq_artdaq_core_Overlays_ICARUS_ICARUSTriggerV2Fragment_hh
 
+#include "sbndaq-artdaq-core/Overlays/ICARUS/ICARUSTriggerInfo.hh"
 #include "artdaq-core/Data/Fragment.hh"
 #include "cetlib_except/exception.h"
 #include "sbndaq-artdaq-core/Overlays/ICARUS/ICARUSTriggerInfo.hh"
 #include "sbndaq-artdaq-core/Trace/trace_defines.h"
 
-#include <iostream>
+#include <ostream>
 #include <chrono>
 #include <string>
 #include <map>
@@ -14,7 +15,6 @@
 
 namespace icarus {
 
-  struct ICARUSTriggerInfo;
   ICARUSTriggerInfo parse_ICARUSTriggerV2String(const char*);
   class ICARUSTriggerV2Fragment;
   std::ostream & operator << (std::ostream &, ICARUSTriggerV2Fragment const &);

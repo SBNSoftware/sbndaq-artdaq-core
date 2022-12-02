@@ -64,7 +64,7 @@ std::map<artdaq::Fragment::type_t, std::string> sbndaq::makeFragmentTypeMap() {
   }
 
   for (auto name : output) {
-    TLOG(TLVL_DEBUG) << "Verifying map: " << name.first << " --> " << name.second;
+    TLOG(TLVL_DEBUG) << "Verifying map: " << (int)(name.first) << " --> " << name.second;
   }
 
   return output;
