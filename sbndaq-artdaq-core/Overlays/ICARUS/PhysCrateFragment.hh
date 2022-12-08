@@ -226,6 +226,9 @@ class icarus::PhysCrateFragment {
 
   typedef std::pair<A2795DataBlock::data_t, const A2795DataBlock::data_t*> recursionPair;
 
+  PhysCrateFragment makeCompressedFragment()   const { return PhysCrateFragment(  compressArtdaqFragment(artdaq_Fragment_)); }
+  PhysCrateFragment makeUncompressedFragment() const { return PhysCrateFragment(decompressArtdaqFragment(artdaq_Fragment_)); }
+
 private:
 
   artdaq::Fragment const & artdaq_Fragment_;
@@ -273,6 +276,9 @@ private:
   static std::vector<uint16_t> GenerateKeys(artdaq::Fragment const& f);
 
   recursionPair adc_val_recursive_helper(size_t b, size_t c, size_t s, size_t sTarget, recursionPair pair) const;
+
+  artdaq::Fragment   compressArtdaqFragment(artdaq::Fragment const & f) const;
+  artdaq::Fragment decompressArtdaqFragment(artdaq::Fragment const & f) const;
 };
 
 
