@@ -300,3 +300,255 @@ icarus::PhysCrateFragment::recursionPair icarus::PhysCrateFragment::adc_val_recu
 
   return this->adc_val_recursive_helper(b, c, s + 1, sTarget, std::make_pair(runningVal, loc + increment));
 }
+
+artdaq::Fragment icarus::PhysCrateFragment::compressArtdaqFragment(artdaq::Fragment const & f) const
+{
+  // you shouldn't run this if you already have a compressed fragment
+  // but in case you do it shouldn't bother with the calculations
+  if (not isCompressed())
+    return f;
+
+  size_t nBoardsPerFragment    = this->nBoards();
+  size_t nChannelsPerBoard     = this->nChannelsPerBoard();
+  size_t nSamplesPerChannel    = this->nSamplesPerChannel();
+  size_t compressedPayloadSize = 0;
+
+  // setup waveform vector which is nBoards x nChannels x nSamples
+  // note we'll index by b*nSamples*nChannels + s*nChannels + c
+  std::vector<uint16_t> waveform(nBoardsPerFragment * nChannelsPerBoard * nSamplesPerChannel);
+ 
+  // setup the ADC differences vector
+  std::vector<int16_t> adcDiffs(nBoardsPerFragment * nChannelsPerBoard * nSamplesPerChannel);
+ 
+  // a vector of bools storing if the adc diff is to be compressed
+  // we compress in blocks of 4 channels, so only 1/4th the channel size needed
+  // note we'll index by (b*nSamples*nChannels + s*nChannels + c)/4
+  std::vector<bool> isCompressed(nBoardsPerFragment * (nChannelsPerBoard / 4) * nSamplesPerChannel);
+
+  for (size_t board = 0; board < nBoardsPerFragment; board++)
+  {
+    const icarus::A2795DataBlock::data_t* dataBlock = this->BoardData(board);
+
+    // a counter for how many blocks of 4 channels are compressed
+    size_t nBlocks = nChannelsPerBoard * nSamplesPerChannel / 4;
+    size_t nCompressedBlocks = 0;
+
+    for (size_t sample = 0; sample < nSamplesPerChannel; sample++)
+    {
+      for(size_t channel = 0; channel < nChannelsPerBoard; channel++)
+      {
+        size_t index = board * nSamplesPerChannel * nChannelsPerBoard
+                     + sample * nChannelsPerBoard
+                     + channel;
+        size_t blockIndex = index / 4;
+
+        waveform[index] = dataBlock[sample * nChannelsPerBoard + channel];
+
+        if (sample == 0)
+        {
+          // compression takes sample 0 as the referent
+          adcDiffs[index] = waveform[index];
+
+          // we don't compress sample 0
+          // only have to set this once every 4 channels
+          if ((channel % 4) == 3)
+            isCompressed[blockIndex] = false;
+        } else {
+          size_t prevSampleIndex = index - nChannelsPerBoard;
+
+          adcDiffs[index] = waveform[index] - waveform[prevSampleIndex];
+
+          // compression is done on blocks of 4 channels
+          // if all differences are less than 7 in magnitude each adc difference is compressed
+          if ((channel % 4) == 3)
+          {
+            bool isCmp =   (std::abs(adcDiffs[index - 3]) < 8)
+                        && (std::abs(adcDiffs[index - 2]) < 8)
+                        && (std::abs(adcDiffs[index - 1]) < 8)
+                        && (std::abs(adcDiffs[index    ]) < 8);
+
+            isCompressed[blockIndex] = isCmp;
+            nCompressedBlocks += isCmp;
+          }
+        }
+      } // end loop over channels
+    }  // end loop over samples
+
+    // each board has a header
+    compressedPayloadSize += sizeof(icarus::PhysCrateDataTileHeader)
+                          +  sizeof(icarus::A2795DataBlock::Header );
+
+    // calculate size, in bytes, needed for compressed data
+    // each uncompressed adcDiff takes 16 bits = 2 bytes
+    // each compressed adcDiff is 4 bits = 0.5 bytes
+    // each block is 4 adcDiffs, so compression takes us from 8 to 2 bytes per block
+    // if there are an odd number of uncompressed blocks there is a 2 byte overflow
+    compressedPayloadSize += 8 *  (nBlocks - nCompressedBlocks)
+                          +  2 *   nCompressedBlocks
+                          +  2 * ((nBlocks - nCompressedBlocks) % 2);
+
+    // each board has a trailer
+    compressedPayloadSize += 4*sizeof(uint16_t);
+  }  // end loop over boards
+
+  artdaq::Fragment compressedFragment(f);
+  compressedFragment.resize(compressedPayloadSize);
+
+  auto oldBegin = reinterpret_cast<const uint16_t*>(f.dataBegin()                   );
+  auto newBegin = reinterpret_cast<      uint16_t*>(compressedFragment.dataAddress());
+  size_t nWord_ofOld = 0;
+  size_t nWord_ofNew = 0;
+
+  // loop to add data
+  for (size_t board = 0; board < nBoardsPerFragment; board++)
+  {
+    size_t nHeaderWords = (sizeof(icarus::PhysCrateDataTileHeader) + sizeof(icarus::A2795DataBlock::Header)) / sizeof(uint16_t);
+    for (size_t headerWord = 0; headerWord < nHeaderWords; headerWord++)
+    {
+      *(newBegin + nWord_ofNew) = *(oldBegin + nWord_ofOld);
+      nWord_ofOld++;
+      nWord_ofNew++;
+    } // end loop over words in header
+    for (size_t sample = 0; sample < nSamplesPerChannel; sample++)
+    {
+      size_t channel = 0;
+      size_t nUncompressed = 16;
+      while (channel < nChannelsPerBoard)
+      {
+        size_t index = board  * nSamplesPerChannel * nChannelsPerBoard
+                     + sample * nChannelsPerBoard
+                     + channel;
+        size_t blockIndex = index/4;
+
+        if (not isCompressed[blockIndex])
+        {
+          *(newBegin + nWord_ofNew) = (adcDiffs[index] & 0x0FFF) + 0x8000;
+          nWord_ofOld++;
+          nWord_ofNew++;
+          channel++;
+        } else {
+          *(newBegin + nWord_ofNew) =  (adcDiffs[index    ] & 0x000F)
+                                    + ((adcDiffs[index + 1] & 0x000F) <<  4)
+                                    + ((adcDiffs[index + 2] & 0x000F) <<  8)
+                                    + ((adcDiffs[index + 3] & 0x000F) << 12);
+          nWord_ofOld += 4;
+          nWord_ofNew++;
+          channel += 4;
+          nUncompressed--;
+        }
+      } // end loop over cahnnels
+      // add offset when odd number of uncompressed blocks
+      if ((nUncompressed % 2) == 1)
+      {
+        *(newBegin + nWord_ofNew) = 0;
+        nWord_ofNew++;
+      }
+    } // end loop over samples
+  } // end loop over boards
+
+  // we need to update the fragment metadata to reflect it is compressed
+  if (compressedFragment.hasMetadata()){
+    icarus::PhysCrateFragmentMetadata::data_t runNumber = this->metadata()->run_number();
+    icarus::PhysCrateFragmentMetadata::data_t nBoards   = this->metadata()->num_boards();
+    icarus::PhysCrateFragmentMetadata::data_t cPerB     = this->metadata()->channels_per_board();
+    icarus::PhysCrateFragmentMetadata::data_t sPerC     = this->metadata()->samples_per_channel();
+    icarus::PhysCrateFragmentMetadata::data_t adcPerS   = this->metadata()->num_adc_bits(); // i don't know why the names are like this...
+    icarus::PhysCrateFragmentMetadata::data_t compress  = 0; // working with compressed being zero. unsure if true
+    std::vector<icarus::PhysCrateFragmentMetadata::id_t> boardIds;
+    for (size_t b = 0; b < nBoards; b++)
+      boardIds.push_back(this->metadata()->board_id(b));
+    icarus::PhysCrateFragmentMetadata updatedMD(runNumber, nBoards, cPerB, sPerC, adcPerS, compress, boardIds);
+    compressedFragment.updateMetadata<icarus::PhysCrateFragmentMetadata>(updatedMD);
+  }
+
+  return compressedFragment;
+}
+
+artdaq::Fragment icarus::PhysCrateFragment::decompressArtdaqFragment(artdaq::Fragment const & f) const
+{
+  // you shouldn't run this if you already have an uncompressed fragment
+  // but in case you do it shouldn't bother with the calculations
+  if (isCompressed())
+    return f;
+
+  size_t nBoardsPerFragment    = this->nBoards();
+  size_t nChannelsPerBoard     = this->nChannelsPerBoard();
+  size_t nSamplesPerChannel    = this->nSamplesPerChannel();
+
+  artdaq::Fragment decompressedFragment(f);
+  decompressedFragment.resize(BoardBlockSize()*nBoards());
+
+  auto oldBegin = reinterpret_cast<const uint16_t*>(f.dataBegin()                     );
+  auto newBegin = reinterpret_cast<      uint16_t*>(decompressedFragment.dataAddress());
+  size_t nWord_ofOld = 0;
+  size_t nWord_ofNew = 0;
+
+  // loop to add data
+  for (size_t board = 0; board < nBoardsPerFragment; board++)
+  {
+    size_t nHeaderWords = (sizeof(icarus::PhysCrateDataTileHeader) + sizeof(icarus::A2795DataBlock::Header)) / sizeof(uint16_t);
+    for (size_t headerWord = 0; headerWord < nHeaderWords; headerWord++)
+    {
+      *(newBegin + nWord_ofNew) = *(oldBegin + nWord_ofOld);
+      nWord_ofOld++;
+      nWord_ofNew++;
+    } // end loop over words in header
+
+    // store the running adc total for each channel
+    std::vector<uint16_t> runningValue(nChannelsPerBoard);
+
+    for (size_t sample = 0; sample < nSamplesPerChannel; sample++)
+    {
+      uint16_t sampleKey = this->CompressionKey(board, sample);
+      for (size_t channel = 0; channel < nChannelsPerBoard; channel++)
+      {
+        const size_t cSet = channel / 4;
+        const size_t channelInSet = channel % 4;
+        uint16_t sampleKey = this->CompressionKey(board, sample); 
+        bool isChannelSetCompressed = ((sampleKey >> cSet) & 0x0001) == 0x0001;
+      
+        if (isChannelSetCompressed)
+        {
+          icarus::A2795DataBlock::data_t dataSlice = *(oldBegin + nWord_ofOld);
+          icarus::A2795DataBlock::data_t fourBitDiff = (dataSlice >> (4*channelInSet)) & 0x000F;
+          bool isNeg = (fourBitDiff >> 3);
+          runningValue[channel] += isNeg*0xFFF0 + fourBitDiff;
+          if (channelInSet == 3)
+            nWord_ofOld++;
+        } else {
+          icarus::A2795DataBlock::data_t dataSlice = *(oldBegin + nWord_ofOld);
+          icarus::A2795DataBlock::data_t twelveBitDiff = dataSlice & 0x0FFF;
+          bool isNeg = (sample != 0) && (twelveBitDiff >> 11);
+          runningValue[channel] += isNeg*0xF000 + twelveBitDiff;
+          nWord_ofOld++;
+        }
+
+        *(newBegin + nWord_ofNew) = runningValue[channel];
+        nWord_ofNew++;
+      } // end loop over channels
+      // compressed fragments have an offset when there's an odd number of uncompressed blocks
+      if ((std::bitset<16>(sampleKey).count() % 2) == 1)
+      {
+        nWord_ofOld++;
+      }
+    } // end loop over samples
+  } // end loop over boards
+ 
+  // we need to update the fragment metadata to reflect it is compressed
+  if (decompressedFragment.hasMetadata()){
+    icarus::PhysCrateFragmentMetadata::data_t runNumber = this->metadata()->run_number();
+    icarus::PhysCrateFragmentMetadata::data_t nBoards   = this->metadata()->num_boards();
+    icarus::PhysCrateFragmentMetadata::data_t cPerB     = this->metadata()->channels_per_board();
+    icarus::PhysCrateFragmentMetadata::data_t sPerC     = this->metadata()->samples_per_channel();
+    icarus::PhysCrateFragmentMetadata::data_t adcPerS   = this->metadata()->num_adc_bits(); // i don't know why the names are like this...
+    icarus::PhysCrateFragmentMetadata::data_t compress  = 1; // we really only care that this is not the compressed value. 1 should do
+    std::vector<icarus::PhysCrateFragmentMetadata::id_t> boardIds;
+    for (size_t b = 0; b < nBoards; b++)
+      boardIds.push_back(this->metadata()->board_id(b));
+    icarus::PhysCrateFragmentMetadata updatedMD(runNumber, nBoards, cPerB, sPerC, adcPerS, compress, boardIds);
+    decompressedFragment.updateMetadata<icarus::PhysCrateFragmentMetadata>(updatedMD);
+  }
+
+  return decompressedFragment;
+
+}
