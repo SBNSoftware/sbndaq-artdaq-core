@@ -189,6 +189,9 @@ class icarus::PhysCrateFragment {
   PhysCrateFragment(artdaq::Fragment const & f) : artdaq_Fragment_(f), 
                                                   compressionKeys_(f) {}
 
+  PhysCrateFragment(artdaq::Fragment const & f, bool const & compressionSwitch)
+    : PhysCrateFragment(this->fragmentSwitch(f, compressionSwitch)) {}
+
   PhysCrateFragmentMetadata const * metadata() const { return artdaq_Fragment_.metadata<PhysCrateFragmentMetadata>(); }
 
   size_t RunNumber() const { return metadata()->run_number(); }
@@ -277,8 +280,12 @@ private:
 
   recursionPair adc_val_recursive_helper(size_t b, size_t c, size_t s, size_t sTarget, recursionPair pair) const;
 
-  artdaq::Fragment   compressArtdaqFragment(artdaq::Fragment const & f) const;
-  artdaq::Fragment decompressArtdaqFragment(artdaq::Fragment const & f) const;
+  static artdaq::Fragment   compressArtdaqFragment(artdaq::Fragment const & f);
+  static artdaq::Fragment decompressArtdaqFragment(artdaq::Fragment const & f);
+  static artdaq::Fragment fragmentSwitch(artdaq::Fragment const & f, bool const & compressionSwitch)
+  {
+    return (compressionSwitch) ? compressArtdaqFragment(f) : decompressArtdaqFragment(f);
+  }
 };
 
 

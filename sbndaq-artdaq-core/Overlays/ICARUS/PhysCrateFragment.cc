@@ -301,16 +301,16 @@ icarus::PhysCrateFragment::recursionPair icarus::PhysCrateFragment::adc_val_recu
   return this->adc_val_recursive_helper(b, c, s + 1, sTarget, std::make_pair(runningVal, loc + increment));
 }
 
-artdaq::Fragment icarus::PhysCrateFragment::compressArtdaqFragment(artdaq::Fragment const & f) const
+artdaq::Fragment icarus::PhysCrateFragment::compressArtdaqFragment(artdaq::Fragment const & f)
 {
   // you shouldn't run this if you already have a compressed fragment
   // but in case you do it shouldn't bother with the calculations
-  if (not isCompressed())
+  if (f.metadata<icarus::PhysCrateFragmentMetadata>()->compression_scheme() != 0)
     return f;
 
-  size_t nBoardsPerFragment    = this->nBoards();
-  size_t nChannelsPerBoard     = this->nChannelsPerBoard();
-  size_t nSamplesPerChannel    = this->nSamplesPerChannel();
+  size_t nBoardsPerFragment    = f.metadata<icarus::PhysCrateFragmentMetadata>()->num_boards(); 
+  size_t nChannelsPerBoard     = f.metadata<icarus::PhysCrateFragmentMetadata>()->channels_per_board();
+  size_t nSamplesPerChannel    = f.metadata<icarus::PhysCrateFragmentMetadata>()->samples_per_channel();
   size_t compressedPayloadSize = 0;
 
   // setup waveform vector which is nBoards x nChannels x nSamples
@@ -327,7 +327,11 @@ artdaq::Fragment icarus::PhysCrateFragment::compressArtdaqFragment(artdaq::Fragm
 
   for (size_t board = 0; board < nBoardsPerFragment; board++)
   {
-    const icarus::A2795DataBlock::data_t* dataBlock = this->BoardData(board);
+    const icarus::A2795DataBlock::data_t* dataBlock = reinterpret_cast<icarus::A2795DataBlock::data_t const*>
+                                                      (f.dataBeginBytes() + sizeof(icarus::PhysCrateDataTileHeader)
+                                                       + board*(sizeof(icarus::PhysCrateDataTileHeader) + 4*sizeof(uint16_t))
+                                                       + board*nChannelsPerBoard*nSamplesPerChannel*sizeof(icarus::A2795DataBlock::data_t)
+                                                       + (board+1)*sizeof(icarus::A2795DataBlock::Header));
 
     // a counter for how many blocks of 4 channels are compressed
     size_t nBlocks = nChannelsPerBoard * nSamplesPerChannel / 4;
@@ -448,15 +452,15 @@ artdaq::Fragment icarus::PhysCrateFragment::compressArtdaqFragment(artdaq::Fragm
 
   // we need to update the fragment metadata to reflect it is compressed
   if (compressedFragment.hasMetadata()){
-    icarus::PhysCrateFragmentMetadata::data_t runNumber = this->metadata()->run_number();
-    icarus::PhysCrateFragmentMetadata::data_t nBoards   = this->metadata()->num_boards();
-    icarus::PhysCrateFragmentMetadata::data_t cPerB     = this->metadata()->channels_per_board();
-    icarus::PhysCrateFragmentMetadata::data_t sPerC     = this->metadata()->samples_per_channel();
-    icarus::PhysCrateFragmentMetadata::data_t adcPerS   = this->metadata()->num_adc_bits(); // i don't know why the names are like this...
+    icarus::PhysCrateFragmentMetadata::data_t runNumber = f.metadata<icarus::PhysCrateFragmentMetadata>()->run_number();
+    icarus::PhysCrateFragmentMetadata::data_t nBoards   = f.metadata<icarus::PhysCrateFragmentMetadata>()->num_boards();
+    icarus::PhysCrateFragmentMetadata::data_t cPerB     = f.metadata<icarus::PhysCrateFragmentMetadata>()->channels_per_board();
+    icarus::PhysCrateFragmentMetadata::data_t sPerC     = f.metadata<icarus::PhysCrateFragmentMetadata>()->samples_per_channel();
+    icarus::PhysCrateFragmentMetadata::data_t adcPerS   = f.metadata<icarus::PhysCrateFragmentMetadata>()->num_adc_bits(); // i don't know why the names are like this...
     icarus::PhysCrateFragmentMetadata::data_t compress  = 0; // working with compressed being zero. unsure if true
     std::vector<icarus::PhysCrateFragmentMetadata::id_t> boardIds;
     for (size_t b = 0; b < nBoards; b++)
-      boardIds.push_back(this->metadata()->board_id(b));
+      boardIds.push_back(f.metadata<icarus::PhysCrateFragmentMetadata>()->board_id(b));
     icarus::PhysCrateFragmentMetadata updatedMD(runNumber, nBoards, cPerB, sPerC, adcPerS, compress, boardIds);
     compressedFragment.updateMetadata<icarus::PhysCrateFragmentMetadata>(updatedMD);
   }
@@ -464,19 +468,23 @@ artdaq::Fragment icarus::PhysCrateFragment::compressArtdaqFragment(artdaq::Fragm
   return compressedFragment;
 }
 
-artdaq::Fragment icarus::PhysCrateFragment::decompressArtdaqFragment(artdaq::Fragment const & f) const
+artdaq::Fragment icarus::PhysCrateFragment::decompressArtdaqFragment(artdaq::Fragment const & f)
 {
   // you shouldn't run this if you already have an uncompressed fragment
   // but in case you do it shouldn't bother with the calculations
-  if (isCompressed())
+  if (f.metadata<icarus::PhysCrateFragmentMetadata>()->compression_scheme() == 0)
     return f;
 
-  size_t nBoardsPerFragment    = this->nBoards();
-  size_t nChannelsPerBoard     = this->nChannelsPerBoard();
-  size_t nSamplesPerChannel    = this->nSamplesPerChannel();
+  // generate compression keys for the fragment
+  std::vector<uint16_t> keys = icarus::PhysCrateFragment::GenerateKeys(f); 
+
+  size_t nBoardsPerFragment    = f.metadata<icarus::PhysCrateFragmentMetadata>()->num_boards(); 
+  size_t nChannelsPerBoard     = f.metadata<icarus::PhysCrateFragmentMetadata>()->channels_per_board();
+  size_t nSamplesPerChannel    = f.metadata<icarus::PhysCrateFragmentMetadata>()->samples_per_channel();
 
   artdaq::Fragment decompressedFragment(f);
-  decompressedFragment.resize(BoardBlockSize()*nBoards());
+  decompressedFragment.resize(nBoardsPerFragment * (sizeof(icarus::A2795DataBlock::Header)
+    + nChannelsPerBoard * nSamplesPerChannel * sizeof(icarus::A2795DataBlock::data_t)));
 
   auto oldBegin = reinterpret_cast<const uint16_t*>(f.dataBegin()                     );
   auto newBegin = reinterpret_cast<      uint16_t*>(decompressedFragment.dataAddress());
@@ -499,12 +507,12 @@ artdaq::Fragment icarus::PhysCrateFragment::decompressArtdaqFragment(artdaq::Fra
 
     for (size_t sample = 0; sample < nSamplesPerChannel; sample++)
     {
-      uint16_t sampleKey = this->CompressionKey(board, sample);
+      uint16_t sampleKey = keys[board * nSamplesPerChannel + sample];
       for (size_t channel = 0; channel < nChannelsPerBoard; channel++)
       {
         const size_t cSet = channel / 4;
         const size_t channelInSet = channel % 4;
-        uint16_t sampleKey = this->CompressionKey(board, sample); 
+        uint16_t sampleKey = keys[board * nSamplesPerChannel + sample];
         bool isChannelSetCompressed = ((sampleKey >> cSet) & 0x0001) == 0x0001;
       
         if (isChannelSetCompressed)
@@ -536,15 +544,15 @@ artdaq::Fragment icarus::PhysCrateFragment::decompressArtdaqFragment(artdaq::Fra
  
   // we need to update the fragment metadata to reflect it is compressed
   if (decompressedFragment.hasMetadata()){
-    icarus::PhysCrateFragmentMetadata::data_t runNumber = this->metadata()->run_number();
-    icarus::PhysCrateFragmentMetadata::data_t nBoards   = this->metadata()->num_boards();
-    icarus::PhysCrateFragmentMetadata::data_t cPerB     = this->metadata()->channels_per_board();
-    icarus::PhysCrateFragmentMetadata::data_t sPerC     = this->metadata()->samples_per_channel();
-    icarus::PhysCrateFragmentMetadata::data_t adcPerS   = this->metadata()->num_adc_bits(); // i don't know why the names are like this...
+    icarus::PhysCrateFragmentMetadata::data_t runNumber = f.metadata<icarus::PhysCrateFragmentMetadata>()->run_number();
+    icarus::PhysCrateFragmentMetadata::data_t nBoards   = f.metadata<icarus::PhysCrateFragmentMetadata>()->num_boards();
+    icarus::PhysCrateFragmentMetadata::data_t cPerB     = f.metadata<icarus::PhysCrateFragmentMetadata>()->channels_per_board();
+    icarus::PhysCrateFragmentMetadata::data_t sPerC     = f.metadata<icarus::PhysCrateFragmentMetadata>()->samples_per_channel();
+    icarus::PhysCrateFragmentMetadata::data_t adcPerS   = f.metadata<icarus::PhysCrateFragmentMetadata>()->num_adc_bits(); // i don't know why the names are like this...
     icarus::PhysCrateFragmentMetadata::data_t compress  = 1; // we really only care that this is not the compressed value. 1 should do
     std::vector<icarus::PhysCrateFragmentMetadata::id_t> boardIds;
     for (size_t b = 0; b < nBoards; b++)
-      boardIds.push_back(this->metadata()->board_id(b));
+      boardIds.push_back(f.metadata<icarus::PhysCrateFragmentMetadata>()->board_id(b));
     icarus::PhysCrateFragmentMetadata updatedMD(runNumber, nBoards, cPerB, sPerC, adcPerS, compress, boardIds);
     decompressedFragment.updateMetadata<icarus::PhysCrateFragmentMetadata>(updatedMD);
   }
