@@ -26,17 +26,10 @@ struct DAPHNEHeader {
   uint32_t customWords;
 };
 
-struct DAPHNEFragment {
+struct DAPHNE_FEB_Channel {
 
-  DAPHNEHeader;
-  std::vector<DAPHNE_FEB_Fragment>;
-
-};
-
-struct DAPHNE_FEB_Fragment {
-
-  DAPHNE_FEB_Header;
-  std::array<DAPHNE_FEB_Channel,16> channels;
+  uint16_t channel;
+  std::array<uint16_t,14> waveform;
 
 };
 
@@ -48,17 +41,23 @@ struct DAPHNE_FEB_Header {
   uint16_t emptyWord;
   uint16_t statusWord2;
   
-}
+};
 
-struct DAPHNE_FEB_Channel {
+struct DAPHNE_FEB_Fragment {
 
-  uint16_t channel;
-  std::array<uint16_t,14> waveform;
+  DAPHNE_FEB_Header febHeader;
+  std::array<DAPHNE_FEB_Channel,16> channels;
+
+};
+
+struct DAPHNEFragment {
+
+  DAPHNEHeader header;
+  std::vector<DAPHNE_FEB_Fragment> febFrags;
 
 };
 
 
-uint16_t DataBlock; // want datablock to be an array?
 
 };
 
