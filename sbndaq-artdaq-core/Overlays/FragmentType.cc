@@ -22,6 +22,7 @@ static std::map<sbndaq::detail::FragmentType, std::string> const names{
     {sbndaq::detail::FragmentType::WhiteRabbit, "WhiteRabbit"},
 
     // ICARUS
+    {sbndaq::detail::FragmentType::BottomCRT, "BottomCRT"},
     {sbndaq::detail::FragmentType::PHYSCRATEDATA, "PHYSCRATEDATA"},
     {sbndaq::detail::FragmentType::PHYSCRATESTAT, "PHYSCRATESTAT"},
     {sbndaq::detail::FragmentType::ICARUSTriggerUDP, "ICARUSTriggerUDP"},
