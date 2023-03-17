@@ -17,47 +17,46 @@ namespace sbndaq {
 
 struct DAPHNEData {
 
-typedef uint64_t data_t;
+  typedef uint64_t data_t;
+  int numFEBs; // need to know number of FEBs connected to loop through them
 
-struct DAPHNEHeader {
-  uint16_t wordCount;
-  uint64_t microbunch : 48;
-  uint32_t timestamp;
-  uint32_t customWords;
-};
+  struct DAPHNEHeader {
+    uint16_t wordCount;
+    uint64_t microbunch : 48;
+    uint32_t timestamp;
+    uint32_t customWords;
+  } hdr;
 
-struct DAPHNE_FEB_Channel {
+  struct DAPHNE_FEB_Channel {
 
-  uint16_t channel;
-  std::array<uint16_t,14> waveform;
+    uint16_t channel;
+    std::array<uint16_t,14> waveform;
 
-};
+  } febch;
 
-struct DAPHNE_FEB_Header {
+  struct DAPHNE_FEB_Header {
 
-  uint16_t wordCount;
-  uint16_t statusWord1;
-  uint32_t microbunch;
-  uint16_t emptyWord;
-  uint16_t statusWord2;
-  
-};
+    uint16_t wordCount;
+    uint16_t statusWord1;
+    uint32_t microbunch;
+    uint16_t emptyWord;
+    uint16_t statusWord2;
+    
+  } febhdr;
 
-struct DAPHNE_FEB_Fragment {
+  struct DAPHNE_FEB_Fragment {
 
-  DAPHNE_FEB_Header febHeader;
-  std::array<DAPHNE_FEB_Channel,16> channels;
+    DAPHNE_FEB_Header febHeader;
+    std::array<DAPHNE_FEB_Channel,16> channels;
 
-};
+  } febfrg;
 
-struct DAPHNEFragment {
+  struct DAPHNEFragment {
 
-  DAPHNEHeader header;
-  std::vector<DAPHNE_FEB_Fragment> febFrags;
+    DAPHNEHeader header;
+    std::vector<DAPHNE_FEB_Fragment> febFrags;
 
-};
-
-
+  } frag;
 
 };
 
