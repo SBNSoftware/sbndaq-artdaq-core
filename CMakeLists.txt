@@ -13,7 +13,7 @@ set(CET_CETBUILDTOOLS_COMPAT TRUE)
 include(Compatibility)
 set(CET_WARN_DEPRECATED)
 
-project(sbndaq_artdaq_core VERSION 1.05.00)
+project(sbndaq_artdaq_core VERSION 1.07.00)
 
 set(CMAKE_MODULE_PATH
   $ENV{ARTDAQ_UTILITIES_DIR}/Modules
