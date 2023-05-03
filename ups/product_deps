@@ -29,19 +29,11 @@ qualifier                artdaq_core
 
 #for offline
 
-c7:prof:s117              c7:prof:s117
-c7:debug:s117             c7:debug:s117
-e20:prof:s117             e20:prof:s117
-e20:debug:s117            e20:debug:s117
+c7:prof:s120              c7:prof:s120
+c7:debug:s120             c7:debug:s120
+e20:prof:s120             e20:prof:s120
+e20:debug:s120            e20:debug:s120
 
-c7:prof:s112              c7:prof:s112
-c7:debug:s112             c7:debug:s112
-e20:prof:s112             e20:prof:s112
-e20:debug:s112            e20:debug:s112
-e20:prof:icarus:s112      e20:prof:s112
-e20:debug:icarus:s112     e20:debug:s112
-e20:prof:sbnd:s112        e20:prof:s112
-e20:debug:sbnd:s112       e20:debug:s112
 # Preserve tabs and formatting in emacs and vi / vim:
 
 ### Local Variables:
