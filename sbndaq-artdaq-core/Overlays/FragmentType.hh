@@ -22,11 +22,13 @@ enum FragmentType : artdaq::Fragment::type_t {
   WhiteRabbit = artdaq::Fragment::FirstUserFragmentType + 12,
 
   // ICARUS
+  BottomCRT = artdaq::Fragment::FirstUserFragmentType + 18,
   PHYSCRATEDATA = artdaq::Fragment::FirstUserFragmentType + 4,
   PHYSCRATESTAT = artdaq::Fragment::FirstUserFragmentType + 5,
   ICARUSTriggerUDP = artdaq::Fragment::FirstUserFragmentType + 10,
   ICARUSPMTGate = artdaq::Fragment::FirstUserFragmentType + 11,
   ICARUSTriggerV2 = artdaq::Fragment::FirstUserFragmentType + 15,
+  ICARUSTriggerV3 = artdaq::Fragment::FirstUserFragmentType + 17,
 
   // SBND
   NevisTPC = artdaq::Fragment::FirstUserFragmentType + 6,
@@ -37,7 +39,7 @@ enum FragmentType : artdaq::Fragment::type_t {
   // Simulators
   DummyGenerator = artdaq::Fragment::FirstUserFragmentType + 8,
 
-  INVALID = artdaq::Fragment::FirstUserFragmentType + 17  // Should always be last.
+  INVALID = artdaq::Fragment::FirstUserFragmentType + 19  // Should always be last.
 };
 
 // Safety check.

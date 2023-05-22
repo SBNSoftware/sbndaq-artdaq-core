@@ -22,11 +22,13 @@ static std::map<sbndaq::detail::FragmentType, std::string> const names{
     {sbndaq::detail::FragmentType::WhiteRabbit, "WhiteRabbit"},
 
     // ICARUS
+    {sbndaq::detail::FragmentType::BottomCRT, "BottomCRT"},
     {sbndaq::detail::FragmentType::PHYSCRATEDATA, "PHYSCRATEDATA"},
     {sbndaq::detail::FragmentType::PHYSCRATESTAT, "PHYSCRATESTAT"},
     {sbndaq::detail::FragmentType::ICARUSTriggerUDP, "ICARUSTriggerUDP"},
     {sbndaq::detail::FragmentType::ICARUSPMTGate, "ICARUSPMTGate"},
     {sbndaq::detail::FragmentType::ICARUSTriggerV2, "ICARUSTriggerV2"},
+    {sbndaq::detail::FragmentType::ICARUSTriggerV3, "ICARUSTriggerV3"},
 
     // SBND
     {sbndaq::detail::FragmentType::NevisTPC, "NEVISTPC"},
@@ -63,7 +65,7 @@ std::map<artdaq::Fragment::type_t, std::string> sbndaq::makeFragmentTypeMap() {
   }
 
   for (auto name : output) {
-    TLOG(TLVL_DEBUG) << "Verifying map: " << name.first << " --> " << name.second;
+    TLOG(TLVL_DEBUG) << "Verifying map: " << (int)(name.first) << " --> " << name.second;
   }
 
   return output;

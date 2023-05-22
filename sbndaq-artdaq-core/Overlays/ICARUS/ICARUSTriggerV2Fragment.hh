@@ -1,11 +1,12 @@
 #ifndef sbndaq_artdaq_core_Overlays_ICARUS_ICARUSTriggerV2Fragment_hh
 #define sbndaq_artdaq_core_Overlays_ICARUS_ICARUSTriggerV2Fragment_hh
 
+#include "sbndaq-artdaq-core/Overlays/ICARUS/ICARUSTriggerInfo.hh"
 #include "artdaq-core/Data/Fragment.hh"
 #include "sbndaq-artdaq-core/Trace/trace_defines.h"
 #include "cetlib_except/exception.h"
 
-#include <iostream>
+#include <ostream>
 #include <chrono>
 #include <string>
 #include <map>
@@ -13,7 +14,6 @@
 
 namespace icarus {
 
-  struct ICARUSTriggerInfo;
   ICARUSTriggerInfo parse_ICARUSTriggerV2String(const char*);
   class ICARUSTriggerV2Fragment;
   std::ostream & operator << (std::ostream &, ICARUSTriggerV2Fragment const &);
@@ -23,82 +23,7 @@ namespace icarus {
   //std::ostream & operator << (std::ostream &, ICARUSTriggerV2FragmentMetadata const &);
 }
 
-struct icarus::ICARUSTriggerInfo
-{
-  int version;
-  std::string name;
-  long event_no;
-  long seconds;
-  long nanoseconds;
-  std::string wr_name;
-  long wr_event_no;
-  long wr_seconds;
-  long wr_nanoseconds;
-  int enable_type;
-  long enable_seconds;
-  long enable_nanoseconds;
-  long gate_id;
-  long gate_id_BNB;
-  long gate_id_NuMI;
-  long gate_id_BNBOff;
-  long gate_id_NuMIOff;
-  int gate_type;
-  long beam_seconds;
-  long beam_nanoseconds;
-  int trigger_type;
-  int trigger_source;
-  std::string cryo1_e_conn_0;
-  std::string cryo1_e_conn_2;
-  std::string cryo2_w_conn_0;
-  std::string cryo2_w_conn_2;
-  long cryo1_east_counts;
-  long cryo2_west_counts;
-
-  ICARUSTriggerInfo() {
-    version = 0;
-    name = ""; 
-    event_no = -1; 
-    seconds = -2; 
-    nanoseconds = -3; 
-    wr_name = ""; 
-    wr_event_no = -1; 
-    wr_seconds = -2; 
-    wr_nanoseconds = -3;
-    enable_type = -1;
-    enable_seconds = 0;
-    enable_nanoseconds = 0;
-    gate_id = -4;
-    gate_type = 0;
-    gate_id_BNB = -4;
-    gate_id_NuMI = -4;
-    gate_id_BNBOff = -4;
-    gate_id_NuMIOff = -4;
-    beam_seconds = 0;
-    beam_nanoseconds = 0;
-    trigger_type = 0;
-    trigger_source = 0;
-    cryo1_e_conn_0 = "";
-    cryo1_e_conn_2 = "";
-    cryo2_w_conn_0 = "";
-    cryo2_w_conn_2 = "";
-    cryo1_east_counts = -1;
-    cryo2_west_counts = -1;
-    
-  }
-  uint64_t getNanoseconds_since_UTC_epoch() {
-    if(wr_seconds == -2 || wr_nanoseconds == -3)
-      return 0;
-    int correction = 0;
-    if(wr_seconds >= 1483228800)
-      correction = 37;
-    uint64_t const corrected_ts
-      { (wr_seconds-correction)*1000000000ULL + wr_nanoseconds };
-    return corrected_ts;
-  }
-  
-};
-
-icarus::ICARUSTriggerInfo icarus::parse_ICARUSTriggerV2String(const char* buffer)
+inline icarus::ICARUSTriggerInfo icarus::parse_ICARUSTriggerV2String(const char* buffer)
 {
   std::string data_input = buffer;
   size_t pos = 0;

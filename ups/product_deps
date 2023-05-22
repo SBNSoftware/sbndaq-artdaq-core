@@ -19,41 +19,28 @@ fcldir      -
 #
 product             version       optional
 
-artdaq_core         v3_08_04
-cetmodules          v2_26_00      -       only_for_build
+artdaq_core         v3_09_08
+cetmodules          v3_21_01      -       only_for_build
 end_product_list
 
 # -nq- here means there is no qualifier
 # a "-" here means the dependent product is not required by the parent and will not be setup
 qualifier                artdaq_core
-c7:prof:s110              c7:prof:s110
-c7:debug:s110             c7:debug:s110
-e19:prof:s110             e19:prof:s110
-e19:debug:s110            e19:debug:s110
-e19:prof:icarus:s110      e19:prof:s110
-e19:debug:icarus:s110     e19:debug:s110
-e19:prof:sbnd:s110        e19:prof:s110
-e19:debug:sbnd:s110       e19:debug:s110
-e20:prof:s110             e20:prof:s110
-e20:debug:s110            e20:debug:s110
-e20:prof:icarus:s110      e20:prof:s110
-e20:debug:icarus:s110     e20:debug:s110
-e20:prof:sbnd:s110        e20:prof:s110
-e20:debug:sbnd:s110       e20:debug:s110
 c7:prof:s112              c7:prof:s112
 c7:debug:s112             c7:debug:s112
-e19:prof:s112             e19:prof:s112
-e19:debug:s112            e19:debug:s112
-e19:prof:icarus:s112      e19:prof:s112
-e19:debug:icarus:s112     e19:debug:s112
-e19:prof:sbnd:s112        e19:prof:s112
-e19:debug:sbnd:s112       e19:debug:s112
 e20:prof:s112             e20:prof:s112
 e20:debug:s112            e20:debug:s112
 e20:prof:icarus:s112      e20:prof:s112
 e20:debug:icarus:s112     e20:debug:s112
 e20:prof:sbnd:s112        e20:prof:s112
 e20:debug:sbnd:s112       e20:debug:s112
+e20:prof:s117             e20:prof:s117
+e20:debug:s117            e20:debug:s117
+e20:prof:icarus:s117      e20:prof:s117
+e20:debug:icarus:s117     e20:debug:s117
+e20:prof:sbnd:s117        e20:prof:s117
+e20:debug:sbnd:s117       e20:debug:s117
+end_qualifier_list
 # Preserve tabs and formatting in emacs and vi / vim:
 
 ### Local Variables:
