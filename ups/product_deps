@@ -29,10 +29,10 @@ qualifier                artdaq_core
 
 #for offline
 
-c7:prof:s120              c7:prof:s120
-c7:debug:s120             c7:debug:s120
-e20:prof:s120             e20:prof:s120
-e20:debug:s120            e20:debug:s120
+c7:prof:s120a              c7:prof:s120a
+c7:debug:s120a             c7:debug:s120a
+e20:prof:s120a             e20:prof:s120a
+e20:debug:s120a            e20:debug:s120a
 
 # Preserve tabs and formatting in emacs and vi / vim:
 
