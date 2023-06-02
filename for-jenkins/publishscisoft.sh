@@ -18,7 +18,6 @@ function publishscisoft(){
 -m SLF7 \
 -q s112-c7  \
 -q s112-e20 \
--q s117-e20 \
  sbndaq_artdaq_core-build
 
 
