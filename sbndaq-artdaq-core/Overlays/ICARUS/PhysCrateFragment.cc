@@ -64,10 +64,9 @@ icarus::A2795DataBlock::data_t const* icarus::PhysCrateFragment::BoardData(uint1
     size_t cumulativeSize = (b == 0) ? 0 : cumulativeBoardSize(b - 1);
     return ( reinterpret_cast<A2795DataBlock::data_t const*>
              (artdaq_Fragment_.dataBeginBytes()
-              + sizeof(PhysCrateDataTileHeader)
-              + sizeof(A2795DataBlock::Header)
-              + b*sizeof(PhysCrateDataTileHeader)
-              + b*4*sizeof(uint16_t)
+              + (1+b)*sizeof(PhysCrateDataTileHeader)
+              + (1+b)*sizeof(A2795DataBlock::Header)
+              + 4*b*sizeof(uint16_t)
               + cumulativeSize));
   }
 
@@ -240,11 +239,10 @@ std::vector<uint16_t> icarus::PhysCrateFragment::GenerateKeys(artdaq::Fragment c
     icarus::A2795DataBlock::data_t const* boardData
                                             = reinterpret_cast<icarus::A2795DataBlock::data_t const*>
                                                        ( f.dataBeginBytes()
-                                                       + sizeof(icarus::PhysCrateDataTileHeader)
-                                                       + sizeof(icarus::A2795DataBlock::Header)
-                                                       + b*sizeof(icarus::PhysCrateDataTileHeader)
-                                                       + b*4*sizeof(uint16_t)
-                                                       + cumulativePrevBlockSize                   );
+                                                       + (1+b)*sizeof(icarus::PhysCrateDataTileHeader)
+                                                       + (1+b)*sizeof(icarus::A2795DataBlock::Header)
+                                                       + 4*b*sizeof(uint16_t)
+                                                       + cumulativePrevBlockSize                     );
     size_t nWord = 0;
     for (size_t s = 0; s < nSamples; s++)
     {
