@@ -258,6 +258,10 @@ std::vector<uint16_t> icarus::PhysCrateFragment::GenerateKeys(artdaq::Fragment c
       nWord += (std::bitset<16>(key).count() % 2);
       cumulativePrevBlockSize += icarus::PhysCrateFragment::SampleBytesFromKey(key);
       TRACEN("PhysCrateFragment",TLVL_DEBUG+3,"PhysCrateFragment::GenerateKeys : Compression key for board %ld, sample %ld is %s", b, s, std::bitset<16>(key).to_string().c_str());
+      if(s == 0 && f.metadata<icarus::PhysCrateFragmentMetadata>()->compression_scheme() != 0 && key != 0)
+      {
+        TRACEN("PhysCrateFragment", TLVL_ERROR, "PhysCrateFragment::GenerateKeys : Sample 0 key is non-zero for board board %ld. Compressed boards use 0th sample as a reference, so this should not occur!", b);
+      }
     }
   }
   return keys;
