@@ -13,13 +13,14 @@ set(CET_CETBUILDTOOLS_COMPAT TRUE)
 include(Compatibility)
 set(CET_WARN_DEPRECATED)
 
-project(sbndaq_artdaq_core VERSION 1.07.01)
+project(sbndaq_artdaq_core)
 
 set(CMAKE_MODULE_PATH
   $ENV{ARTDAQ_UTILITIES_DIR}/Modules
   ${CMAKE_MODULE_PATH})
 include(CetCMakeEnv)
 
+set(${PROJECT_NAME}_CMAKE_PROJECT_VERSION_STRING 1.08.00)
 cet_cmake_env()
 
 cet_set_compiler_flags(DIAGS VIGILANT
@@ -80,7 +81,7 @@ if(DEFINED $ENV{MRB_QUALS})
   ENDIF()
 endif()
 
-IF (NOT(SBND_BUILD OR ICARUS_BUILD))
+IF (NOT;;(;;SBND_BUILD OR ICARUS_BUILD;;))
    MESSAGE("No experiment-specific build specified. Building all.")
    SET(SBND_BUILD 1)
    SET(ICARUS_BUILD 1)
