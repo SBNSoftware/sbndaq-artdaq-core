@@ -11,6 +11,7 @@ namespace sbndaq {
   class CAENV1730Fragment;
 
   struct CAENV1730FragmentMetadata;
+  struct CAENV1730FragmentMetadataV0;
   struct CAENV1730EventHeader;
   struct CAENV1730Event;
 
@@ -55,6 +56,38 @@ struct sbndaq::CAENV1730Event{
 
 struct sbndaq::CAENV1730FragmentMetadata {
 
+  static constexpr uint32_t markerWord = 0xdeadbeef; 
+  uint32_t  version;  
+
+  uint32_t  nChannels;
+  uint32_t  nSamples;
+  uint32_t  timeStampSec;
+  uint32_t  timeStampNSec;
+  uint32_t  postTriggerPercent;  
+
+  uint32_t  chTemps[CAEN_V1730_MAX_CHANNELS];
+  
+  CAENV1730FragmentMetadata() : version(1) {}
+  
+  CAENV1730FragmentMetadata(uint32_t nc, uint32_t ns,
+			    uint32_t ts_s, uint32_t ts_ns,
+			    uint32_t ptp,
+			    uint32_t chtemp[CAEN_V1730_MAX_CHANNELS]) :
+    version(1),
+    nChannels(nc),nSamples(ns),
+    timeStampSec(ts_s),timeStampNSec(ts_ns),
+    postTriggerPercent(ptp)
+  {
+    memcpy(chTemps,chtemp,CAEN_V1730_MAX_CHANNELS*sizeof(uint32_t));
+  }
+
+  size_t ExpectedDataSize() const 
+  { return (sizeof(CAENV1730EventHeader) + 
+	    nChannels * nSamples * sizeof(uint16_t)); }
+};
+
+struct sbndaq::CAENV1730FragmentMetadataV0 {
+
   uint32_t  nChannels;
   uint32_t  nSamples;
   uint32_t  timeStampSec;
@@ -62,9 +95,9 @@ struct sbndaq::CAENV1730FragmentMetadata {
 
   uint32_t  chTemps[CAEN_V1730_MAX_CHANNELS];
   
-  CAENV1730FragmentMetadata() {}
+  CAENV1730FragmentMetadataV0() {}
   
-  CAENV1730FragmentMetadata(uint32_t nc, uint32_t ns,
+  CAENV1730FragmentMetadataV0(uint32_t nc, uint32_t ns,
 			    uint32_t ts_s, uint32_t ts_ns,
 			    uint32_t chtemp[CAEN_V1730_MAX_CHANNELS]) :
     nChannels(nc),nSamples(ns),
@@ -76,7 +109,6 @@ struct sbndaq::CAENV1730FragmentMetadata {
   size_t ExpectedDataSize() const 
   { return (sizeof(CAENV1730EventHeader) + 
 	    nChannels * nSamples * sizeof(uint16_t)); }
-  
 };
 
 class sbndaq::CAENV1730Fragment{
@@ -85,8 +117,28 @@ public:
   
   CAENV1730Fragment(artdaq::Fragment const& f) : fFragment(f) {}
 
-  CAENV1730FragmentMetadata const* Metadata() const
-  { return fFragment.metadata<sbndaq::CAENV1730FragmentMetadata>(); }
+  CAENV1730FragmentMetadata const Metadata() const { 
+    CAENV1730FragmentMetadata metadata = *(fFragment.metadata<sbndaq::CAENV1730FragmentMetadata>()); 
+  
+    if(metadata.markerWord != 0xdeadbeef){
+      auto const* mv0_ptr         = fFragment.metadata<sbndaq::CAENV1730FragmentMetadataV0>();
+
+      metadata = CAENV1730FragmentMetadata();
+      metadata.version = 0;
+      metadata.postTriggerPercent = 9999; //dummy number
+  
+      metadata.nChannels     = mv0_ptr->nChannels;
+      metadata.nSamples      = mv0_ptr->nSamples;
+      metadata.timeStampSec  = mv0_ptr->timeStampSec;
+      metadata.timeStampNSec = mv0_ptr->timeStampNSec;
+      
+      memcpy(const_cast<uint32_t*>(mv0_ptr->chTemps), metadata.chTemps, sizeof(mv0_ptr->chTemps)*sizeof(uint32_t));
+     
+      return metadata;
+    }
+    else
+    { return *(fFragment.metadata<sbndaq::CAENV1730FragmentMetadata>()); }
+  }
 
   CAENV1730Event const* Event() const
   { return reinterpret_cast<CAENV1730Event const*>(fFragment.dataBeginBytes()); }
@@ -95,7 +147,7 @@ public:
   { return fFragment.dataSizeBytes(); }
 
   size_t ExpectedDataSize() const 
-  { return Metadata()->ExpectedDataSize(); }
+  { return Metadata().ExpectedDataSize(); }
 
   bool Verify() const;
 

@@ -3,7 +3,7 @@
 
 bool sbndaq::CAENV1730Fragment::Verify() const {
 
-  if(Metadata()->nChannels!=CAEN_V1730_MAX_CHANNELS) 
+  if(Metadata().nChannels!=CAEN_V1730_MAX_CHANNELS) 
     return false;
 
   if(ExpectedDataSize() != DataPayloadSize())
