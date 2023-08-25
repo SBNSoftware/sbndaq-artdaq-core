@@ -20,7 +20,8 @@ set(CMAKE_MODULE_PATH
   ${CMAKE_MODULE_PATH})
 include(CetCMakeEnv)
 
-set(${PROJECT_NAME}_CMAKE_PROJECT_VERSION_STRING 1.08.00)
+set(${PROJECT_NAME}_EXTENDED_VERSION_SEMANTICS true)
+set(${PROJECT_NAME}_CMAKE_PROJECT_VERSION_STRING 1.08.00of0)
 cet_cmake_env()
 
 cet_set_compiler_flags(DIAGS VIGILANT
@@ -81,7 +82,7 @@ if(DEFINED $ENV{MRB_QUALS})
   ENDIF()
 endif()
 
-IF (NOT;;(;;SBND_BUILD OR ICARUS_BUILD;;))
+IF (NOT;;;(;;;SBND_BUILD OR ICARUS_BUILD;;;))
    MESSAGE("No experiment-specific build specified. Building all.")
    SET(SBND_BUILD 1)
    SET(ICARUS_BUILD 1)
