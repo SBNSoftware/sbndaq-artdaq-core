@@ -137,7 +137,7 @@ public:
       return metadata;
     }
     else
-    { return *(fFragment.metadata<sbndaq::CAENV1730FragmentMetadata>()); }
+    { return metadata; }
   }
 
   CAENV1730Event const* Event() const
