@@ -29,8 +29,12 @@ qualifier                artdaq_core
 
 #for offline
 
+c14:prof:s120a             c14:prof:s120a
+c14:debug:s120a            c14:debug:s120a
 c7:prof:s120a              c7:prof:s120a
 c7:debug:s120a             c7:debug:s120a
+e26:prof:s120a             e26:prof:s120a
+e26:debug:s120a            e26:debug:s120a
 e20:prof:s120a             e20:prof:s120a
 e20:debug:s120a            e20:debug:s120a
 
