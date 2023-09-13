@@ -27,6 +27,7 @@ cet_set_compiler_flags(DIAGS VIGILANT
   WERROR
   NO_UNDEFINED
   EXTRA_FLAGS -pedantic
+              $<$<CXX_COMPILER_ID:GNU>:-Wno-maybe-uninitialized>
 )
 
 string(TOUPPER ${CMAKE_BUILD_TYPE} BTYPE_UC)
