@@ -28,6 +28,7 @@ cet_set_compiler_flags(DIAGS VIGILANT
   NO_UNDEFINED
   EXTRA_FLAGS -pedantic
               $<$<CXX_COMPILER_ID:GNU>:-Wno-maybe-uninitialized>
+              $<$<CXX_COMPILER_ID:Clang>:-Wno-return-stack-address>
 )
 
 string(TOUPPER ${CMAKE_BUILD_TYPE} BTYPE_UC)
