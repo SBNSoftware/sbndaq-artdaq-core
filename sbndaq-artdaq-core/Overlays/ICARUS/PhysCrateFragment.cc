@@ -77,11 +77,12 @@ icarus::A2795DataBlock::data_t const* icarus::PhysCrateFragment::BoardData(uint1
 }
 
 icarus::A2795DataBlock::data_t icarus::PhysCrateFragment::adc_val(size_t b,size_t c, size_t s) const{
-  if (isCompressed())
-    return adc_val_recursive_helper(b, c, 0, s,
-             std::make_pair(static_cast<icarus::A2795DataBlock::data_t>(0), BoardData(b))).first;
+  //if (isCompressed())
+  //  return adc_val_recursive_helper(b, c, 0, s,
+  //           std::make_pair(static_cast<icarus::A2795DataBlock::data_t>(0), BoardData(b))).first;
 
-  return ( *(BoardData(b)+s*nChannelsPerBoard()+c) & (~(1<<(metadata()->num_adc_bits()+1))) );
+  return (isCompressed()) ? this->adcVal_fromAccessor(b, c, s) :
+                            ( *(BoardData(b)+s*nChannelsPerBoard()+c) & (~(1<<(metadata()->num_adc_bits()+1))) );
 }
 
 std::ostream & icarus::operator << (std::ostream & os, PhysCrateFragmentMetadata const& m){
@@ -183,7 +184,11 @@ bool icarus::PhysCrateFragment::Verify() const {
     for(size_t i_b=0; i_b<nBoards(); ++i_b)
       for(size_t i_s=0; i_s<nSamplesPerChannel(); ++i_s)
         {
-          size_t nCompressed = std::bitset<16>(CompressionKey(i_b, i_s)).count();
+          icarus::PhysCrateFragment::Key const& compKey = CompressionKey(i_b, i_s);
+          size_t nCompressed = 0;
+          for (size_t cB = 0; cB < 16; ++cB)
+            nCompressed += compKey[cB];
+
           expectedSize -= 6*nCompressed - 2*(nCompressed % 2);
         }
 
@@ -214,18 +219,39 @@ bool icarus::PhysCrateFragment::Verify() const {
     
 }
 
-std::vector<uint16_t> icarus::PhysCrateFragment::GenerateKeys(artdaq::Fragment const& f) {
+std::pair<std::vector<icarus::PhysCrateFragment::Key>, std::vector<icarus::A2795DataBlock::data_t>> icarus::PhysCrateFragment::GenerateAccessors(artdaq::Fragment const& f) {
   size_t nBoards   = f.metadata<icarus::PhysCrateFragmentMetadata>()->num_boards();
+  size_t nChannels = f.metadata<icarus::PhysCrateFragmentMetadata>()->channels_per_board();
   size_t nSamples  = f.metadata<icarus::PhysCrateFragmentMetadata>()->samples_per_channel();
 
-  std::vector<uint16_t> keys(nBoards*nSamples, 0);
+  std::vector<icarus::PhysCrateFragment::Key> keys;
+  std::vector<icarus::A2795DataBlock::data_t> adcValues(nBoards*nSamples*nChannels, 0);
 
   // if there's no compression it's all uncompressed
-  // NOTE: double check how compression_scheme() is encoded
   if (f.metadata<icarus::PhysCrateFragmentMetadata>()->compression_scheme() == 0)
   {
-    TRACEN("PhysCrateFragment",TLVL_DEBUG+3,"PhysCrateFragment::GenerateKeys : Uncompressed fragement. Return trivial keys.");
-    return keys;
+    for (size_t i_key = 0; i_key < nBoards*nSamples; ++i_key)
+      keys.push_back({});
+
+    size_t cumulativePrevBlockSize = 0;
+    for (size_t b = 0; b < nBoards; ++b)
+    {
+      icarus::A2795DataBlock::data_t const* boardData
+                                            = reinterpret_cast<icarus::A2795DataBlock::data_t const*>
+                                                       ( f.dataBeginBytes()
+                                                       + (1+b)*sizeof(icarus::PhysCrateDataTileHeader)
+                                                       + (1+b)*sizeof(icarus::A2795DataBlock::Header)
+                                                       + 4*b*sizeof(uint16_t)
+                                                       + cumulativePrevBlockSize                     );
+      for (size_t c = 0; c < nChannels; ++c)
+      {
+        for (size_t s = 0; s < nSamples; ++s)
+          adcValues[b*nSamples*nChannels + c*nSamples + s] = (*(boardData+s*nChannels+c) & (~(1<<(f.metadata<icarus::PhysCrateFragmentMetadata>()->num_adc_bits()+1))));
+      }
+      cumulativePrevBlockSize += icarus::PhysCrateFragment::SampleBytesFromKey({});
+    }
+
+    return std::make_pair(keys, adcValues);
   }
 
   // loop over the fragment data and check the compression
@@ -246,25 +272,42 @@ std::vector<uint16_t> icarus::PhysCrateFragment::GenerateKeys(artdaq::Fragment c
     size_t nWord = 0;
     for (size_t s = 0; s < nSamples; s++)
     {
-      uint16_t key = 0;
+      icarus::PhysCrateFragment::Key key = {};
+      size_t keyCount = 0;
       for (size_t bit = 0; bit < 16; bit++)
       {
         icarus::A2795DataBlock::data_t word = boardData[nWord];
         bool isCompressed = ((word & 0xF000) != 0x8000);
-        key += (isCompressed << bit);
         nWord += (isCompressed) ? 1 : 4;
+        keyCount += isCompressed;
+        key[bit] = isCompressed;
+        if (isCompressed)
+        {
+          for (size_t cInSet = 0; cInSet < 4; ++ cInSet)
+          {
+            size_t c = 4*bit + cInSet;
+            icarus::A2795DataBlock::data_t fourBitDiff = (word >> (4*cInSet)) & 0x000F;
+            bool isNeg = (fourBitDiff >> 3);
+            icarus::A2795DataBlock::data_t prevSample = (s != 0) ? adcValues[b*nSamples*nChannels + c*nSamples + s - 1] : 0;
+            adcValues[b*nSamples*nChannels + c*nSamples + s] = (isNeg*0xFFF0 + fourBitDiff + prevSample);
+          }
+        } else {
+          for (size_t cInSet = 0; cInSet < 4; ++ cInSet)
+          {
+            size_t c = 4*bit + cInSet;
+            icarus::A2795DataBlock::data_t twelveBitDiff = boardData[nWord + cInSet] & 0x0FFF;
+            bool isNeg = (s != 0) && (twelveBitDiff >> 11);
+            icarus::A2795DataBlock::data_t prevSample = (s != 0) ? adcValues[b*nSamples*nChannels + c*nSamples + s - 1] : 0;
+            adcValues[b*nSamples*nChannels + c*nSamples + s] = (isNeg*0xF000 + twelveBitDiff + prevSample);
+          }
+        }
       }
-      keys[b*nSamples + s] = key;
-      nWord += (std::bitset<16>(key).count() % 2);
-      cumulativePrevBlockSize += icarus::PhysCrateFragment::SampleBytesFromKey(key);
-      TRACEN("PhysCrateFragment",TLVL_DEBUG+3,"PhysCrateFragment::GenerateKeys : Compression key for board %ld, sample %ld is %s", b, s, std::bitset<16>(key).to_string().c_str());
-      if(s == 0 && f.metadata<icarus::PhysCrateFragmentMetadata>()->compression_scheme() != 0 && key != 0)
-      {
-        TRACEN("PhysCrateFragment", TLVL_ERROR, "PhysCrateFragment::GenerateKeys : Sample 0 key is non-zero for board board %ld. Compressed boards use 0th sample as a reference, so this should not occur!", b);
-      }
+      keys.push_back(key);
+      nWord += (keyCount % 2);
+      cumulativePrevBlockSize += icarus::PhysCrateFragment::SampleBytesFromKey(keys[b*nSamples + s]);
     }
   }
-  return keys;
+  return std::make_pair(keys, adcValues);
 }
 
 icarus::PhysCrateFragment::recursionPair icarus::PhysCrateFragment::adc_val_recursive_helper
@@ -276,10 +319,13 @@ icarus::PhysCrateFragment::recursionPair icarus::PhysCrateFragment::adc_val_recu
   const icarus::A2795DataBlock::data_t* loc = pair.second;
   const size_t cSet = c / 4;
   const size_t channelInSet = c % 4;
-  uint16_t sampleKey = this->CompressionKey(b, s);
+  icarus::PhysCrateFragment::Key const& sampleKey = this->CompressionKey(b, s);
+  size_t keyiPartialCount = 0;
+  for (size_t cB = 0; cB < cSet; ++cB)
+    keyiPartialCount += sampleKey[cB];
 
-  size_t cIndex = 4*cSet - 3*std::bitset<16>(sampleKey % (1 << cSet)).count();
-  bool isChannelSetCompressed = ((sampleKey >> cSet) & 0x0001) == 0x0001;
+  size_t cIndex = 4*cSet - 3*keyiPartialCount;
+  bool isChannelSetCompressed = sampleKey[cSet];
 
   if (isChannelSetCompressed)
   {
@@ -294,7 +340,10 @@ icarus::PhysCrateFragment::recursionPair icarus::PhysCrateFragment::adc_val_recu
     runningVal += isNeg*0xF000 + twelveBitDiff;
   }
 
-  size_t keyCount = std::bitset<16>(sampleKey).count();
+  size_t keyCount = keyiPartialCount;
+  for (size_t cB = cSet; cB < 16; ++cB)
+    keyCount += sampleKey[cB];
+
   size_t increment = 64 - 3*keyCount + (keyCount % 2);
 
   if (s == sTarget)
@@ -459,7 +508,7 @@ artdaq::Fragment icarus::PhysCrateFragment::compressArtdaqFragment(artdaq::Fragm
     icarus::PhysCrateFragmentMetadata::data_t cPerB     = f.metadata<icarus::PhysCrateFragmentMetadata>()->channels_per_board();
     icarus::PhysCrateFragmentMetadata::data_t sPerC     = f.metadata<icarus::PhysCrateFragmentMetadata>()->samples_per_channel();
     icarus::PhysCrateFragmentMetadata::data_t adcPerS   = f.metadata<icarus::PhysCrateFragmentMetadata>()->num_adc_bits(); // i don't know why the names are like this...
-    icarus::PhysCrateFragmentMetadata::data_t compress  = 0; // working with compressed being zero. unsure if true
+    icarus::PhysCrateFragmentMetadata::data_t compress  = 1;
     std::vector<icarus::PhysCrateFragmentMetadata::id_t> boardIds;
     for (size_t b = 0; b < nBoards; b++)
       boardIds.push_back(f.metadata<icarus::PhysCrateFragmentMetadata>()->board_id(b));
@@ -478,7 +527,7 @@ artdaq::Fragment icarus::PhysCrateFragment::decompressArtdaqFragment(artdaq::Fra
     return f;
 
   // generate compression keys for the fragment
-  std::vector<uint16_t> keys = icarus::PhysCrateFragment::GenerateKeys(f); 
+  std::pair<std::vector<icarus::PhysCrateFragment::Key>, std::vector<icarus::A2795DataBlock::data_t>> keys = icarus::PhysCrateFragment::GenerateAccessors(f); 
 
   size_t nBoardsPerFragment    = f.metadata<icarus::PhysCrateFragmentMetadata>()->num_boards(); 
   size_t nChannelsPerBoard     = f.metadata<icarus::PhysCrateFragmentMetadata>()->channels_per_board();
@@ -509,13 +558,12 @@ artdaq::Fragment icarus::PhysCrateFragment::decompressArtdaqFragment(artdaq::Fra
 
     for (size_t sample = 0; sample < nSamplesPerChannel; sample++)
     {
-      uint16_t sampleKey = keys[board * nSamplesPerChannel + sample];
+      icarus::PhysCrateFragment::Key& sampleKey = keys.first[board * nSamplesPerChannel + sample];
       for (size_t channel = 0; channel < nChannelsPerBoard; channel++)
       {
         const size_t cSet = channel / 4;
         const size_t channelInSet = channel % 4;
-        uint16_t sampleKey = keys[board * nSamplesPerChannel + sample];
-        bool isChannelSetCompressed = ((sampleKey >> cSet) & 0x0001) == 0x0001;
+        bool isChannelSetCompressed = sampleKey[cSet];
       
         if (isChannelSetCompressed)
         {
@@ -537,7 +585,11 @@ artdaq::Fragment icarus::PhysCrateFragment::decompressArtdaqFragment(artdaq::Fra
         nWord_ofNew++;
       } // end loop over channels
       // compressed fragments have an offset when there's an odd number of uncompressed blocks
-      if ((std::bitset<16>(sampleKey).count() % 2) == 1)
+      size_t sampleKeyCount = 0;
+      for (size_t cB = 0; cB < 16; ++cB)
+        sampleKeyCount += sampleKey[cB];
+
+      if ((sampleKeyCount % 2) == 1)
       {
         nWord_ofOld++;
       }
@@ -551,7 +603,7 @@ artdaq::Fragment icarus::PhysCrateFragment::decompressArtdaqFragment(artdaq::Fra
     icarus::PhysCrateFragmentMetadata::data_t cPerB     = f.metadata<icarus::PhysCrateFragmentMetadata>()->channels_per_board();
     icarus::PhysCrateFragmentMetadata::data_t sPerC     = f.metadata<icarus::PhysCrateFragmentMetadata>()->samples_per_channel();
     icarus::PhysCrateFragmentMetadata::data_t adcPerS   = f.metadata<icarus::PhysCrateFragmentMetadata>()->num_adc_bits(); // i don't know why the names are like this...
-    icarus::PhysCrateFragmentMetadata::data_t compress  = 1; // we really only care that this is not the compressed value. 1 should do
+    icarus::PhysCrateFragmentMetadata::data_t compress  = 0;
     std::vector<icarus::PhysCrateFragmentMetadata::id_t> boardIds;
     for (size_t b = 0; b < nBoards; b++)
       boardIds.push_back(f.metadata<icarus::PhysCrateFragmentMetadata>()->board_id(b));

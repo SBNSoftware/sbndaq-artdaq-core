@@ -187,7 +187,7 @@ class icarus::PhysCrateFragment {
   public:
 
   PhysCrateFragment(artdaq::Fragment const & f) : artdaq_Fragment_(f), 
-                                                  compressionKeys_(f) {}
+                                                  accessors_(f) {}
 
   PhysCrateFragment(artdaq::Fragment const & f, bool const & compressionSwitch)
     : PhysCrateFragment(this->fragmentSwitch(f, compressionSwitch)) {}
@@ -217,15 +217,30 @@ class icarus::PhysCrateFragment {
   A2795DataBlock::header_t        BoardTimeStamp(uint16_t b=0) const;
   A2795DataBlock::data_t   const* BoardData(uint16_t b=0) const;
 
+  A2795DataBlock::data_t adc_diff(size_t b,size_t c,size_t s) const;
   A2795DataBlock::data_t adc_val(size_t b,size_t c,size_t s) const;
+  std::vector<A2795DataBlock::data_t> channel_adc_vec(size_t b,size_t c) const
+  {
+    std::vector<A2795DataBlock::data_t>::const_iterator beginItr = accessors_.accessPair_.second.begin() + b*this->nSamplesPerChannel()*this->nChannelsPerBoard() + c*this->nSamplesPerChannel();
+    std::vector<A2795DataBlock::data_t>::const_iterator backItr = beginItr + this->nSamplesPerChannel();
+    std::vector<A2795DataBlock::data_t> chADCs(beginItr, backItr);
+    return chADCs;
+  }
 
   bool Verify() const;
 
-  uint16_t const& CompressionKey(size_t b, size_t s) const
-                                  {
-                                    size_t index = b*this->nSamplesPerChannel() + s;
-                                    return compressionKeys_.keys_[index];
-                                  }
+  typedef std::array<bool, 16> Key; 
+  Key const& CompressionKey(size_t b, size_t s) const
+  {
+    size_t index = b*this->nSamplesPerChannel() + s;
+    return accessors_.accessPair_.first[index];
+  }
+  A2795DataBlock::data_t const& adcVal_fromAccessor(size_t b, size_t c, size_t s) const
+  {
+    // adc values are stored such that they can be easily sliced by board/channel
+    size_t index = b*this->nSamplesPerChannel()*this->nChannelsPerBoard() + c*this->nSamplesPerChannel() + s;
+    return accessors_.accessPair_.second[index];
+  }
 
   typedef std::pair<A2795DataBlock::data_t, const A2795DataBlock::data_t*> recursionPair;
 
@@ -239,15 +254,18 @@ private:
   void   throwIfCompressed() const;
 
   // here are things helpful for the comrpessed fragments
-  struct Keys
+  struct Accessors
   {
-     Keys(artdaq::Fragment const& f) : keys_(GenerateKeys(f)) {};
-     std::vector<uint16_t> const keys_;
-  } compressionKeys_;
+    Accessors(artdaq::Fragment const& f) : accessPair_(GenerateAccessors(f)) {};
+    std::pair<std::vector<Key>, std::vector<A2795DataBlock::data_t>> const accessPair_;
+  } accessors_;
 
-  static size_t SampleBytesFromKey(uint16_t const& key)
+  static size_t SampleBytesFromKey(Key const& key)
   {
-    size_t nCompressed = std::bitset<16>(key).count();
+    size_t nCompressed = 0;
+    for (size_t cBlock = 0; cBlock < 16; ++cBlock)
+      ++nCompressed = key[cBlock];
+
     return 128 - 6*nCompressed + ((nCompressed % 2) == 1)*2;
   }
 
@@ -255,7 +273,7 @@ private:
   {
     // tail recursive function to total the bytes used for each sample
     // requires the compression keys to function
-    uint16_t const& key = this->CompressionKey(b, s);
+    Key const& key = this->CompressionKey(b, s);
 
     if (s == 0)
       return runningTotal + this->SampleBytesFromKey(key);
@@ -276,7 +294,7 @@ private:
     return this->cumulativeBoardSize(b - 1, this->cumulativeSampleSize(b, nSamples - 1, runningTotal));
   }
 
-  static std::vector<uint16_t> GenerateKeys(artdaq::Fragment const& f);
+  static std::pair<std::vector<Key>, std::vector<A2795DataBlock::data_t>> GenerateAccessors(artdaq::Fragment const& f);
 
   recursionPair adc_val_recursive_helper(size_t b, size_t c, size_t s, size_t sTarget, recursionPair pair) const;
 
