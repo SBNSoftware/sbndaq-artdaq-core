@@ -264,7 +264,7 @@ private:
   {
     size_t nCompressed = 0;
     for (size_t cBlock = 0; cBlock < 16; ++cBlock)
-      ++nCompressed = key[cBlock];
+      nCompressed += key[cBlock];
 
     return 128 - 6*nCompressed + ((nCompressed % 2) == 1)*2;
   }

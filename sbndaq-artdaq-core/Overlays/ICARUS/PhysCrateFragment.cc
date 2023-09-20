@@ -274,37 +274,33 @@ std::pair<std::vector<icarus::PhysCrateFragment::Key>, std::vector<icarus::A2795
     {
       icarus::PhysCrateFragment::Key key = {};
       size_t keyCount = 0;
-      for (size_t bit = 0; bit < 16; bit++)
+      for (size_t bit = 0; bit < nChannels/4; bit++)
       {
         icarus::A2795DataBlock::data_t word = boardData[nWord];
         bool isCompressed = ((word & 0xF000) != 0x8000);
-        nWord += (isCompressed) ? 1 : 4;
-        keyCount += isCompressed;
-        key[bit] = isCompressed;
-        if (isCompressed)
+        for (size_t cInSet = 0; cInSet < 4; ++ cInSet)
         {
-          for (size_t cInSet = 0; cInSet < 4; ++ cInSet)
+          size_t c = 4*bit + cInSet;
+          if (isCompressed)
           {
-            size_t c = 4*bit + cInSet;
             icarus::A2795DataBlock::data_t fourBitDiff = (word >> (4*cInSet)) & 0x000F;
             bool isNeg = (fourBitDiff >> 3);
             icarus::A2795DataBlock::data_t prevSample = (s != 0) ? adcValues[b*nSamples*nChannels + c*nSamples + s - 1] : 0;
             adcValues[b*nSamples*nChannels + c*nSamples + s] = (isNeg*0xFFF0 + fourBitDiff + prevSample);
-          }
-        } else {
-          for (size_t cInSet = 0; cInSet < 4; ++ cInSet)
-          {
-            size_t c = 4*bit + cInSet;
-            icarus::A2795DataBlock::data_t twelveBitDiff = boardData[nWord + cInSet] & 0x0FFF;
+          } else {
+            icarus::A2795DataBlock::data_t twelveBitDiff = (boardData[nWord + cInSet] & 0x0FFF);
             bool isNeg = (s != 0) && (twelveBitDiff >> 11);
             icarus::A2795DataBlock::data_t prevSample = (s != 0) ? adcValues[b*nSamples*nChannels + c*nSamples + s - 1] : 0;
             adcValues[b*nSamples*nChannels + c*nSamples + s] = (isNeg*0xF000 + twelveBitDiff + prevSample);
           }
         }
+        nWord += (isCompressed) ? 1 : 4;
+        keyCount += isCompressed;
+        key[bit] = isCompressed;
       }
       keys.push_back(key);
       nWord += (keyCount % 2);
-      cumulativePrevBlockSize += icarus::PhysCrateFragment::SampleBytesFromKey(keys[b*nSamples + s]);
+      cumulativePrevBlockSize += icarus::PhysCrateFragment::SampleBytesFromKey(key);
     }
   }
   return std::make_pair(keys, adcValues);
