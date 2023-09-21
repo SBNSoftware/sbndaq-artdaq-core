@@ -6,9 +6,9 @@
 #  buildtool
 # ======================================================================
 
-cmake_minimum_required (VERSION 3.18.2)
+cmake_minimum_required (VERSION 3.19 FATAL_ERROR)
 
-find_package(cetmodules)
+find_package(cetmodules 3.16.00 REQUIRED)
 
 project(sbndaq_artdaq_core VERSION 1.08.00)
 
@@ -55,22 +55,23 @@ if(DEFINED ENV{USE_EXCEPTIONSTACKTRACE})
   endif()
 endif()
 
+message("Searching ${sbndaq_artdaq_core_EXEC_PREFIX} for icarus or sbnd qualifiers")
 string(FIND "x${sbndaq_artdaq_core_EXEC_PREFIX}" "icarus" ICARUS_FOUND)
 string(FIND "x${sbndaq_artdaq_core_EXEC_PREFIX}" "sbnd" SBND_FOUND)
 
-  IF (ICARUS_FOUND EQUAL -1)
-     MESSAGE ("No ICARUS_BUILD?")
-  ELSE()
-     SET(ICARUS_BUILD 1)
-     MESSAGE ("Performing ICARUS_BUILD")
-  ENDIF()
+IF (ICARUS_FOUND EQUAL -1)
+   MESSAGE ("No ICARUS_BUILD?")
+ELSE()
+   SET(ICARUS_BUILD 1)
+   MESSAGE ("Performing ICARUS_BUILD")
+ENDIF()
 
-  IF (SBND_FOUND EQUAL -1)
-     MESSAGE ("No SBND_BUILD?")
-  ELSE()
-     SET(SBND_BUILD 1)
-     MESSAGE ("Performing SBND_BUILD")
-  ENDIF()
+IF (SBND_FOUND EQUAL -1)
+   MESSAGE ("No SBND_BUILD?")
+ELSE()
+   SET(SBND_BUILD 1)
+   MESSAGE ("Performing SBND_BUILD")
+ENDIF()
 
 IF (NOT(SBND_BUILD OR ICARUS_BUILD))
    MESSAGE("No experiment-specific build specified. Building all.")
