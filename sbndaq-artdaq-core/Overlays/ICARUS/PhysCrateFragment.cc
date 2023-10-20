@@ -443,7 +443,7 @@ artdaq::Fragment icarus::PhysCrateFragment::compressArtdaqFragment(artdaq::Fragm
   }  // end loop over boards
 
   artdaq::Fragment compressedFragment(f);
-  compressedFragment.resize(compressedPayloadSize);
+  compressedFragment.resizeBytes(compressedPayloadSize);
 
   auto oldBegin = reinterpret_cast<const uint16_t*>(f.dataBegin()                   );
   auto newBegin = reinterpret_cast<      uint16_t*>(compressedFragment.dataAddress());
@@ -530,7 +530,7 @@ artdaq::Fragment icarus::PhysCrateFragment::decompressArtdaqFragment(artdaq::Fra
   size_t nSamplesPerChannel    = f.metadata<icarus::PhysCrateFragmentMetadata>()->samples_per_channel();
 
   artdaq::Fragment decompressedFragment(f);
-  decompressedFragment.resize(nBoardsPerFragment * (sizeof(icarus::A2795DataBlock::Header)
+  decompressedFragment.resizeBytes(nBoardsPerFragment * (sizeof(icarus::A2795DataBlock::Header)
     + nChannelsPerBoard * nSamplesPerChannel * sizeof(icarus::A2795DataBlock::data_t)));
 
   auto oldBegin = reinterpret_cast<const uint16_t*>(f.dataBegin()                     );
