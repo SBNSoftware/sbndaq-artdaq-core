@@ -244,6 +244,13 @@ class icarus::PhysCrateFragment {
 
   typedef std::pair<A2795DataBlock::data_t, const A2795DataBlock::data_t*> recursionPair;
 
+  static artdaq::Fragment   compressArtdaqFragment(artdaq::Fragment const & f);
+  static artdaq::Fragment decompressArtdaqFragment(artdaq::Fragment const & f);
+  static artdaq::Fragment fragmentSwitch(artdaq::Fragment const & f, bool const & compressionSwitch)
+  {
+    return (compressionSwitch) ? compressArtdaqFragment(f) : decompressArtdaqFragment(f);
+  }
+
   PhysCrateFragment makeCompressedFragment()   const { return PhysCrateFragment(  compressArtdaqFragment(artdaq_Fragment_)); }
   PhysCrateFragment makeUncompressedFragment() const { return PhysCrateFragment(decompressArtdaqFragment(artdaq_Fragment_)); }
 
@@ -297,13 +304,6 @@ private:
   static std::pair<std::vector<Key>, std::vector<A2795DataBlock::data_t>> GenerateAccessors(artdaq::Fragment const& f);
 
   recursionPair adc_val_recursive_helper(size_t b, size_t c, size_t s, size_t sTarget, recursionPair pair) const;
-
-  static artdaq::Fragment   compressArtdaqFragment(artdaq::Fragment const & f);
-  static artdaq::Fragment decompressArtdaqFragment(artdaq::Fragment const & f);
-  static artdaq::Fragment fragmentSwitch(artdaq::Fragment const & f, bool const & compressionSwitch)
-  {
-    return (compressionSwitch) ? compressArtdaqFragment(f) : decompressArtdaqFragment(f);
-  }
 };
 
 

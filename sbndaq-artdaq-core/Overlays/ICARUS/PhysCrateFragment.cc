@@ -505,9 +505,9 @@ artdaq::Fragment icarus::PhysCrateFragment::compressArtdaqFragment(artdaq::Fragm
     icarus::PhysCrateFragmentMetadata::data_t sPerC     = f.metadata<icarus::PhysCrateFragmentMetadata>()->samples_per_channel();
     icarus::PhysCrateFragmentMetadata::data_t adcPerS   = f.metadata<icarus::PhysCrateFragmentMetadata>()->num_adc_bits(); // i don't know why the names are like this...
     icarus::PhysCrateFragmentMetadata::data_t compress  = 1;
-    std::vector<icarus::PhysCrateFragmentMetadata::id_t> boardIds;
-    for (size_t b = 0; b < nBoards; b++)
-      boardIds.push_back(f.metadata<icarus::PhysCrateFragmentMetadata>()->board_id(b));
+    std::vector<icarus::PhysCrateFragmentMetadata::id_t> boardIds(nBoards);
+    //for (size_t b = 0; b < nBoards; b++)                                          // the board IDs are busted, and (I believe) are ununsed
+    //  boardIds[b] = f.metadata<icarus::PhysCrateFragmentMetadata>()->board_id(b); // don't bother setting them
     icarus::PhysCrateFragmentMetadata updatedMD(runNumber, nBoards, cPerB, sPerC, adcPerS, compress, boardIds);
     compressedFragment.updateMetadata<icarus::PhysCrateFragmentMetadata>(updatedMD);
   }
@@ -600,9 +600,9 @@ artdaq::Fragment icarus::PhysCrateFragment::decompressArtdaqFragment(artdaq::Fra
     icarus::PhysCrateFragmentMetadata::data_t sPerC     = f.metadata<icarus::PhysCrateFragmentMetadata>()->samples_per_channel();
     icarus::PhysCrateFragmentMetadata::data_t adcPerS   = f.metadata<icarus::PhysCrateFragmentMetadata>()->num_adc_bits(); // i don't know why the names are like this...
     icarus::PhysCrateFragmentMetadata::data_t compress  = 0;
-    std::vector<icarus::PhysCrateFragmentMetadata::id_t> boardIds;
-    for (size_t b = 0; b < nBoards; b++)
-      boardIds.push_back(f.metadata<icarus::PhysCrateFragmentMetadata>()->board_id(b));
+    std::vector<icarus::PhysCrateFragmentMetadata::id_t> boardIds(nBoards);
+    //for (size_t b = 0; b < nBoards; b++)                                          // the board IDs are busted, and (I believe) are ununsed
+    //  boardIds[b] = f.metadata<icarus::PhysCrateFragmentMetadata>()->board_id(b); // don't bother setting them
     icarus::PhysCrateFragmentMetadata updatedMD(runNumber, nBoards, cPerB, sPerC, adcPerS, compress, boardIds);
     decompressedFragment.updateMetadata<icarus::PhysCrateFragmentMetadata>(updatedMD);
   }
