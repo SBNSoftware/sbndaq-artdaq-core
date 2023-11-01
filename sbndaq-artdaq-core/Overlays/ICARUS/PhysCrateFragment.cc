@@ -499,8 +499,7 @@ artdaq::Fragment icarus::PhysCrateFragment::decompressArtdaqFragment(artdaq::Fra
     // we don't save any bytes on the 0th sample
     for (size_t sample = 1; sample < overlay.nSamplesPerChannel(); ++sample)
     {
-      icarus::PhysCrateFragment::Key const& curKey = overlay.CompressionKey(board, sample);
-      for (auto const& bit : curKey)
+      for (auto const& bit : overlay.CompressionKey(board, sample))
       {
         if (bit)
         {
@@ -547,7 +546,7 @@ artdaq::Fragment icarus::PhysCrateFragment::decompressArtdaqFragment(artdaq::Fra
         ++decompressedDataOffset;
       }
       bool oddCompressions = false;
-      for (auto const& bit : overlay.CompressionKey)
+      for (auto const& bit : overlay.CompressionKey(board, sample))
       {
         if (bit)
         {
@@ -563,14 +562,14 @@ artdaq::Fragment icarus::PhysCrateFragment::decompressArtdaqFragment(artdaq::Fra
     // ...and each board has a trailer
     for (size_t boardTrailerWord = 0; boardTrailerWord < 4; ++boardTrailerWord)
     {
-      *(compressedDataStart + compressedDataOffset) = *(uncompressedDataStart + uncompressedDataOffset);
+      *(decompressedDataStart + decompressedDataOffset) = *(compressedDataStart + compressedDataOffset);
+      ++decompressedDataOffset;
       ++compressedDataOffset;
-      ++uncompressedDataOffset;
     }
   }
   
   // updated the metadata to reflect the compression
-  if (compressed_fragment.hasMetadata()){
+  if (decompressed_fragment.hasMetadata()){
     icarus::PhysCrateFragmentMetadata::data_t runNumber = f.metadata<icarus::PhysCrateFragmentMetadata>()->run_number();
     icarus::PhysCrateFragmentMetadata::data_t nBoards   = f.metadata<icarus::PhysCrateFragmentMetadata>()->num_boards();
     icarus::PhysCrateFragmentMetadata::data_t cPerB     = f.metadata<icarus::PhysCrateFragmentMetadata>()->channels_per_board();
