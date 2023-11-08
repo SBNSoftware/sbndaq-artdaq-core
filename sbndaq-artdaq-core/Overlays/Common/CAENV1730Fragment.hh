@@ -45,8 +45,8 @@ struct sbndaq::CAENV1730EventHeader{
     { return triggerTimeTag + (static_cast<uint64_t>(pattern) << 32U); }
   
 };
-static_assert(sizeof(sbndaq::CAENV1730EventHeader)==4*sizeof(uint32_t),"CAENV1730EventHeader not correct size.");
 
+static_assert(sizeof(sbndaq::CAENV1730EventHeader)==4*sizeof(uint32_t),"CAENV1730EventHeader not correct size.");
 
 struct sbndaq::CAENV1730Event{
   CAENV1730EventHeader Header;
@@ -55,28 +55,44 @@ struct sbndaq::CAENV1730Event{
 
 struct sbndaq::CAENV1730FragmentMetadata {
 
-  uint32_t  nChannels;
+  static constexpr std::uint32_t ExtendedDataMarker = 0xFFFF;
+	
+  uint32_t  versionMarker = ExtendedDataMarker; // versionMarker for Version 1+, nChannels for Version 0,
   uint32_t  nSamples;
   uint32_t  timeStampSec;
   uint32_t  timeStampNSec;
-
+  
   uint32_t  chTemps[CAEN_V1730_MAX_CHANNELS];
   
-  CAENV1730FragmentMetadata() {}
+  uint32_t  version;         // New addition: Version of the underlying data buffer format.
+  uint32_t  actualNChannels; // New addition: The number of channels in the fragment.
+  uint32_t  postTrigger;     // New addition: Post trigger percent  
+
+  CAENV1730FragmentMetadata(): version(1) {}
   
   CAENV1730FragmentMetadata(uint32_t nc, uint32_t ns,
 			    uint32_t ts_s, uint32_t ts_ns,
+			    uint32_t pt,
 			    uint32_t chtemp[CAEN_V1730_MAX_CHANNELS]) :
-    nChannels(nc),nSamples(ns),
-    timeStampSec(ts_s),timeStampNSec(ts_ns)
+    nSamples(ns),
+    timeStampSec(ts_s),timeStampNSec(ts_ns),
+    version(1), actualNChannels(nc), postTrigger(pt)
   {
     memcpy(chTemps,chtemp,CAEN_V1730_MAX_CHANNELS*sizeof(uint32_t));
   }
 
   size_t ExpectedDataSize() const 
   { return (sizeof(CAENV1730EventHeader) + 
-	    nChannels * nSamples * sizeof(uint16_t)); }
-  
+	    nChannels() * nSamples * sizeof(uint16_t)); }
+ 
+  uint32_t getVersion() const
+  { return (versionMarker == ExtendedDataMarker)? version:0; }
+
+  uint32_t nChannels() const
+  { return getVersion() >= 1? actualNChannels:versionMarker; }
+
+  uint32_t getPostTrigger() const
+  { return getVersion() >= 1? postTrigger:0; } 
 };
 
 class sbndaq::CAENV1730Fragment{
