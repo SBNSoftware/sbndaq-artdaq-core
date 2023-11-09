@@ -10,10 +10,13 @@ cmake_minimum_required (VERSION 3.19 FATAL_ERROR)
 
 find_package(cetmodules 3.16.00 REQUIRED)
 
-project(sbndaq_artdaq_core VERSION 1.08.03)
+project(sbndaq_artdaq_core VERSION)
+set(${PROJECT_NAME}_CMAKE_PROJECT_VERSION_STRING 1.08.00.of0)
 
 include(CetCMakeEnv)
 cet_cmake_env()
+
+SET(ICARUS_BUILD 1)
 
 cet_set_compiler_flags(DIAGS VIGILANT
   WERROR
