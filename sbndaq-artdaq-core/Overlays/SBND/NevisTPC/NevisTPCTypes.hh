@@ -124,6 +124,8 @@ struct sbndaq::NevisTPCHeader{
   }
   NevisTPCHeader(){};
   
+  // c14: error: returning address of local temporary object 
+  // This code needs to be reviewed
   const char* c_str() const { std::ostringstream ss; ss << *this; return ss.str().c_str(); }
 };
 

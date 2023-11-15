@@ -14,7 +14,7 @@ include(Compatibility)
 set(CET_WARN_DEPRECATED)
 
 project(sbndaq_artdaq_core)
-set(${PROJECT_NAME}_CMAKE_PROJECT_VERSION_STRING 1.08.00.of0)
+set(${PROJECT_NAME}_CMAKE_PROJECT_VERSION_STRING 1.08.00.of1)
 
 set(CMAKE_MODULE_PATH
   $ENV{ARTDAQ_UTILITIES_DIR}/Modules
@@ -27,6 +27,8 @@ cet_set_compiler_flags(DIAGS VIGILANT
   WERROR
   NO_UNDEFINED
   EXTRA_FLAGS -pedantic
+              $<$<CXX_COMPILER_ID:GNU>:-Wno-maybe-uninitialized>
+              $<$<CXX_COMPILER_ID:Clang>:-Wno-return-stack-address>
 )
 
 string(TOUPPER ${CMAKE_BUILD_TYPE} BTYPE_UC)

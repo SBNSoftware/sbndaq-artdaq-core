@@ -109,6 +109,8 @@ public:
 
   uint32_t increment_feb_events(uint32_t n=1)      { _feb_event_number+=n; return feb_event_number(); }
   
+  // c14: error: returning address of local temporary object
+  // the probolem is  ss.str().c_str()
   const char* c_str() const { std::ostringstream ss; ss << *this; return ss.str().c_str(); }
 
 private:
