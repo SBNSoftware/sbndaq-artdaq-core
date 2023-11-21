@@ -27,7 +27,7 @@ void icarus::PhysCrateFragment::throwIfCompressed() const {
 size_t icarus::PhysCrateFragment::DataTileHeaderLocation(uint16_t b) const {
   metadata()->BoardExists(b);
   size_t blocks_skipped_size=0;
-  for(size_t i_b=0; i_b<b; ++i_b){
+  for (size_t i_b=0; i_b<b; ++i_b){
     auto dt_header = reinterpret_cast< PhysCrateDataTileHeader const *>(artdaq_Fragment_.dataBeginBytes()+blocks_skipped_size);
     blocks_skipped_size += ntohl(dt_header->packSize);
   }
@@ -400,9 +400,13 @@ artdaq::Fragment icarus::PhysCrateFragment::compressArtdaqFragment(artdaq::Fragm
   // keep track of where we are reading from/writing to
   size_t   compressedDataOffset = 0;
   size_t uncompressedDataOffset = 0;
+  std::vector<icarus::PhysCrateFragment::Key> compressionKeys;
+  compressionKeys.resize(overlay.nBoards() * overlay.nSamplesPerChannel());
+  size_t totalDataTileSize = 0;
   for (size_t board = 0; board < overlay.nBoards(); ++board)
   {
     // each board has a header...
+    size_t boardDataTileSize = sizeof(PhysCrateDataTileHeader) + sizeof(A2795DataBlock::Header);
     for (size_t boardHeaderWord = 0; boardHeaderWord < (sizeof(PhysCrateDataTileHeader) + sizeof(A2795DataBlock::Header)) / sizeof(uint16_t); ++boardHeaderWord)
     {
       *(compressedDataStart + compressedDataOffset) = *(uncompressedDataStart + uncompressedDataOffset);
@@ -410,6 +414,8 @@ artdaq::Fragment icarus::PhysCrateFragment::compressArtdaqFragment(artdaq::Fragm
       ++uncompressedDataOffset;
     }
     // since the 0th sample is used as a reference, store it as is
+    compressionKeys[board*overlay.nSamplesPerChannel()] = {};
+    boardDataTileSize += SampleBytesFromKey({});
     for (size_t channel = 0; channel < overlay.nChannelsPerBoard(); ++channel)
     {
       *(compressedDataStart + compressedDataOffset) = (overlay.adc_val(board, channel, 0) & 0x0FFF) + 0x8000;
@@ -434,6 +440,7 @@ artdaq::Fragment icarus::PhysCrateFragment::compressArtdaqFragment(artdaq::Fragm
             std::abs(adcDiff_2) < 8 &&
             std::abs(adcDiff_3) < 8 )
         {
+          compressionKeys[board*overlay.nSamplesPerChannel() + sample][channelBlock] = true;
           oddCompressions = (not oddCompressions);
           *(compressedDataStart + compressedDataOffset) = ((adcDiff_0 & 0x000F) <<  0) +
                                                           ((adcDiff_1 & 0x000F) <<  4) +
@@ -441,6 +448,7 @@ artdaq::Fragment icarus::PhysCrateFragment::compressArtdaqFragment(artdaq::Fragm
                                                           ((adcDiff_3 & 0x000F) << 12) ;
           ++compressedDataOffset;
         } else {
+          compressionKeys[board*overlay.nSamplesPerChannel() + sample][channelBlock] = false;
           *(compressedDataStart + compressedDataOffset + 0) = (adcDiff_0 & 0x0FFF) + 0x8000;
           *(compressedDataStart + compressedDataOffset + 1) = (adcDiff_1 & 0x0FFF) + 0x8000;
           *(compressedDataStart + compressedDataOffset + 2) = (adcDiff_2 & 0x0FFF) + 0x8000;
@@ -454,14 +462,22 @@ artdaq::Fragment icarus::PhysCrateFragment::compressArtdaqFragment(artdaq::Fragm
         *(compressedDataStart + compressedDataOffset) = 0;
         ++compressedDataOffset;
       }
+      // add up the size of the differences
+      boardDataTileSize += SampleBytesFromKey(compressionKeys[board*overlay.nSamplesPerChannel() + sample]);
     }
     // ...and each board has a trailer
+    boardDataTileSize += 4*sizeof(uint16_t);
     for (size_t boardTrailerWord = 0; boardTrailerWord < 4; ++boardTrailerWord)
     {
       *(compressedDataStart + compressedDataOffset) = *(uncompressedDataStart + uncompressedDataOffset);
       ++compressedDataOffset;
       ++uncompressedDataOffset;
     }
+    // now that we know the size for the data tile, store that in the tile header
+    // endianness is weird for this, hence the htonl...
+    icarus::PhysCrateDataTileHeader* boardHeader = reinterpret_cast<PhysCrateDataTileHeader*>(compressedDataStart + totalDataTileSize / sizeof(uint16_t));
+    boardHeader->packSize = htonl(boardDataTileSize);
+    totalDataTileSize += boardDataTileSize;
   }
   
   // updated the metadata to reflect the compression
@@ -566,6 +582,13 @@ artdaq::Fragment icarus::PhysCrateFragment::decompressArtdaqFragment(artdaq::Fra
       ++decompressedDataOffset;
       ++compressedDataOffset;
     }
+    // update the board tile header packSize
+    // endianness is weird for this, hence the htonl...
+    icarus::PhysCrateDataTileHeader* boardHeader = reinterpret_cast<PhysCrateDataTileHeader*>(decompressedDataStart 
+                                                                                              + board*(sizeof(PhysCrateDataTileHeader) + sizeof(A2795DataBlock::Header)) / sizeof(uint16_t)
+                                                                                              + board*overlay.nChannelsPerBoard()*overlay.nSamplesPerChannel()
+                                                                                              + board*4);
+    boardHeader->packSize = htonl(sizeof(PhysCrateDataTileHeader) + sizeof(A2795DataBlock::Header) + overlay.nChannelsPerBoard()*overlay.nSamplesPerChannel()*sizeof(uint16_t) + 4*sizeof(uint16_t));
   }
   
   // updated the metadata to reflect the compression

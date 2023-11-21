@@ -210,6 +210,13 @@ class icarus::PhysCrateFragment {
 
   size_t BoardBlockSize() const
   { return sizeof(A2795DataBlock::Header)+nChannelsPerBoard()*nSamplesPerChannel()*sizeof(A2795DataBlock::data_t); }
+  size_t BoardBlockSize(size_t b)
+  {
+    size_t boardBlockSize = sizeof(A2795DataBlock::Header);
+    for (size_t s = 0; s < nSamplesPerChannel(); ++s)
+      boardBlockSize += SampleBytesFromKey(CompressionKey(b, s));
+    return boardBlockSize;
+  }
 
   A2795DataBlock           const* BoardDataBlock(uint16_t b=0) const;
   A2795DataBlock::Header   const& BoardHeader(uint16_t b=0) const;
