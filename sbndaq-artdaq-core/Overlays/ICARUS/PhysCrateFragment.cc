@@ -481,17 +481,8 @@ artdaq::Fragment icarus::PhysCrateFragment::compressArtdaqFragment(artdaq::Fragm
   }
   
   // updated the metadata to reflect the compression
-  if (compressed_fragment.hasMetadata()){
-    icarus::PhysCrateFragmentMetadata::data_t runNumber = f.metadata<icarus::PhysCrateFragmentMetadata>()->run_number();
-    icarus::PhysCrateFragmentMetadata::data_t nBoards   = f.metadata<icarus::PhysCrateFragmentMetadata>()->num_boards();
-    icarus::PhysCrateFragmentMetadata::data_t cPerB     = f.metadata<icarus::PhysCrateFragmentMetadata>()->channels_per_board();
-    icarus::PhysCrateFragmentMetadata::data_t sPerC     = f.metadata<icarus::PhysCrateFragmentMetadata>()->samples_per_channel();
-    icarus::PhysCrateFragmentMetadata::data_t adcPerS   = f.metadata<icarus::PhysCrateFragmentMetadata>()->num_adc_bits(); // i don't know why the names are like this...
-    icarus::PhysCrateFragmentMetadata::data_t compress  = 1;
-    std::vector<icarus::PhysCrateFragmentMetadata::id_t> boardIds(nBoards);
-    icarus::PhysCrateFragmentMetadata updatedMD(runNumber, nBoards, cPerB, sPerC, adcPerS, compress, boardIds);
-    compressed_fragment.updateMetadata<icarus::PhysCrateFragmentMetadata>(updatedMD);
-  }
+  if (compressed_fragment.hasMetadata())
+    compressed_fragment.metadata<icarus::PhysCrateFragmentMetadata>()->SetCompressionScheme(1);
 
   return compressed_fragment;
 }
@@ -592,17 +583,8 @@ artdaq::Fragment icarus::PhysCrateFragment::decompressArtdaqFragment(artdaq::Fra
   }
   
   // updated the metadata to reflect the compression
-  if (decompressed_fragment.hasMetadata()){
-    icarus::PhysCrateFragmentMetadata::data_t runNumber = f.metadata<icarus::PhysCrateFragmentMetadata>()->run_number();
-    icarus::PhysCrateFragmentMetadata::data_t nBoards   = f.metadata<icarus::PhysCrateFragmentMetadata>()->num_boards();
-    icarus::PhysCrateFragmentMetadata::data_t cPerB     = f.metadata<icarus::PhysCrateFragmentMetadata>()->channels_per_board();
-    icarus::PhysCrateFragmentMetadata::data_t sPerC     = f.metadata<icarus::PhysCrateFragmentMetadata>()->samples_per_channel();
-    icarus::PhysCrateFragmentMetadata::data_t adcPerS   = f.metadata<icarus::PhysCrateFragmentMetadata>()->num_adc_bits(); // i don't know why the names are like this...
-    icarus::PhysCrateFragmentMetadata::data_t compress  = 0;
-    std::vector<icarus::PhysCrateFragmentMetadata::id_t> boardIds(nBoards);
-    icarus::PhysCrateFragmentMetadata updatedMD(runNumber, nBoards, cPerB, sPerC, adcPerS, compress, boardIds);
-    decompressed_fragment.updateMetadata<icarus::PhysCrateFragmentMetadata>(updatedMD);
-  }
+  if (decompressed_fragment.hasMetadata())
+    decompressed_fragment.metadata<icarus::PhysCrateFragmentMetadata>()->SetCompressionScheme(0);
 
   return decompressed_fragment;
 }

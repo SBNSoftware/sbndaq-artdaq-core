@@ -157,6 +157,8 @@ public:
   { BoardExists(i); _board_ids[i] = id; }
   void  SetBoardIDs(std::vector<id_t> const& idvec)
   { CheckNBoards(idvec.size()); _board_ids = idvec; } 
+  void  SetCompressionScheme(data_t scheme)
+  { _compression_scheme = scheme; }
 
   void BoardExists(size_t i) const;
   void CheckNBoards(size_t i) const;
