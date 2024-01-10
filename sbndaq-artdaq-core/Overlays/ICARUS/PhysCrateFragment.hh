@@ -188,8 +188,18 @@ class icarus::PhysCrateFragment {
 
   public:
 
-  PhysCrateFragment(artdaq::Fragment const & f) : artdaq_Fragment_(f), 
-                                                  accessors_(f) {}
+  PhysCrateFragment(artdaq::Fragment const & f) : artdaq_Fragment_(f),
+                                                  accessors_(f.metadata<icarus::PhysCrateFragmentMetadata>()->num_boards(),
+                                                             f.metadata<icarus::PhysCrateFragmentMetadata>()->channels_per_board(),
+                                                             f.metadata<icarus::PhysCrateFragmentMetadata>()->samples_per_channel())
+                                                  {
+                                                    //size_t nBoards   = artdaq_Fragment_.metadata<icarus::PhysCrateFragmentMetadata>()->num_boards();
+                                                    //size_t nChannels = artdaq_Fragment_.metadata<icarus::PhysCrateFragmentMetadata>()->channels_per_board();
+                                                    //size_t nSamples  = artdaq_Fragment_.metadata<icarus::PhysCrateFragmentMetadata>()->samples_per_channel();
+                                                    //accessors_.accessPair_.first.reserve(nBoards * nSamples);
+                                                    //accessors_.accessPair_.first.reserve(nBoards * nSamples * nChannels);
+                                                    accessors_ = icarus::PhysCrateFragment::GenerateAccessors(artdaq_Fragment_);
+                                                  }
 
   PhysCrateFragment(artdaq::Fragment const & f, bool const & compressionSwitch)
     : PhysCrateFragment(this->fragmentSwitch(f, compressionSwitch)) {}
@@ -228,6 +238,7 @@ class icarus::PhysCrateFragment {
 
   A2795DataBlock::data_t adc_diff(size_t b,size_t c,size_t s) const;
   A2795DataBlock::data_t adc_val(size_t b,size_t c,size_t s) const;
+  A2795DataBlock::data_t adc_val_usingIterator(size_t b,size_t c,size_t s) const;
   std::vector<A2795DataBlock::data_t> channel_adc_vec(size_t b,size_t c) const
   {
     std::vector<A2795DataBlock::data_t>::const_iterator beginItr = accessors_.accessPair_.second.begin() + b*this->nSamplesPerChannel()*this->nChannelsPerBoard() + c*this->nSamplesPerChannel();
@@ -242,16 +253,19 @@ class icarus::PhysCrateFragment {
   Key const& CompressionKey(size_t b, size_t s) const
   {
     size_t index = b*this->nSamplesPerChannel() + s;
-    return accessors_.accessPair_.first[index];
+    return accessors_.accessPair_.first.at(index);
   }
   A2795DataBlock::data_t const& adcVal_fromAccessor(size_t b, size_t c, size_t s) const
   {
     // adc values are stored such that they can be easily sliced by board/channel
     size_t index = b*this->nSamplesPerChannel()*this->nChannelsPerBoard() + c*this->nSamplesPerChannel() + s;
-    return accessors_.accessPair_.second[index];
+    //if (index >= accessors_.accessPair_.second.size())
+    //  std::cout << "Attempting to index out of range!" << '\n'
+    //            << "  board " << b << ", channel " << c << ", sample " << s << '\n'
+    //            << "  index is b*" << this->nSamplesPerChannel() << "*" << this->nChannelsPerBoard() << " + c*" << this->nSamplesPerChannel() << " + s = " << index << '\n'
+    //            << "  the size of accessors_.accessPair_.second is " << accessors_.accessPair_.second.size() << std::endl;
+    return accessors_.accessPair_.second.at(index);
   }
-
-  typedef std::pair<A2795DataBlock::data_t, const A2795DataBlock::data_t*> recursionPair;
 
   static artdaq::Fragment   compressArtdaqFragment(artdaq::Fragment const & f);
   static artdaq::Fragment decompressArtdaqFragment(artdaq::Fragment const & f);
@@ -263,6 +277,37 @@ class icarus::PhysCrateFragment {
   PhysCrateFragment makeCompressedFragment()   const { return PhysCrateFragment(  compressArtdaqFragment(artdaq_Fragment_)); }
   PhysCrateFragment makeUncompressedFragment() const { return PhysCrateFragment(decompressArtdaqFragment(artdaq_Fragment_)); }
 
+  static uint64_t getFragmentWord(artdaq::Fragment const& f, size_t nWord) 
+  {
+    // this returns the nth 64-bit word of the _payload_
+    // note this skips Fragment headers/metadata
+    // but _doesn't_ skip the board header(s) which are inside the Fragment payload
+    if (nWord > f.dataSize())
+      throw cet::exception("PhysCrateFragment:getFragmentWord")
+        << "Asked for 64-bit word " << nWord << " of the fragment, but there are only " << f.dataSize() << " in the payload" << '\n';
+
+    return *(f.dataBegin() + nWord);
+  }
+
+  static uint16_t getA2795Word(artdaq::Fragment const& f, size_t nWord)
+  {
+    // this returns the nth 16-bit word of the _payload_
+    size_t nFragmentWord = nWord / 4;
+    size_t shift = 16*(nWord % 4);
+    uint64_t longWord = getFragmentWord(f, nFragmentWord);
+    uint16_t shortWord = (longWord >> shift) & 0xFFFF;
+    return shortWord;
+  }
+
+  static size_t SampleBytesFromKey(Key const& key)
+  {
+    size_t nCompressed = 0;
+    for (auto const& bit : key)
+      nCompressed += bit;
+
+    return 128 - 6*nCompressed + 2*(nCompressed % 2);
+  }
+
 private:
 
   artdaq::Fragment const & artdaq_Fragment_;
@@ -272,18 +317,24 @@ private:
   // here are things helpful for the comrpessed fragments
   struct Accessors
   {
+    Accessors(size_t nBoards, size_t nChannels, size_t nSamples)
+    {
+      accessPair_.first  = std::vector<Key>(nBoards*nSamples);
+      accessPair_.second = std::vector<A2795DataBlock::data_t>(nBoards*nChannels*nSamples, 0);
+    };
+    Accessors(std::vector<Key> accessorKeys, std::vector<A2795DataBlock::data_t> accessorADC)
+    {
+      accessPair_.first  = accessorKeys;
+      accessPair_.second = accessorADC;
+    }
+    Accessors(std::pair<std::vector<Key>, std::vector<A2795DataBlock::data_t>> accessPair)
+    {
+      accessPair_.first  = accessPair.first;
+      accessPair_.second = accessPair.second;
+    }
     Accessors(artdaq::Fragment const& f) : accessPair_(GenerateAccessors(f)) {};
-    std::pair<std::vector<Key>, std::vector<A2795DataBlock::data_t>> const accessPair_;
+    std::pair<std::vector<Key>, std::vector<A2795DataBlock::data_t>> accessPair_;
   } accessors_;
-
-  static size_t SampleBytesFromKey(Key const& key)
-  {
-    size_t nCompressed = 0;
-    for (size_t cBlock = 0; cBlock < 16; ++cBlock)
-      nCompressed += key[cBlock];
-
-    return 128 - 6*nCompressed + ((nCompressed % 2) == 1)*2;
-  }
 
   size_t cumulativeSampleSize(size_t b, size_t s, size_t runningTotal = 0) const
   {
@@ -312,7 +363,23 @@ private:
 
   static std::pair<std::vector<Key>, std::vector<A2795DataBlock::data_t>> GenerateAccessors(artdaq::Fragment const& f);
 
-  recursionPair adc_val_recursive_helper(size_t b, size_t c, size_t s, size_t sTarget, recursionPair pair) const;
+  static void setFragmentWord(artdaq::Fragment& f, size_t nWord, uint64_t value)
+  {
+    *(f.dataBegin() + nWord) = value;
+  }
+
+  static void setA2795Word(artdaq::Fragment& f, size_t nWord, uint16_t value)
+  {
+    uint64_t value64 = value;
+    size_t nFragmentWord = nWord / 4;
+    size_t shift = 16*(nWord % 4);
+    uint64_t oldWord = getFragmentWord(f, nFragmentWord);
+    uint64_t filterBlock = 0xFFFF;
+    uint64_t filter = ~(filterBlock << shift);
+    uint64_t newWord = (oldWord & filter) + ((value64 << shift) & ~filter);
+    setFragmentWord(f, nWord / 4, newWord);
+  }
+
 };
 
 

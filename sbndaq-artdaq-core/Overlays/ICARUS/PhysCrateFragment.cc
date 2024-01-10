@@ -77,12 +77,25 @@ icarus::A2795DataBlock::data_t const* icarus::PhysCrateFragment::BoardData(uint1
 }
 
 icarus::A2795DataBlock::data_t icarus::PhysCrateFragment::adc_val(size_t b,size_t c, size_t s) const{
-  //if (isCompressed())
-  //  return adc_val_recursive_helper(b, c, 0, s,
-  //           std::make_pair(static_cast<icarus::A2795DataBlock::data_t>(0), BoardData(b))).first;
+  if (b > this->nBoards() || c > this->nChannelsPerBoard() || s > this->nSamplesPerChannel())
+  {
+    std::cout << "WARNING in icarus::PhysCrateFragment::adc_val" << '\n'
+              << "  Attempting to find ADC value for board " << b << ", channel " << c << ", sample " << s << '\n'
+              << "  But Fragment only has " << this->nBoards() << " boards, " << this->nChannelsPerBoard() << " channels per board, and " << this->nSamplesPerChannel() << " samples per channel" << std::endl;
+  }
+  return (this->isCompressed()) ? this->adcVal_fromAccessor(b, c, s) :
+                                  ( *(this->BoardData(b)+s*this->nChannelsPerBoard()+c) & (~(1<<(this->metadata()->num_adc_bits()+1))) );
+}
 
-  return (isCompressed()) ? this->adcVal_fromAccessor(b, c, s) :
-                            ( *(BoardData(b)+s*nChannelsPerBoard()+c) & (~(1<<(metadata()->num_adc_bits()+1))) );
+icarus::A2795DataBlock::data_t icarus::PhysCrateFragment::adc_val_usingIterator(size_t b,size_t c, size_t s) const
+{
+  size_t bytesUntilBlock = (1+b)*sizeof(PhysCrateDataTileHeader)
+                           + b*(BoardBlockSize() + 4*sizeof(uint16_t))
+                           + sizeof(A2795DataBlock::Header);
+  size_t wordsUntilBlock = (bytesUntilBlock / sizeof(icarus::A2795DataBlock::data_t));
+  size_t wordsIntoBlock  = s*this->nChannelsPerBoard()+c;
+  icarus::A2795DataBlock::data_t word = getA2795Word(artdaq_Fragment_, wordsUntilBlock + wordsIntoBlock);
+  return (word & (~(1<<(this->metadata()->num_adc_bits()+1))) );
 }
 
 std::ostream & icarus::operator << (std::ostream & os, PhysCrateFragmentMetadata const& m){
@@ -225,7 +238,7 @@ std::pair<std::vector<icarus::PhysCrateFragment::Key>, std::vector<icarus::A2795
   size_t nSamples  = f.metadata<icarus::PhysCrateFragmentMetadata>()->samples_per_channel();
 
   std::vector<icarus::PhysCrateFragment::Key> keys;
-  std::vector<icarus::A2795DataBlock::data_t> adcValues(nBoards*nSamples*nChannels, 0);
+  std::vector<icarus::A2795DataBlock::data_t> adcValues(nBoards*nChannels*nSamples, std::numeric_limits<icarus::A2795DataBlock::data_t>::min());
 
   // if there's no compression it's all uncompressed
   if (f.metadata<icarus::PhysCrateFragmentMetadata>()->compression_scheme() == 0)
@@ -246,7 +259,7 @@ std::pair<std::vector<icarus::PhysCrateFragment::Key>, std::vector<icarus::A2795
       for (size_t c = 0; c < nChannels; ++c)
       {
         for (size_t s = 0; s < nSamples; ++s)
-          adcValues[b*nSamples*nChannels + c*nSamples + s] = (*(boardData+s*nChannels+c) & (~(1<<(f.metadata<icarus::PhysCrateFragmentMetadata>()->num_adc_bits()+1))));
+          adcValues.push_back(*(boardData+s*nChannels+c) & (~(1<<(f.metadata<icarus::PhysCrateFragmentMetadata>()->num_adc_bits()+1))));
       }
       cumulativePrevBlockSize += icarus::PhysCrateFragment::SampleBytesFromKey({});
     }
@@ -259,93 +272,59 @@ std::pair<std::vector<icarus::PhysCrateFragment::Key>, std::vector<icarus::A2795
   // each bit corresponds to a block of 4 channels
   // 0 means those channels are uncompressed, 1 means they are compressed
   // if the 4 most significant bits of the 16-bit word is 0x8 the words is compressed
-  size_t cumulativePrevBlockSize = 0;
+  uint64_t fragWord = 0;
   for (size_t b = 0; b < nBoards; b++)
   {
-    icarus::A2795DataBlock::data_t const* boardData
-                                            = reinterpret_cast<icarus::A2795DataBlock::data_t const*>
-                                                       ( f.dataBeginBytes()
-                                                       + (1+b)*sizeof(icarus::PhysCrateDataTileHeader)
-                                                       + (1+b)*sizeof(icarus::A2795DataBlock::Header)
-                                                       + 4*b*sizeof(uint16_t)
-                                                       + cumulativePrevBlockSize                     );
-    size_t nWord = 0;
+    // skip board headers...
+    size_t headerBytes = sizeof(icarus::PhysCrateDataTileHeader) + sizeof(A2795DataBlock::Header);
+    fragWord += (headerBytes / sizeof(icarus::A2795DataBlock::data_t));
     for (size_t s = 0; s < nSamples; s++)
     {
       icarus::PhysCrateFragment::Key key = {};
       size_t keyCount = 0;
       for (size_t bit = 0; bit < nChannels/4; bit++)
       {
-        icarus::A2795DataBlock::data_t word = boardData[nWord];
-        bool isCompressed = ((word & 0xF000) != 0x8000);
+        icarus::A2795DataBlock::data_t word = getA2795Word(f, fragWord);
+        bool isCompressed = (((word & 0xF000) != 0x8000));
         for (size_t cInSet = 0; cInSet < 4; ++ cInSet)
         {
           size_t c = 4*bit + cInSet;
-          if (isCompressed)
+          if (not isCompressed)
           {
-            icarus::A2795DataBlock::data_t fourBitDiff = (word >> (4*cInSet)) & 0x000F;
+            icarus::A2795DataBlock::data_t tempWord = getA2795Word(f, fragWord + cInSet);
+            int16_t twelveBitDiff = (tempWord & 0x0FFF);
+            bool isNeg = (twelveBitDiff >> 11) && (s != 0);
+            icarus::A2795DataBlock::data_t prevSample = (s != 0) ? adcValues[b*nSamples*nChannels + c*nSamples + s - 1] : 0;
+            icarus::A2795DataBlock::data_t currSample = (isNeg*0xF000 + twelveBitDiff + prevSample);
+            adcValues.at(b*nSamples*nChannels + c*nSamples + s) = currSample;
+          } else {
+            int16_t fourBitDiff = (word >> (4*cInSet)) & 0x000F;
             bool isNeg = (fourBitDiff >> 3);
             icarus::A2795DataBlock::data_t prevSample = (s != 0) ? adcValues[b*nSamples*nChannels + c*nSamples + s - 1] : 0;
-            adcValues[b*nSamples*nChannels + c*nSamples + s] = (isNeg*0xFFF0 + fourBitDiff + prevSample);
-          } else {
-            icarus::A2795DataBlock::data_t twelveBitDiff = (boardData[nWord + cInSet] & 0x0FFF);
-            bool isNeg = (s != 0) && (twelveBitDiff >> 11);
-            icarus::A2795DataBlock::data_t prevSample = (s != 0) ? adcValues[b*nSamples*nChannels + c*nSamples + s - 1] : 0;
-            adcValues[b*nSamples*nChannels + c*nSamples + s] = (isNeg*0xF000 + twelveBitDiff + prevSample);
+            icarus::A2795DataBlock::data_t currSample = (isNeg*0xFFF0 + fourBitDiff + prevSample);
+            adcValues.at(b*nSamples*nChannels + c*nSamples + s) = currSample;
           }
         }
-        nWord += (isCompressed) ? 1 : 4;
+        fragWord += (isCompressed) ? 1 : 4;
         keyCount += isCompressed;
         key[bit] = isCompressed;
       }
       keys.push_back(key);
-      nWord += (keyCount % 2);
-      cumulativePrevBlockSize += icarus::PhysCrateFragment::SampleBytesFromKey(key);
+      uint16_t keyAsWord = 0;
+      for (size_t bit = 0; bit < 16; ++bit)
+      {
+        keyAsWord <<= 1;
+        keyAsWord += key[bit];
+      }
+      if ((keyCount % 2) == 1)
+      {
+        fragWord += 1;
+      }
     }
+    // ...and skip board trailers
+   fragWord += 4;
   }
   return std::make_pair(keys, adcValues);
-}
-
-icarus::PhysCrateFragment::recursionPair icarus::PhysCrateFragment::adc_val_recursive_helper
-  (size_t b, size_t c, size_t s, size_t sTarget, icarus::PhysCrateFragment::recursionPair pair) const
-{
-  // this function helps calculate the ADC values from compressed fragments
-  // it is tail recursive and accumulates the ADC values while finding each ADC difference
-  icarus::A2795DataBlock::data_t runningVal = pair.first;
-  const icarus::A2795DataBlock::data_t* loc = pair.second;
-  const size_t cSet = c / 4;
-  const size_t channelInSet = c % 4;
-  icarus::PhysCrateFragment::Key const& sampleKey = this->CompressionKey(b, s);
-  size_t keyiPartialCount = 0;
-  for (size_t cB = 0; cB < cSet; ++cB)
-    keyiPartialCount += sampleKey[cB];
-
-  size_t cIndex = 4*cSet - 3*keyiPartialCount;
-  bool isChannelSetCompressed = sampleKey[cSet];
-
-  if (isChannelSetCompressed)
-  {
-    icarus::A2795DataBlock::data_t dataSlice = *(loc+cIndex);
-    icarus::A2795DataBlock::data_t fourBitDiff = (dataSlice >> (4*channelInSet)) & 0x000F;
-    bool isNeg = (fourBitDiff >> 3);
-    runningVal += isNeg*0xFFF0 + fourBitDiff;
-  } else {
-    icarus::A2795DataBlock::data_t dataSlice = *(loc+cIndex+channelInSet);
-    icarus::A2795DataBlock::data_t twelveBitDiff = dataSlice & 0x0FFF;
-    bool isNeg = (s != 0) && (twelveBitDiff >> 11);
-    runningVal += isNeg*0xF000 + twelveBitDiff;
-  }
-
-  size_t keyCount = keyiPartialCount;
-  for (size_t cB = cSet; cB < 16; ++cB)
-    keyCount += sampleKey[cB];
-
-  size_t increment = 64 - 3*keyCount + (keyCount % 2);
-
-  if (s == sTarget)
-    return std::make_pair(runningVal, loc + increment);
-
-  return this->adc_val_recursive_helper(b, c, s + 1, sTarget, std::make_pair(runningVal, loc + increment));
 }
 
 artdaq::Fragment icarus::PhysCrateFragment::compressArtdaqFragment(artdaq::Fragment const & f)
@@ -358,42 +337,8 @@ artdaq::Fragment icarus::PhysCrateFragment::compressArtdaqFragment(artdaq::Fragm
   // use an overlay to help access old fragment
   icarus::PhysCrateFragment overlay(f);
 
-  // calculate how many bytes we should save
-  size_t savedBytes = 0;
-  for (size_t board = 0; board < overlay.nBoards(); ++board)
-  {
-    // save if we compress an odd number of times
-    bool oddCompressions = false;
-    // we don't save any bytes on the 0th sample
-    for (size_t sample = 1; sample < overlay.nSamplesPerChannel(); ++sample)
-    {
-      for (size_t channelBlock = 0; channelBlock < overlay.nChannelsPerBoard() / 4; ++channelBlock)
-      {
-        if (std::abs(overlay.adc_val(board, 4*channelBlock + 0, sample) - overlay.adc_val(board, 4*channelBlock + 0, sample - 1)) < 8 &&
-            std::abs(overlay.adc_val(board, 4*channelBlock + 1, sample) - overlay.adc_val(board, 4*channelBlock + 1, sample - 1)) < 8 &&
-            std::abs(overlay.adc_val(board, 4*channelBlock + 2, sample) - overlay.adc_val(board, 4*channelBlock + 2, sample - 1)) < 8 &&
-            std::abs(overlay.adc_val(board, 4*channelBlock + 3, sample) - overlay.adc_val(board, 4*channelBlock + 3, sample - 1)) < 8 )
-        {
-          // each compression saves 6 bytes (4*16 bits - 16 bits = 48 bits = 6 bytes)
-          savedBytes += 6;
-          oddCompressions = (not oddCompressions);
-        }
-      }
-    }
-    // acount for spacer if needed
-    if (oddCompressions)
-      savedBytes -= 2;
-  }
-
   // create a new fragment to return
-  // resize it based on home many compressions occur
   artdaq::Fragment compressed_fragment(f);
-  compressed_fragment.resizeBytes(f.dataSizeBytes() - savedBytes);
-
-  // get a pointer to the start of the new payload
-  // and to the start of the old payload
-  icarus::A2795DataBlock::data_t*         compressedDataStart = reinterpret_cast<A2795DataBlock::data_t*>      (compressed_fragment.dataBeginBytes());
-  icarus::A2795DataBlock::data_t const* uncompressedDataStart = reinterpret_cast<A2795DataBlock::data_t const*>(                  f.dataBeginBytes());
 
   // go through board/channel/sample and load up the data
   // data is stored in channel->sample->board
@@ -406,19 +351,22 @@ artdaq::Fragment icarus::PhysCrateFragment::compressArtdaqFragment(artdaq::Fragm
   for (size_t board = 0; board < overlay.nBoards(); ++board)
   {
     // each board has a header...
-    size_t boardDataTileSize = sizeof(PhysCrateDataTileHeader) + sizeof(A2795DataBlock::Header);
-    for (size_t boardHeaderWord = 0; boardHeaderWord < (sizeof(PhysCrateDataTileHeader) + sizeof(A2795DataBlock::Header)) / sizeof(uint16_t); ++boardHeaderWord)
+    uint32_t boardDataTileSize = sizeof(PhysCrateDataTileHeader) + sizeof(A2795DataBlock::Header);
+    for (size_t boardHeaderWord = 0; boardHeaderWord < (sizeof(PhysCrateDataTileHeader) + sizeof(A2795DataBlock::Header)) / sizeof(icarus::A2795DataBlock::data_t); ++boardHeaderWord)
     {
-      *(compressedDataStart + compressedDataOffset) = *(uncompressedDataStart + uncompressedDataOffset);
+      setA2795Word(compressed_fragment, compressedDataOffset, getA2795Word(f, uncompressedDataOffset));
       ++compressedDataOffset;
       ++uncompressedDataOffset;
     }
+    // check offsets
     // since the 0th sample is used as a reference, store it as is
     compressionKeys[board*overlay.nSamplesPerChannel()] = {};
     boardDataTileSize += SampleBytesFromKey({});
     for (size_t channel = 0; channel < overlay.nChannelsPerBoard(); ++channel)
     {
-      *(compressedDataStart + compressedDataOffset) = (overlay.adc_val(board, channel, 0) & 0x0FFF) + 0x8000;
+      A2795DataBlock::data_t sampleADC  = (overlay.adc_val(board, channel, 0) & 0x0FFF);
+      sampleADC += 0x8000;
+      setA2795Word(compressed_fragment, compressedDataOffset, sampleADC);
       ++compressedDataOffset;
       ++uncompressedDataOffset;
     }
@@ -433,52 +381,65 @@ artdaq::Fragment icarus::PhysCrateFragment::compressArtdaqFragment(artdaq::Fragm
         int16_t adcDiff_1 = overlay.adc_val(board, 4*channelBlock + 1, sample) - overlay.adc_val(board, 4*channelBlock + 1, sample - 1);
         int16_t adcDiff_2 = overlay.adc_val(board, 4*channelBlock + 2, sample) - overlay.adc_val(board, 4*channelBlock + 2, sample - 1);
         int16_t adcDiff_3 = overlay.adc_val(board, 4*channelBlock + 3, sample) - overlay.adc_val(board, 4*channelBlock + 3, sample - 1);
+        bool isComp = (std::abs(adcDiff_0) < 8) &&
+                      (std::abs(adcDiff_1) < 8) &&
+                      (std::abs(adcDiff_2) < 8) &&
+                      (std::abs(adcDiff_3) < 8);
         uncompressedDataOffset += 4;
         // if the 4 diffs are all less than 8 in magnetude then we compress the block
-        if (std::abs(adcDiff_0) < 8 && 
-            std::abs(adcDiff_1) < 8 &&
-            std::abs(adcDiff_2) < 8 &&
-            std::abs(adcDiff_3) < 8 )
+        if (isComp)
         {
           compressionKeys[board*overlay.nSamplesPerChannel() + sample][channelBlock] = true;
           oddCompressions = (not oddCompressions);
-          *(compressedDataStart + compressedDataOffset) = ((adcDiff_0 & 0x000F) <<  0) +
-                                                          ((adcDiff_1 & 0x000F) <<  4) +
-                                                          ((adcDiff_2 & 0x000F) <<  8) +
-                                                          ((adcDiff_3 & 0x000F) << 12) ;
+          uint16_t new_word  = (adcDiff_3 & 0x000F);
+          new_word <<= 4;
+                   new_word += (adcDiff_2 & 0x000F);
+          new_word <<= 4;
+                   new_word += (adcDiff_1 & 0x000F);
+          new_word <<= 4;
+                   new_word += (adcDiff_0 & 0x000F);
+          setA2795Word(compressed_fragment, compressedDataOffset, new_word);
           ++compressedDataOffset;
         } else {
           compressionKeys[board*overlay.nSamplesPerChannel() + sample][channelBlock] = false;
-          *(compressedDataStart + compressedDataOffset + 0) = (adcDiff_0 & 0x0FFF) + 0x8000;
-          *(compressedDataStart + compressedDataOffset + 1) = (adcDiff_1 & 0x0FFF) + 0x8000;
-          *(compressedDataStart + compressedDataOffset + 2) = (adcDiff_2 & 0x0FFF) + 0x8000;
-          *(compressedDataStart + compressedDataOffset + 3) = (adcDiff_3 & 0x0FFF) + 0x8000;
+          setA2795Word(compressed_fragment, compressedDataOffset + 0, (adcDiff_0 & 0x0FFF) + 0x8000);
+          setA2795Word(compressed_fragment, compressedDataOffset + 1, (adcDiff_1 & 0x0FFF) + 0x8000);
+          setA2795Word(compressed_fragment, compressedDataOffset + 2, (adcDiff_2 & 0x0FFF) + 0x8000);
+          setA2795Word(compressed_fragment, compressedDataOffset + 3, (adcDiff_3 & 0x0FFF) + 0x8000);
           compressedDataOffset += 4;
         }
       }
       // if there are an odd number of words in the difference then there needs to be a spacer added
       if (oddCompressions)
       {
-        *(compressedDataStart + compressedDataOffset) = 0;
+        setA2795Word(compressed_fragment, compressedDataOffset, 0);
         ++compressedDataOffset;
       }
       // add up the size of the differences
       boardDataTileSize += SampleBytesFromKey(compressionKeys[board*overlay.nSamplesPerChannel() + sample]);
+      uint16_t keyAsWord = 0;
+      for (size_t bit = 0; bit < 16; ++bit)
+      {
+        keyAsWord <<= 1;
+        keyAsWord += compressionKeys[board*overlay.nSamplesPerChannel() + sample][bit];
+      }
     }
     // ...and each board has a trailer
     boardDataTileSize += 4*sizeof(uint16_t);
     for (size_t boardTrailerWord = 0; boardTrailerWord < 4; ++boardTrailerWord)
     {
-      *(compressedDataStart + compressedDataOffset) = *(uncompressedDataStart + uncompressedDataOffset);
+      setA2795Word(compressed_fragment, compressedDataOffset, getA2795Word(f, uncompressedDataOffset));
       ++compressedDataOffset;
       ++uncompressedDataOffset;
     }
     // now that we know the size for the data tile, store that in the tile header
     // endianness is weird for this, hence the htonl...
-    icarus::PhysCrateDataTileHeader* boardHeader = reinterpret_cast<PhysCrateDataTileHeader*>(compressedDataStart + totalDataTileSize / sizeof(uint16_t));
+    icarus::PhysCrateDataTileHeader* boardHeader = reinterpret_cast<PhysCrateDataTileHeader*>(compressed_fragment.dataBeginBytes() + totalDataTileSize);
     boardHeader->packSize = htonl(boardDataTileSize);
     totalDataTileSize += boardDataTileSize;
   }
+  
+  compressed_fragment.resizeBytes(totalDataTileSize);
   
   // updated the metadata to reflect the compression
   if (compressed_fragment.hasMetadata())
@@ -526,11 +487,6 @@ artdaq::Fragment icarus::PhysCrateFragment::decompressArtdaqFragment(artdaq::Fra
   artdaq::Fragment decompressed_fragment(f);
   decompressed_fragment.resizeBytes(f.dataSizeBytes() + savedBytes);
 
-  // get a pointer to the start of the new payload
-  // and to the start of the old payload
-  icarus::A2795DataBlock::data_t*       decompressedDataStart = reinterpret_cast<A2795DataBlock::data_t*>      (decompressed_fragment.dataBeginBytes());
-  icarus::A2795DataBlock::data_t const*   compressedDataStart = reinterpret_cast<A2795DataBlock::data_t const*>(                    f.dataBeginBytes());
-
   // go through board/channel/sample and load up the data
   // data is stored in channel->sample->board
   // keep track of where we are reading from/writing to
@@ -541,7 +497,7 @@ artdaq::Fragment icarus::PhysCrateFragment::decompressArtdaqFragment(artdaq::Fra
     // each board has a header...
     for (size_t boardHeaderWord = 0; boardHeaderWord < (sizeof(PhysCrateDataTileHeader) + sizeof(A2795DataBlock::Header)) / sizeof(uint16_t); ++boardHeaderWord)
     {
-      *(decompressedDataStart + decompressedDataOffset) = *(compressedDataStart + compressedDataOffset);
+      setA2795Word(decompressed_fragment, decompressedDataOffset, getA2795Word(f, compressedDataOffset));
       ++decompressedDataOffset;
       ++compressedDataOffset;
     }
@@ -549,7 +505,7 @@ artdaq::Fragment icarus::PhysCrateFragment::decompressArtdaqFragment(artdaq::Fra
     {
       for (size_t channel = 0; channel < overlay.nChannelsPerBoard(); ++channel)
       {
-        *(decompressedDataStart + decompressedDataOffset) = overlay.adc_val(board, channel, sample);
+        setA2795Word(decompressed_fragment, decompressedDataOffset, overlay.adc_val(board, channel, sample));
         ++decompressedDataOffset;
       }
       bool oddCompressions = false;
@@ -569,13 +525,13 @@ artdaq::Fragment icarus::PhysCrateFragment::decompressArtdaqFragment(artdaq::Fra
     // ...and each board has a trailer
     for (size_t boardTrailerWord = 0; boardTrailerWord < 4; ++boardTrailerWord)
     {
-      *(decompressedDataStart + decompressedDataOffset) = *(compressedDataStart + compressedDataOffset);
+      setA2795Word(decompressed_fragment, decompressedDataOffset, getA2795Word(f, compressedDataOffset));
       ++decompressedDataOffset;
       ++compressedDataOffset;
     }
     // update the board tile header packSize
     // endianness is weird for this, hence the htonl...
-    icarus::PhysCrateDataTileHeader* boardHeader = reinterpret_cast<PhysCrateDataTileHeader*>(decompressedDataStart 
+    icarus::PhysCrateDataTileHeader* boardHeader = reinterpret_cast<PhysCrateDataTileHeader*>(decompressed_fragment.dataBeginBytes() 
                                                                                               + board*(sizeof(PhysCrateDataTileHeader) + sizeof(A2795DataBlock::Header)) / sizeof(uint16_t)
                                                                                               + board*overlay.nChannelsPerBoard()*overlay.nSamplesPerChannel()
                                                                                               + board*4);
