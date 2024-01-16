@@ -16,8 +16,8 @@ function publishscisoft(){
 
  ./copyFromJenkins \
 -m SLF7 \
--q s112a-c7  \
--q s112a-e20 \
+-q s112-c7  \
+-q s112-e20 \
 -q s120a-e20 \
  sbndaq_artdaq_core-build
 
