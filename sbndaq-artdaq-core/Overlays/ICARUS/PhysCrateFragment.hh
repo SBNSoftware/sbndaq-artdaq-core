@@ -193,11 +193,6 @@ class icarus::PhysCrateFragment {
                                                              f.metadata<icarus::PhysCrateFragmentMetadata>()->channels_per_board(),
                                                              f.metadata<icarus::PhysCrateFragmentMetadata>()->samples_per_channel())
                                                   {
-                                                    //size_t nBoards   = artdaq_Fragment_.metadata<icarus::PhysCrateFragmentMetadata>()->num_boards();
-                                                    //size_t nChannels = artdaq_Fragment_.metadata<icarus::PhysCrateFragmentMetadata>()->channels_per_board();
-                                                    //size_t nSamples  = artdaq_Fragment_.metadata<icarus::PhysCrateFragmentMetadata>()->samples_per_channel();
-                                                    //accessors_.accessPair_.first.reserve(nBoards * nSamples);
-                                                    //accessors_.accessPair_.first.reserve(nBoards * nSamples * nChannels);
                                                     accessors_ = icarus::PhysCrateFragment::GenerateAccessors(artdaq_Fragment_);
                                                   }
 
@@ -213,7 +208,7 @@ class icarus::PhysCrateFragment {
   size_t nChannelsPerBoard() const { return metadata()->channels_per_board(); }
   size_t CompressionScheme() const { return metadata()->compression_scheme(); }
 
-  bool   isCompressed() const { return (CompressionScheme()!=0); } // check that 0 in the md is compressed
+  bool   isCompressed() const { return (CompressionScheme()!=0); }
 
   size_t DataPayloadSize() const { return artdaq_Fragment_.dataSizeBytes(); }
 
@@ -236,7 +231,6 @@ class icarus::PhysCrateFragment {
   A2795DataBlock::header_t        BoardTimeStamp(uint16_t b=0) const;
   A2795DataBlock::data_t   const* BoardData(uint16_t b=0) const;
 
-  A2795DataBlock::data_t adc_diff(size_t b,size_t c,size_t s) const;
   A2795DataBlock::data_t adc_val(size_t b,size_t c,size_t s) const;
   A2795DataBlock::data_t adc_val_usingIterator(size_t b,size_t c,size_t s) const;
   std::vector<A2795DataBlock::data_t> channel_adc_vec(size_t b,size_t c) const
