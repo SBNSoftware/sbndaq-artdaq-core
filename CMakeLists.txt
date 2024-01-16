@@ -10,7 +10,7 @@ cmake_minimum_required (VERSION 3.19 FATAL_ERROR)
 
 find_package(cetmodules 3.16.00 REQUIRED)
 
-project(sbndaq_artdaq_core VERSION 1.08.06)
+project(sbndaq_artdaq_core VERSION 1.08.05)
 
 include(CetCMakeEnv)
 cet_cmake_env()
@@ -75,7 +75,7 @@ ELSE()
    MESSAGE ("Performing SBND_BUILD")
 ENDIF()
 
-IF (NOT;;;(;;;SBND_BUILD OR ICARUS_BUILD;;;))
+IF (NOT(SBND_BUILD OR ICARUS_BUILD))
    MESSAGE("No experiment-specific build specified. Building all.")
    SET(SBND_BUILD 1)
    SET(ICARUS_BUILD 1)
