@@ -259,11 +259,6 @@ class icarus::PhysCrateFragment {
   {
     // adc values are stored such that they can be easily sliced by board/channel
     size_t index = b*this->nSamplesPerChannel()*this->nChannelsPerBoard() + c*this->nSamplesPerChannel() + s;
-    //if (index >= accessors_.accessPair_.second.size())
-    //  std::cout << "Attempting to index out of range!" << '\n'
-    //            << "  board " << b << ", channel " << c << ", sample " << s << '\n'
-    //            << "  index is b*" << this->nSamplesPerChannel() << "*" << this->nChannelsPerBoard() << " + c*" << this->nSamplesPerChannel() << " + s = " << index << '\n'
-    //            << "  the size of accessors_.accessPair_.second is " << accessors_.accessPair_.second.size() << std::endl;
     return accessors_.accessPair_.second.at(index);
   }
 

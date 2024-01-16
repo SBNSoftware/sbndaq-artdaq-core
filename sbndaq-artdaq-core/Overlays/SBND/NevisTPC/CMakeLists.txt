@@ -1,3 +1,5 @@
+add_definitions(-Wno-maybe-uninitialized)
+
 cet_make_library(
   LIBRARY_NAME
     sbndaq-artdaq-core_Overlays_SBND_NevisTPC
