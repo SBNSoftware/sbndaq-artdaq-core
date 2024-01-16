@@ -15,8 +15,6 @@ project(sbndaq_artdaq_core VERSION 1.08.05)
 include(CetCMakeEnv)
 cet_cmake_env()
 
-SET(ICARUS_BUILD 1)
-
 cet_set_compiler_flags(DIAGS VIGILANT
   WERROR
   NO_UNDEFINED
