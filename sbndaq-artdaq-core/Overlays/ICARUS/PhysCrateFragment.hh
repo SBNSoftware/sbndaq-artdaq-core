@@ -7,6 +7,7 @@
 #include <bitset>
 #include <iostream>
 #include <vector>
+#include <array>
 
 #include "sbndaq-artdaq-core/Overlays/ICARUS/structures.h"
 
