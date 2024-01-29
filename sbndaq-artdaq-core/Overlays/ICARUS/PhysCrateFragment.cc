@@ -27,7 +27,7 @@ void icarus::PhysCrateFragment::throwIfCompressed() const {
 size_t icarus::PhysCrateFragment::DataTileHeaderLocation(uint16_t b) const {
   metadata()->BoardExists(b);
   size_t blocks_skipped_size=0;
-  for(size_t i_b=0; i_b<b; ++i_b){
+  for (size_t i_b=0; i_b<b; ++i_b){
     auto dt_header = reinterpret_cast< PhysCrateDataTileHeader const *>(artdaq_Fragment_.dataBeginBytes()+blocks_skipped_size);
     blocks_skipped_size += ntohl(dt_header->packSize);
   }
@@ -59,6 +59,17 @@ icarus::A2795DataBlock::header_t icarus::PhysCrateFragment::BoardTimeStamp(uint1
 
 icarus::A2795DataBlock::data_t const* icarus::PhysCrateFragment::BoardData(uint16_t b) const{
   //return (reinterpret_cast<A2795DataBlock::data_t const *>(BoardDataBlock(b)->data));
+  if(isCompressed())
+  {
+    size_t cumulativeSize = (b == 0) ? 0 : cumulativeBoardSize(b - 1);
+    return ( reinterpret_cast<A2795DataBlock::data_t const*>
+             (artdaq_Fragment_.dataBeginBytes()
+              + (1+b)*sizeof(PhysCrateDataTileHeader)
+              + (1+b)*sizeof(A2795DataBlock::Header)
+              + 4*b*sizeof(uint16_t)
+              + cumulativeSize));
+  }
+
   return ( reinterpret_cast< A2795DataBlock::data_t const *>
 	   (artdaq_Fragment_.dataBeginBytes() + sizeof(PhysCrateDataTileHeader)
 	    + b*(sizeof(PhysCrateDataTileHeader) + 4*sizeof(uint16_t) + BoardBlockSize())
@@ -66,7 +77,25 @@ icarus::A2795DataBlock::data_t const* icarus::PhysCrateFragment::BoardData(uint1
 }
 
 icarus::A2795DataBlock::data_t icarus::PhysCrateFragment::adc_val(size_t b,size_t c, size_t s) const{
-  return ( *(BoardData(b)+s*nChannelsPerBoard()+c) & (~(1<<(metadata()->num_adc_bits()+1))) );
+  if (b > this->nBoards() || c > this->nChannelsPerBoard() || s > this->nSamplesPerChannel())
+  {
+    std::cout << "WARNING in icarus::PhysCrateFragment::adc_val" << '\n'
+              << "  Attempting to find ADC value for board " << b << ", channel " << c << ", sample " << s << '\n'
+              << "  But Fragment only has " << this->nBoards() << " boards, " << this->nChannelsPerBoard() << " channels per board, and " << this->nSamplesPerChannel() << " samples per channel" << std::endl;
+  }
+  return (this->isCompressed()) ? this->adcVal_fromAccessor(b, c, s) :
+                                  ( *(this->BoardData(b)+s*this->nChannelsPerBoard()+c) & (~(1<<(this->metadata()->num_adc_bits()+1))) );
+}
+
+icarus::A2795DataBlock::data_t icarus::PhysCrateFragment::adc_val_usingIterator(size_t b,size_t c, size_t s) const
+{
+  size_t bytesUntilBlock = (1+b)*sizeof(PhysCrateDataTileHeader)
+                           + b*(BoardBlockSize() + 4*sizeof(uint16_t))
+                           + sizeof(A2795DataBlock::Header);
+  size_t wordsUntilBlock = (bytesUntilBlock / sizeof(icarus::A2795DataBlock::data_t));
+  size_t wordsIntoBlock  = s*this->nChannelsPerBoard()+c;
+  icarus::A2795DataBlock::data_t word = getA2795Word(artdaq_Fragment_, wordsUntilBlock + wordsIntoBlock);
+  return (word & (~(1<<(this->metadata()->num_adc_bits()+1))) );
 }
 
 std::ostream & icarus::operator << (std::ostream & os, PhysCrateFragmentMetadata const& m){
@@ -160,15 +189,26 @@ std::ostream & icarus::operator << (std::ostream & os, PhysCrateFragment const &
 bool icarus::PhysCrateFragment::Verify() const {
   bool verified=true;
 
-  if(!isCompressed()){
-    TRACE(TLVL_INFO,"Data is compressed, so no verification done.");
-    return verified;
-  }
+  size_t expectedSize = BoardBlockSize()*nBoards();
 
-  if(artdaq_Fragment_.dataSizeBytes()!=(BoardBlockSize()*nBoards())){
+  // If the fragment is compressed we expect 6 fewer bytes for each compressed set of 4 channel diffs
+  // however if there are an odd number of compressions in a sample there are 2 additional bytes
+  if (isCompressed())
+    for(size_t i_b=0; i_b<nBoards(); ++i_b)
+      for(size_t i_s=0; i_s<nSamplesPerChannel(); ++i_s)
+        {
+          icarus::PhysCrateFragment::Key const& compKey = CompressionKey(i_b, i_s);
+          size_t nCompressed = 0;
+          for (size_t cB = 0; cB < 16; ++cB)
+            nCompressed += compKey[cB];
+
+          expectedSize -= 6*nCompressed - 2*(nCompressed % 2);
+        }
+
+  if(artdaq_Fragment_.dataSizeBytes()!=expectedSize){
     TRACEN("PhysCrateFragment",TLVL_WARNING,"PhysCrateFragment::Verify : Data size not correct!\n\tObserved=%lu, Expected=%lu\n",
 	  artdaq_Fragment_.dataSizeBytes(),
-	  BoardBlockSize()*nBoards());
+	  expectedSize);
     verified=false;
   }
 
