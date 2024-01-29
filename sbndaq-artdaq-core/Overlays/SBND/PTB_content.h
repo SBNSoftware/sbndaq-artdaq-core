@@ -148,12 +148,12 @@ namespace ptb {
       typedef struct ch_status_t {
 
           static size_t const n_bits_timestamp  = 61 ;
-          static size_t const n_bits_beam       =  4 ;
+          static size_t const n_bits_beam       =  3 ;
           static size_t const n_bits_crt        = 14 ;
           static size_t const n_bits_pds        = 10 ;
           static size_t const n_bits_mtca       =  6 ;
-          static size_t const n_bits_nim        =  5 ;
-          static size_t const n_bits_auxpds     = 25 ;  // levtovers are for the v2495
+          static size_t const n_bits_nim        =  6 ;
+          static size_t const n_bits_auxpds     = 25 ;
           static size_t const n_bits_type       = word_t::n_bits_type ;
 
           typedef uint64_t ts_size_t;
@@ -165,10 +165,10 @@ namespace ptb {
           typedef uint64_t auxpds_size_t;
           typedef uint64_t wtype_size_t;
 
-           ////////bits 0-64//////////////
+           ////////bits 0-63//////////////
            ts_size_t     timestamp  : n_bits_timestamp ;
            beam_size_t   beam       : n_bits_beam ;
-           ////////bits 65-125////////////
+           ////////bits 64-125////////////
            crt_size_t    crt        : n_bits_crt ;
            pds_size_t    pds        : n_bits_pds ;
            mtca_size_t   mtca       : n_bits_mtca ;
@@ -182,11 +182,11 @@ namespace ptb {
 
            // aux_functions Not sure why they are needed
            /*
-           uint8_t  get_beam()   {return (beam   & 0xF)      ;}
+           uint8_t  get_beam()   {return (beam   & 0x7)      ;}
            uint16_t get_crt()    {return (crt    & 0x3FFF)   ;}
            uint16_t get_pds()    {return (pds    & 0x3FF)    ;}
            uint8_t  get_mtca()   {return (mtca   & 0x3F)     ;}
-           uint8_t  get_nim()    {return (mtca   & 0x1F)     ;}
+           uint8_t  get_nim()    {return (mtca   & 0x3F)     ;}
            uint32_t get_auxpds() {return (auxpds & 0x1FFFFFF);} //25{1'b1}
            */
            
@@ -244,7 +244,7 @@ namespace ptb {
            typedef uint64_t wtype_size_t;
 
            ts_size_t timestamp;
-           mask_size_t  trigger_word : n_bits_tmask ;
+           mask_size_t  trigger_word : n_bits_timestamp ;
            wtype_size_t word_type    : n_bits_type ;
 
            //static size_t const size_bytes = sizeof( trigger_t );

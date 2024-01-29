@@ -6,14 +6,21 @@
 #  buildtool
 # ======================================================================
 
-cmake_minimum_required (VERSION 3.19 FATAL_ERROR)
+cmake_minimum_required (VERSION 3.18.2)
 
-find_package(cetmodules 3.16.00 REQUIRED)
+find_package(cetmodules)
+set(CET_CETBUILDTOOLS_COMPAT TRUE)
+include(Compatibility)
+set(CET_WARN_DEPRECATED)
 
 project(sbndaq_artdaq_core)
 set(${PROJECT_NAME}_CMAKE_PROJECT_VERSION_STRING 1.08.00.of2)
 
+set(CMAKE_MODULE_PATH
+  $ENV{ARTDAQ_UTILITIES_DIR}/Modules
+  ${CMAKE_MODULE_PATH})
 include(CetCMakeEnv)
+
 cet_cmake_env()
 
 cet_set_compiler_flags(DIAGS VIGILANT
@@ -58,23 +65,23 @@ if(DEFINED ENV{USE_EXCEPTIONSTACKTRACE})
   endif()
 endif()
 
-message("Searching ${sbndaq_artdaq_core_EXEC_PREFIX} for icarus or sbnd qualifiers")
-string(FIND "x${sbndaq_artdaq_core_EXEC_PREFIX}" "icarus" ICARUS_FOUND)
-string(FIND "x${sbndaq_artdaq_core_EXEC_PREFIX}" "sbnd" SBND_FOUND)
+if(DEFINED $ENV{MRB_QUALS})
+  string(FIND $ENV{MRB_QUALS} "icarus" ICARUS_FOUND)
+  IF (ICARUS_FOUND EQUAL -1)
+     MESSAGE ("No ICARUS_BUILD?")
+  ELSE()
+     SET(ICARUS_BUILD 1)
+     MESSAGE ("Performing ICARUS_BUILD")
+  ENDIF()
 
-IF (ICARUS_FOUND EQUAL -1)
-   MESSAGE ("No ICARUS_BUILD?")
-ELSE()
-   SET(ICARUS_BUILD 1)
-   MESSAGE ("Performing ICARUS_BUILD")
-ENDIF()
-
-IF (SBND_FOUND EQUAL -1)
-   MESSAGE ("No SBND_BUILD?")
-ELSE()
-   SET(SBND_BUILD 1)
-   MESSAGE ("Performing SBND_BUILD")
-ENDIF()
+  string(FIND $ENV{MRB_QUALS} "sbnd" SBND_FOUND)
+  IF (SBND_FOUND EQUAL -1)
+     MESSAGE ("No SBND_BUILD?")
+  ELSE()
+     SET(SBND_BUILD 1)
+     MESSAGE ("Performing SBND_BUILD")
+  ENDIF()
+endif()
 
 IF (NOT(SBND_BUILD OR ICARUS_BUILD))
    MESSAGE("No experiment-specific build specified. Building all.")
@@ -83,10 +90,10 @@ IF (NOT(SBND_BUILD OR ICARUS_BUILD))
 ENDIF()
 
 
-find_package( artdaq_core QUIET REQUIRED EXPORT)
-find_package( TRACE QUIET REQUIRED EXPORT)
-find_package( cetlib QUIET REQUIRED EXPORT )
-find_package( cetlib_except QUIET REQUIRED EXPORT)
+find_ups_product( artdaq_core )
+find_ups_product( TRACE )
+find_ups_product( cetlib )
+find_ups_product( cetlib_except)
 
 
 #experiment specific products needed
