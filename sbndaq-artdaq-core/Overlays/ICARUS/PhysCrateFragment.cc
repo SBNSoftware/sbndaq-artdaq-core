@@ -310,12 +310,6 @@ std::pair<std::vector<icarus::PhysCrateFragment::Key>, std::vector<icarus::A2795
         key[bit] = isCompressed;
       }
       keys.push_back(key);
-      uint16_t keyAsWord = 0;
-      for (size_t bit = 0; bit < 16; ++bit)
-      {
-        keyAsWord <<= 1;
-        keyAsWord += key[bit];
-      }
       if ((keyCount % 2) == 1)
       {
         fragWord += 1;
@@ -417,12 +411,6 @@ artdaq::Fragment icarus::PhysCrateFragment::compressArtdaqFragment(artdaq::Fragm
       }
       // add up the size of the differences
       boardDataTileSize += SampleBytesFromKey(compressionKeys[board*overlay.nSamplesPerChannel() + sample]);
-      uint16_t keyAsWord = 0;
-      for (size_t bit = 0; bit < 16; ++bit)
-      {
-        keyAsWord <<= 1;
-        keyAsWord += compressionKeys[board*overlay.nSamplesPerChannel() + sample][bit];
-      }
     }
     // ...and each board has a trailer
     boardDataTileSize += 4*sizeof(uint16_t);
