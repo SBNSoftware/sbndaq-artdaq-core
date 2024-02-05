@@ -153,7 +153,7 @@ namespace ptb {
           static size_t const n_bits_pds        = 10 ;
           static size_t const n_bits_mtca       =  6 ;
           static size_t const n_bits_nim        =  5 ;
-	  static size_t const n_bits_auxpds     = 25 ;  // levtovers are for the v2495
+          static size_t const n_bits_auxpds     = 25 ;  // levtovers are for the v2495
           static size_t const n_bits_type       = word_t::n_bits_type ;
 
           typedef uint64_t ts_size_t;
