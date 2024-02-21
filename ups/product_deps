@@ -1,7 +1,7 @@
 # The parent line must be the first non-comment line in the file
 # This line defines the product name and version
 parent sbndaq_artdaq_core
-defaultqual e20:s120a
+defaultqual e26:s120a
 
 # These optional lines define the installed directories where
 # headers, libraries, and executables will be found
