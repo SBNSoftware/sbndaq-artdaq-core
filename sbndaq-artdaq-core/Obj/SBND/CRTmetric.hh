@@ -3,6 +3,7 @@
 
 #include <cstddef>
 #include <vector>
+#include <cstdint>
 
 // do we need some initialization here??
 
