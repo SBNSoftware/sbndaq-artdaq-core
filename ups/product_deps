@@ -19,8 +19,8 @@ fcldir      -
 #
 product             version       optional
 
-artdaq_core         v3_10_00
-cetmodules          v3_21_01      -       only_for_build
+artdaq_core         v3_10_01
+cetmodules          v3_24_01      -       only_for_build
 end_product_list
 
 # -nq- here means there is no qualifier
@@ -29,14 +29,11 @@ qualifier                artdaq_core
 
 #for offline
 
-c14:prof:s120b             c14:prof:s120b
-c14:debug:s120b            c14:debug:s120b
-c7:prof:s120a              c7:prof:s120a
-c7:debug:s120a             c7:debug:s120a
-e26:prof:s120b             e26:prof:s120b
-e26:debug:s120b            e26:debug:s120b
-e20:prof:s120a             e20:prof:s120a
-e20:debug:s120a            e20:debug:s120a
+c14:prof:s130             c14:prof:s130
+c14:debug:s130            c14:debug:s130
+e26:prof:s130             e26:prof:s130
+e26:debug:s130            e26:debug:s130
+
 
 # Preserve tabs and formatting in emacs and vi / vim:
 
