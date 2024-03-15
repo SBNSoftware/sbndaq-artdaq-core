@@ -1,7 +1,7 @@
 # The parent line must be the first non-comment line in the file
 # This line defines the product name and version
 parent sbndaq_artdaq_core
-defaultqual e26:s120a
+defaultqual e26
 
 # These optional lines define the installed directories where
 # headers, libraries, and executables will be found
@@ -19,28 +19,22 @@ fcldir      -
 #
 product             version       optional
 
-artdaq_core         v3_09_15
-cetmodules          v3_22_02      -       only_for_build
+artdaq_core         v3_10_01
+cetmodules          v3_24_01      -       only_for_build
 end_product_list
 
 # -nq- here means there is no qualifier
 # a "-" here means the dependent product is not required by the parent and will not be setup
 qualifier                artdaq_core
-c7:prof:s112              c7:prof:s120a
-c7:debug:s112             c7:debug:s120a
-e20:prof:s120a            e20:prof:s120a
-e20:debug:s120a           e20:debug:s120a
-e20:prof:icarus:s120a     e20:prof:s120a
-e20:debug:icarus:s120a    e20:debug:s120a
-e20:prof:sbnd:s120a       e20:prof:s120a
-e20:debug:sbnd:s120a      e20:debug:s120a
-e26:prof:s120a            e26:prof:s120a
-e26:debug:s120a           e26:debug:s120a
-e26:prof:icarus:s120a     e26:prof:s120a
-e26:debug:icarus:s120a    e26:debug:s120a
-e26:prof:sbnd:s120a       e26:prof:s120a
-e26:debug:sbnd:s120a      e26:debug:s120a
-end_qualifier_list
+
+#for offline
+
+c14:prof:s130             c14:prof:s130
+c14:debug:s130            c14:debug:s130
+e26:prof:s130             e26:prof:s130
+e26:debug:s130            e26:debug:s130
+
+
 # Preserve tabs and formatting in emacs and vi / vim:
 
 ### Local Variables:

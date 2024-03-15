@@ -4,6 +4,7 @@
 #include "artdaq-core/Data/Fragment.hh"
 #include "cetlib_except/exception.h"
 
+#include <array>
 #include <bitset>
 #include <iostream>
 #include <vector>
