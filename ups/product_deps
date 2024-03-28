@@ -19,7 +19,7 @@ fcldir      -
 #
 product             version       optional
 
-artdaq_core         v3_10_01
+artdaq_core         v3_10_02
 cetmodules          v3_24_01      -       only_for_build
 end_product_list
 
@@ -29,10 +29,10 @@ qualifier                artdaq_core
 
 #for offline
 
-c14:prof:s130             c14:prof:s130
-c14:debug:s130            c14:debug:s130
-e26:prof:s130             e26:prof:s130
-e26:debug:s130            e26:debug:s130
+c14:prof:s131             c14:prof:s131
+c14:debug:s131            c14:debug:s131
+e26:prof:s131             e26:prof:s131
+e26:debug:s131            e26:debug:s131
 
 
 # Preserve tabs and formatting in emacs and vi / vim:
