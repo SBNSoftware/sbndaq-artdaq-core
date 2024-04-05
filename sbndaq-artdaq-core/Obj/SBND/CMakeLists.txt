@@ -4,6 +4,7 @@ cet_make_library(
   SOURCE
     testStandTrigger.cc
     CRTmetric.cc
+    pmtSoftwareTrigger.cc
   LIBRARIES
     ${LIBRARY_CORE_LIB_LIST}
 )
