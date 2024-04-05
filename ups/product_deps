@@ -46,6 +46,12 @@ e26:prof:icbrus:s120b     e26:prof:s120b
 e26:debug:icbrus:s120b    e26:debug:s120b
 e26:prof:sbnd:s120b       e26:prof:s120b
 e26:debug:sbnd:s120b      e26:debug:s120b
+e26:prof:s130            e26:prof:s130
+e26:debug:s130           e26:debug:s130
+e26:prof:icbrus:s130     e26:prof:s130
+e26:debug:icbrus:s130    e26:debug:s130
+e26:prof:sbnd:s130       e26:prof:s130
+e26:debug:sbnd:s130      e26:debug:s130
 end_qualifier_list
 # Preserve tabs and formatting in emacs and vi / vim:
 
