@@ -34,7 +34,7 @@ enum FragmentType : artdaq::Fragment::type_t {
   NevisTPC = artdaq::Fragment::FirstUserFragmentType + 6,
   NevisTB = artdaq::Fragment::FirstUserFragmentType + 19,
   PTB = artdaq::Fragment::FirstUserFragmentType + 7,
-  DAPHNE = artdaq::Fragment::FirstUserFragmentType + 14,
+  CAENV1740 = artdaq::Fragment::FirstUserFragmentType + 14, // was DAPHNE
   TDCTIMESTAMP = artdaq::Fragment::FirstUserFragmentType + 16,
 
   // Simulators
