@@ -76,10 +76,13 @@ public:
   { return reinterpret_cast<NevisTrigger_Header const*>(artdaq_Fragment_.dataBeginBytes()); }
 
   NevisTrigger_Data const * data() const
-  { return reinterpret_cast<NevisTrigger_Data const*>(artdaq_Fragment_.dataBeginBytes()); }
+  { return reinterpret_cast<NevisTrigger_Data const*>(artdaq_Fragment_.dataBeginBytes()
+                                                      + sizeof(NevisTrigger_Header)); }
 
   NevisTrigger_Trailer const * trailer() const
-  { return reinterpret_cast<NevisTrigger_Trailer const*>(artdaq_Fragment_.dataBeginBytes()); }
+  { return reinterpret_cast<NevisTrigger_Trailer const*>(artdaq_Fragment_.dataBeginBytes()
+                                                         + sizeof(NevisTrigger_Header)
+                                                         + sizeof(NevisTrigger_Data) ); }
 
 
   //  NevisTB_word_t const * data() const
