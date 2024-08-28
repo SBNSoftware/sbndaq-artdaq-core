@@ -51,7 +51,7 @@ struct TDCTimestamp {
   uint64_t nanoseconds() const {
     uint64_t ns = 0.0;
     ns += vals.coarse * 8.0;
-    ns += std::round(vals.frac * 8.0 / 4096.0); //need to round up correctly
+    ns += uint64_t((vals.frac * 8.0 / 4096.0)+0.5); //for correctly rounding up when converting float to unsigned int
     return ns;
   }
 
@@ -67,7 +67,7 @@ struct TDCTimestamp {
   uint64_t picoseconds() const {
     uint64_t ps = 0.0;
     ps += vals.coarse * 8000.0;
-    ps += vals.frac * 8000.0 / 4096.0;
+    ps += uint64_t((vals.frac * 8000.0 / 4096.0)+0.5); //for correctly rounding up when converting float to unsigned int
     return ps;
   }
 
