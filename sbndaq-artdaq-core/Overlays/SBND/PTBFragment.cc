@@ -52,6 +52,12 @@ namespace sbndaq {
   { ; }
 
 
+  int GetGateCount(){
+    return 0;
+    //return _gate_1_counter;
+  }
+
+
   //---------------------------------
   // Proper TS getter
   //---------------------------------

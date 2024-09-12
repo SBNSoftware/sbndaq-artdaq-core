@@ -11,6 +11,7 @@
 
 #include <set>
 #include <cstdint>
+#include <bitset>
 
 namespace ptb {
 
@@ -236,21 +237,30 @@ namespace ptb {
        typedef struct trigger_t {
 
            static size_t const n_bits_timestamp = 64;
-           static size_t const n_bits_tmask     = 61;
-           static size_t const n_bits_type      = word_t::n_bits_type ;
+	 //static size_t const n_bits_tmask     = 61;
+
+	 //Added these two in order to have 8 bits to the gate counter
+           static size_t const n_bits_tmask     = 53;
+	   static size_t const n_bits_gcounter  = 8;
+
+	   static size_t const n_bits_type      = word_t::n_bits_type ;
 
            typedef uint64_t ts_size_t;
            typedef uint64_t mask_size_t;
+	   typedef uint64_t gc_size_t; //gate counter
            typedef uint64_t wtype_size_t;
 
            ts_size_t timestamp;
            mask_size_t  trigger_word : n_bits_tmask ;
+	   gc_size_t gate_counter    : n_bits_gcounter ;
            wtype_size_t word_type    : n_bits_type ;
 
            //static size_t const size_bytes = sizeof( trigger_t );
-           static size_t const size_bytes = 2*sizeof( uint64_t );
+	   static size_t const size_bytes = 2*sizeof( uint64_t );
            static size_t const size_u32 = size_bytes/sizeof(uint32_t);
-
+	 
+	 void setGateCounter(int num) { gate_counter = (uint64_t)num; }
+	 
          bool IsHLT() const { return word_type == word_type::t_gt ; }
          bool IsLLT() const { return word_type == word_type::t_lt ; }
          bool IsTrigger( const unsigned int i ) const  { return trigger_word & ( 0x1 << i ); }

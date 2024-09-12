@@ -38,13 +38,21 @@ Brief guide to CTB fragments
 namespace sbndaq {
 
 
-class CTBFragment {
+  //class CTBFragment {
+  class CTBFragment : public artdaq::Fragment {
   public:
 
   // The constructor simply sets its const private member "artdaq_Fragment_"
   // to refer to the artdaq::Fragment object
 
+  
   CTBFragment( artdaq::Fragment const & f ) ;
+
+  int _gate_1_counter = 0;
+
+  //Getters and Setters for the Gate counter
+  void SetGateCount(int numGates) { _gate_1_counter = numGates;  }
+  int GetGateCount();
 
 
   // const getter functions for the data in the header
@@ -62,6 +70,7 @@ class CTBFragment {
   // This is supposed to be the right way to retrieve the TS.
   uint64_t TimeStamp( unsigned int i ) const ;
 
+  
 
   // casted words depending on their type for easy deconding
   // An null pointer as a return means the requested cast is not correct
@@ -100,6 +109,8 @@ class CTBFragment {
   friend std::ostream & operator << (std::ostream &, CTBFragment const & ) ;
 
   const artdaq::Fragment & RawFragment() const { return artdaq_Fragment_ ; }
+
+
 
 protected:
 
