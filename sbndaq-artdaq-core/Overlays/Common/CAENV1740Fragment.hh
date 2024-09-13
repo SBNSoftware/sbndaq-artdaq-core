@@ -60,17 +60,32 @@ struct sbndaq::CAENV1740FragmentMetadata {
   uint32_t  timeStampSec;
   uint32_t  timeStampNSec;
 
-  uint32_t  chTemps[CAEN_V1740_MAX_CHANNELS];
+  // uint32_t  chTemps[CAEN_V1740_MAX_CHANNELS]; // jcrespo: not available for V1740
   
   CAENV1740FragmentMetadata() {}
+
+  // jcrespo: channel temperature not available for V1740
+//   CAENV1740FragmentMetadata(uint32_t nc, uint32_t ns,
+// 			    uint32_t ts_s, uint32_t ts_ns,
+// 			    uint32_t chtemp[CAEN_V1740_MAX_CHANNELS]) :
+//     nChannels(nc),nSamples(ns),
+//     timeStampSec(ts_s),timeStampNSec(ts_ns)
+//   {
+//     memcpy(chTemps,chtemp,CAEN_V1740_MAX_CHANNELS*sizeof(uint32_t));
+//   }
+
+//   size_t ExpectedDataSize() const
+//   { return (sizeof(CAENV1740EventHeader) +
+// 	    nChannels * nSamples * sizeof(uint16_t)); }
   
+// };
+
   CAENV1740FragmentMetadata(uint32_t nc, uint32_t ns,
-			    uint32_t ts_s, uint32_t ts_ns,
-			    uint32_t chtemp[CAEN_V1740_MAX_CHANNELS]) :
+			    uint32_t ts_s, uint32_t ts_ns) :
     nChannels(nc),nSamples(ns),
     timeStampSec(ts_s),timeStampNSec(ts_ns)
   {
-    memcpy(chTemps,chtemp,CAEN_V1740_MAX_CHANNELS*sizeof(uint32_t));
+    // memcpy(chTemps,chtemp,CAEN_V1740_MAX_CHANNELS*sizeof(uint32_t));
   }
 
   size_t ExpectedDataSize() const 
@@ -78,6 +93,7 @@ struct sbndaq::CAENV1740FragmentMetadata {
 	    nChannels * nSamples * sizeof(uint16_t)); }
   
 };
+
 
 class sbndaq::CAENV1740Fragment{
 
