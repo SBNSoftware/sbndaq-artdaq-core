@@ -32,7 +32,6 @@ enum FragmentType : artdaq::Fragment::type_t {
 
   // SBND
   NevisTPC = artdaq::Fragment::FirstUserFragmentType + 6,
-  NevisTB = artdaq::Fragment::FirstUserFragmentType + 19,
   PTB = artdaq::Fragment::FirstUserFragmentType + 7,
   CAENV1740 = artdaq::Fragment::FirstUserFragmentType + 14, // was DAPHNE
   TDCTIMESTAMP = artdaq::Fragment::FirstUserFragmentType + 16,
@@ -40,7 +39,7 @@ enum FragmentType : artdaq::Fragment::type_t {
   // Simulators
   DummyGenerator = artdaq::Fragment::FirstUserFragmentType + 8,
 
-  INVALID = artdaq::Fragment::FirstUserFragmentType + 20  // Should always be last.
+  INVALID = artdaq::Fragment::FirstUserFragmentType + 19  // Should always be last.
 };
 
 // Safety check.

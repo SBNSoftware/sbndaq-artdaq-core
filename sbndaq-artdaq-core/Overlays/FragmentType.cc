@@ -32,7 +32,6 @@ static std::map<sbndaq::detail::FragmentType, std::string> const names{
 
     // SBND
     {sbndaq::detail::FragmentType::NevisTPC, "NEVISTPC"},
-    {sbndaq::detail::FragmentType::NevisTB, "NEVISTB"},
     {sbndaq::detail::FragmentType::PTB, "PTB"},
     {sbndaq::detail::FragmentType::CAENV1740, "CAENV1740"}, // was DAPHNE
     {sbndaq::detail::FragmentType::TDCTIMESTAMP, "TDCTIMESTAMP"},

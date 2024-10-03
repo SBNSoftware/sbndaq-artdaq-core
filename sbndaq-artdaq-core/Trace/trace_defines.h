@@ -1,4 +1,4 @@
-#include "TRACE/trace.h"
+#include "trace.h"
 
 /*****
  * TRACE levels used in the code
