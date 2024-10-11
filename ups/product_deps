@@ -1,7 +1,7 @@
 # The parent line must be the first non-comment line in the file
 # This line defines the product name and version
 parent sbndaq_artdaq_core
-defaultqual e26:s120a
+defaultqual e26:s131
 
 # These optional lines define the installed directories where
 # headers, libraries, and executables will be found
@@ -19,8 +19,8 @@ fcldir      -
 #
 product             version       optional
 
-artdaq_core         v3_09_15
-cetmodules          v3_22_02      -       only_for_build
+artdaq_core         v3_10_02
+cetmodules          v3_24_01      -       only_for_build
 end_product_list
 
 # -nq- here means there is no qualifier
@@ -40,6 +40,24 @@ e26:prof:icarus:s120a     e26:prof:s120a
 e26:debug:icarus:s120a    e26:debug:s120a
 e26:prof:sbnd:s120a       e26:prof:s120a
 e26:debug:sbnd:s120a      e26:debug:s120a
+e26:prof:s120b            e26:prof:s120b
+e26:debug:s120b           e26:debug:s120b
+e26:prof:icbrus:s120b     e26:prof:s120b
+e26:debug:icbrus:s120b    e26:debug:s120b
+e26:prof:sbnd:s120b       e26:prof:s120b
+e26:debug:sbnd:s120b      e26:debug:s120b
+e26:prof:s130            e26:prof:s130
+e26:debug:s130           e26:debug:s130
+e26:prof:icbrus:s130     e26:prof:s130
+e26:debug:icbrus:s130    e26:debug:s130
+e26:prof:sbnd:s130       e26:prof:s130
+e26:debug:sbnd:s130      e26:debug:s130
+e26:prof:s131            e26:prof:s131
+e26:debug:s131           e26:debug:s131
+e26:prof:icbrus:s131     e26:prof:s131
+e26:debug:icbrus:s131    e26:debug:s131
+e26:prof:sbnd:s131       e26:prof:s131
+e26:debug:sbnd:s131      e26:debug:s131
 end_qualifier_list
 # Preserve tabs and formatting in emacs and vi / vim:
 

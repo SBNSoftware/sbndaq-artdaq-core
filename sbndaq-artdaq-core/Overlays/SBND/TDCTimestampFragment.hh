@@ -49,18 +49,28 @@ struct TDCTimestamp {
 
   // Provides a nano-second approximation of the timestamp.
   uint64_t nanoseconds() const {
-    uint64_t ns = 0;
-    ns += vals.coarse * 8;
-    ns += vals.frac * 8 / 4096;
+    uint64_t ns = 0.0;
+    ns += vals.coarse * 8.0;
+    ns += uint64_t((vals.frac * 8.0 / 4096.0)+0.5); //for correctly rounding up when converting float to unsigned int
     return ns;
   }
 
+  // Provides full UTC timestamp format in nano-second, needed for event building
   uint64_t timestamp_ns() const {
-    uint64_t ns = 0;
-    ns += vals.seconds * 1000000000;
+    uint64_t ns = 0.0;
+    ns += vals.seconds * 1000000000.0;
     ns += nanoseconds();
     return ns;
   }
+
+  // Provides a pico-second approximation of the timestamp.
+  uint64_t picoseconds() const {
+    uint64_t ps = 0.0;
+    ps += vals.coarse * 8000.0;
+    ps += uint64_t((vals.frac * 8000.0 / 4096.0)+0.5); //for correctly rounding up when converting float to unsigned int
+    return ps;
+  }
+
 };
 
 static_assert(sizeof(TDCTimestamp) == TDCTimestamp::size_words * sizeof(TDCTimestamp::data_t),
