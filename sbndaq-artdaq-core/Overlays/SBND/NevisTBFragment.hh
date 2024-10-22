@@ -33,14 +33,16 @@ private:
   uint32_t _event_number;
   uint32_t _frame_number;
   uint16_t _sample_number;
+  uint32_t _uncorrected_frame_number;
   //bool     _is_compressed;
 
 public:
   NevisTBFragmentMetadata(){}
-  NevisTBFragmentMetadata(uint32_t en, uint32_t fn, uint16_t sn){ // , uint32_t n_samples, bool compressed){
+  NevisTBFragmentMetadata(uint32_t en, uint32_t fn, uint16_t sn, uint32_t ufn){ // , uint32_t n_samples, bool compressed){
     _event_number = en;
     _frame_number = fn;
     _sample_number = sn;
+    _uncorrected_frame_number = ufn;
     //    _samples_per_channel = n_samples;
     // _is_compressed = compressed;
   }
@@ -48,11 +50,13 @@ public:
   uint32_t const& EventNumber()const { return _event_number; }
   uint32_t const& FrameNumber()const { return _frame_number; }
   uint16_t const& SampleNumber()   const { return _sample_number; }
+  uint32_t const& UncorrFrameNumber() const {return _uncorrected_frame_number; }
   //bool     const& IsCompressed()        const { return _is_compressed; }
 
   void SetEventNumber(uint32_t en) { _event_number = en; }
   void SetFrameNumber(uint32_t fn) { _frame_number = fn; }
   void SetSampleNumber(uint16_t sn) { _sample_number= sn; }
+  void SetUncorrFrameNumber(uint32_t ufn) {_uncorrected_frame_number = ufn; }
   //void SetIsCompressed(bool c) { _is_compressed = c; }
 
   size_t ExpectedDataSize() const {
@@ -83,7 +87,6 @@ public:
   { return reinterpret_cast<NevisTrigger_Trailer const*>(artdaq_Fragment_.dataBeginBytes()
                                                          + sizeof(NevisTrigger_Header)
                                                          + sizeof(NevisTrigger_Data) ); }
-
 
   //  NevisTB_word_t const * data() const
   //{ return reinterpret_cast<uint16_t const*>(artdaq_Fragment_.dataBeginBytes()+sizeof(NevisTrigger_Header)+sizeof(NevisTrigger_Data)+sizeof(NevisTrigger_Trailer)); }
