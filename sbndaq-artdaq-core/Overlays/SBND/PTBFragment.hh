@@ -48,12 +48,6 @@ namespace sbndaq {
   
   CTBFragment( artdaq::Fragment const & f ) ;
 
-  int _gate_1_counter = 0;
-
-  //Getters and Setters for the Gate counter
-  void SetGateCount(int numGates) { _gate_1_counter = numGates;  }
-  int GetGateCount();
-
 
   // const getter functions for the data in the header
   unsigned int NWords() const noexcept { return _n_words ; }
@@ -74,6 +68,9 @@ namespace sbndaq {
 
   // casted words depending on their type for easy deconding
   // An null pointer as a return means the requested cast is not correct
+
+  //Access the generic PTB word with 192 bits (128b generic word + 64b for exposure accounting)
+    const ptb::content::word::PTBBoardReaderWord_t* PTBWord(unsigned int i) const ;
 
   // access to the generic word structure.
   // This simply allows access to word type, TS
@@ -104,7 +101,8 @@ namespace sbndaq {
   static const ptb::content::word::timestamp_t* TSWord   ( const ptb::content::word::word_t & w ) ;
   static const ptb::content::word::trigger_t*   Trigger  ( const ptb::content::word::word_t & w ) ;
 
-  static constexpr unsigned int WordSize() { return sizeof( ptb::content::word::word_t ) ; }
+    // static constexpr unsigned int WordSize() { return sizeof( ptb::content::word::word_t ) ; }
+ static constexpr unsigned int WordSize() { return sizeof( ptb::content::word::PTBBoardReaderWord_t ) ; }
 
   friend std::ostream & operator << (std::ostream &, CTBFragment const & ) ;
 

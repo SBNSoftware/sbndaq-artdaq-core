@@ -52,10 +52,6 @@ namespace sbndaq {
   { ; }
 
 
-  int GetGateCount(){
-    return 0;
-    //return _gate_1_counter;
-  }
 
 
   //---------------------------------
@@ -82,12 +78,19 @@ namespace sbndaq {
   // word getters
   //--------------------------------
 
-  const ptb::content::word::word_t* CTBFragment::Word( unsigned int i ) const {
+  const ptb::content::word::PTBBoardReaderWord_t* CTBFragment::PTBWord( unsigned int i ) const {
 
     if ( i >= NWords() ) return nullptr ;
 
-    return reinterpret_cast<const ptb::content::word::word_t*>( artdaq_Fragment_.dataBeginBytes() + i * CTBFragment::WordSize() )  ;
+    return reinterpret_cast<const ptb::content::word::PTBBoardReaderWord_t*>( artdaq_Fragment_.dataBeginBytes() + i * CTBFragment::WordSize() )  ;
 
+  }
+
+
+  const ptb::content::word::word_t* CTBFragment::Word(unsigned int i) const{
+    if (i >= NWords() ) return nullptr;
+    
+    return &PTBWord(i)->word;
   }
 
 

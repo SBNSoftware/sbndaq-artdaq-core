@@ -108,8 +108,19 @@ namespace ptb {
 
       } word_t;
 
-
-
+      typedef struct PTBBoardReaderWord_t {
+	
+      	static size_t const n_bits_prevTS = 64;
+      	typedef uint64_t  prev_ts_size_t;
+      	prev_ts_size_t  prevTS: n_bits_prevTS;
+      	word_t word;
+	
+      	void setPrevTimestamp(uint64_t prevTime){
+      	  prevTS = prevTime;
+      	}
+	
+      } PTBBoardReaderWord_t;
+      
 
       /// -- Several different structures that can be used to reinterpret the payload depending on
       /// the word type. All these structures map into the full 16 bytes of the CTB words
