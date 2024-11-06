@@ -29,7 +29,6 @@ private:
   uint32_t _samples_per_channel;
   uint32_t _n_channels;
   bool     _is_compressed;
-  uint32_t _uncorrected_frame_number;
   
 public:
   NevisTPCFragmentMetadata(){}
