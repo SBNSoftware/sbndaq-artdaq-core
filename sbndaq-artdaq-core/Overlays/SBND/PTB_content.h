@@ -17,6 +17,8 @@ namespace ptb {
 
   namespace content {
 
+    const int version = 2 ;
+
     using std::size_t ;
 
     // NFB: Note that order denotes bit order in the word:
