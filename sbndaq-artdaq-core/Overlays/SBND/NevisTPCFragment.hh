@@ -25,25 +25,29 @@ class sbndaq::NevisTPCFragmentMetadata {
   
 private:
   uint32_t _event_number;
+  uint32_t _frame_number;
   uint32_t _samples_per_channel;
   uint32_t _n_channels;
   bool     _is_compressed;
   
 public:
   NevisTPCFragmentMetadata(){}
-  NevisTPCFragmentMetadata(uint32_t en, uint32_t n_ch, uint32_t n_samples, bool compressed){
+  NevisTPCFragmentMetadata(uint32_t en, uint32_t fn, uint32_t n_ch, uint32_t n_samples, bool compressed){
     _event_number = en;
+    _frame_number = fn;
     _n_channels = n_ch;
     _samples_per_channel = n_samples;
     _is_compressed = compressed;
   }
   
   uint32_t const& EventNumber()		const { return _event_number; }
+  uint32_t const& FrameNumber()         const { return _frame_number; }
   uint32_t const& NChannels()           const { return _n_channels; }
   uint32_t const& SamplesPerChannel()   const { return _samples_per_channel; }
   bool     const& IsCompressed()        const { return _is_compressed; }
   
   void SetEventNumber(uint32_t en) { _event_number = en; }
+  void SetFrameNumber(uint32_t fn) { _frame_number = fn; }
   void SetNChannels(uint32_t nc) { _n_channels = nc; }
   void SetSamplesPerChannel(uint32_t ns) { _samples_per_channel = ns; }
   void SetIsCompressed(bool c) { _is_compressed = c; }
