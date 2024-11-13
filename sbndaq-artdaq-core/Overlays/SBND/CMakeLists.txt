@@ -7,7 +7,7 @@ cet_make_library(
     PTB_content.cc
     PTBFragment.cc
     NevisTPCFragment.cc
-    DAPHNEFragment.cc
+    CAENV1740Fragment.cc
     TDCTimestampFragment.cc
   LIBRARIES
     ${LIBRARY_CORE_LIB_LIST}
