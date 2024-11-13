@@ -12,7 +12,6 @@ cet_make_library(
     sbndaq-artdaq-core_Overlays_Common
   SOURCE
     CAENV1730Fragment.cc
-    CAENV1740Fragment.cc
     SpectratimeEventFragment.cc
     BernCRTZMQFragment.cc
     BernCRTFragment.cc
