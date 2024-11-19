@@ -38,12 +38,14 @@ Brief guide to CTB fragments
 namespace sbndaq {
 
 
-class CTBFragment {
+  //class CTBFragment {
+  class CTBFragment : public artdaq::Fragment {
   public:
 
   // The constructor simply sets its const private member "artdaq_Fragment_"
   // to refer to the artdaq::Fragment object
 
+  
   CTBFragment( artdaq::Fragment const & f ) ;
 
 
@@ -62,9 +64,13 @@ class CTBFragment {
   // This is supposed to be the right way to retrieve the TS.
   uint64_t TimeStamp( unsigned int i ) const ;
 
+  
 
   // casted words depending on their type for easy deconding
   // An null pointer as a return means the requested cast is not correct
+
+  //Access the generic PTB word with 192 bits (128b generic word + 64b for exposure accounting)
+    const ptb::content::word::PTBBoardReaderWord_t* PTBWord(unsigned int i) const ;
 
   // access to the generic word structure.
   // This simply allows access to word type, TS
@@ -95,11 +101,14 @@ class CTBFragment {
   static const ptb::content::word::timestamp_t* TSWord   ( const ptb::content::word::word_t & w ) ;
   static const ptb::content::word::trigger_t*   Trigger  ( const ptb::content::word::word_t & w ) ;
 
-  static constexpr unsigned int WordSize() { return sizeof( ptb::content::word::word_t ) ; }
+    // static constexpr unsigned int WordSize() { return sizeof( ptb::content::word::word_t ) ; }
+ static constexpr unsigned int WordSize() { return sizeof( ptb::content::word::PTBBoardReaderWord_t ) ; }
 
   friend std::ostream & operator << (std::ostream &, CTBFragment const & ) ;
 
   const artdaq::Fragment & RawFragment() const { return artdaq_Fragment_ ; }
+
+
 
 protected:
 
