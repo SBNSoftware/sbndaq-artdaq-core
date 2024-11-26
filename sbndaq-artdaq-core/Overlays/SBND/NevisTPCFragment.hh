@@ -80,9 +80,9 @@ public:
   { 
     NevisTPCDecoder decoder(metadata()->SamplesPerChannel());
     auto wc = header()->getADCWordCount();
-    if (sizeof(NevisTPCHeader) + header()->getADCWordCount()*2 > artdaq_Fragment_.dataSizeBytes()) {
+    if (sizeof(NevisTPCHeader) + header()->getADCWordCount()*sizeof(NevisTPC_ADC_t) > artdaq_Fragment_.dataSizeBytes()) {
       if (artdaq_Fragment_.dataSizeBytes() > sizeof(NevisTPCHeader)) {
-        wc = (artdaq_Fragment_.dataSizeBytes() - sizeof(NevisTPCHeader))/2;
+        wc = (artdaq_Fragment_.dataSizeBytes() - sizeof(NevisTPCHeader))/sizeof(NevisTPC_ADC_t);
       }
       else {
         wc = 0;
