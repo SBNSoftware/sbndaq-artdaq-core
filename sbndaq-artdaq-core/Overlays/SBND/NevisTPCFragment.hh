@@ -40,7 +40,7 @@ public:
     _is_compressed = compressed;
   }
   
-  uint32_t const& EventNumber()		const { return _event_number; }
+  uint32_t const& EventNumber()         const { return _event_number; }
   uint32_t const& FrameNumber()         const { return _frame_number; }
   uint32_t const& NChannels()           const { return _n_channels; }
   uint32_t const& SamplesPerChannel()   const { return _samples_per_channel; }
@@ -79,7 +79,16 @@ public:
   size_t decode_data(std::unordered_map< uint16_t,NevisTPC_Data_t >& wvfm_map) const
   { 
     NevisTPCDecoder decoder(metadata()->SamplesPerChannel());
-    return decoder.decode_data(data(),header()->getADCWordCount(),wvfm_map);
+    auto wc = header()->getADCWordCount();
+    if (sizeof(NevisTPCHeader) + header()->getADCWordCount()*2 > artdaq_Fragment_.dataSizeBytes()) {
+      if (artdaq_Fragment_.dataSizeBytes() > sizeof(NevisTPCHeader)) {
+        wc = (artdaq_Fragment_.dataSizeBytes() - sizeof(NevisTPCHeader))/2;
+      }
+      else {
+        wc = 0;
+      }
+    }
+    return decoder.decode_data(data(),wc,wvfm_map);
   }
 
   bool Verify() const;
