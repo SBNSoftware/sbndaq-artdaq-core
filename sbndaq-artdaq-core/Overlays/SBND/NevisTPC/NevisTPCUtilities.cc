@@ -58,10 +58,16 @@ size_t sbndaq::NevisTPCDecoder::decode_data(const sbndaq::NevisTPC_ADC_t* data_p
   for(size_t i_w=0; i_w<n_words; ++i_w){
     w_ptr = data_ptr+i_w;
 
+    bool skiptoend = false;
+
     switch(get_word_type(*w_ptr)){
 
     case NevisTPCWordType_t::kChannelHeader:
-
+      if (currentChannel == 63) {
+	TRACE(TWARNING,"Unexpected channel header for channel %u found after last channel",*w_ptr & 0x3F);
+	skiptoend = true;
+	break;
+      }
       currentChannel = (*w_ptr & 0x3F);
       TRACE(TDECODE,"Reading channel %u ...",currentChannel);
 
@@ -99,6 +105,11 @@ size_t sbndaq::NevisTPCDecoder::decode_data(const sbndaq::NevisTPC_ADC_t* data_p
 
     }break;
     case NevisTPCWordType_t::kChannelEnding:
+      if (currentChannel == 63) {
+	TRACE(TWARNING,"Unexpected channel trailer for channel %u found after last channel",*w_ptr & 0x3F);
+	skiptoend = true;
+	break;
+      }
 
       if( (*w_ptr & 0x3F) == currentChannel )
 	TRACE(TDECODE,"Finished reading channel %u. %lu ADC samples read.",currentChannel,currentWaveformPtr->size());
@@ -113,6 +124,7 @@ size_t sbndaq::NevisTPCDecoder::decode_data(const sbndaq::NevisTPC_ADC_t* data_p
       break;
     }//endswitch
 
+    if (skiptoend) break;
 
   }//end loop over words
 
