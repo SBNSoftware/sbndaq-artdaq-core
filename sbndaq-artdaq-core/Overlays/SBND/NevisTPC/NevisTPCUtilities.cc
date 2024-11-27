@@ -58,16 +58,11 @@ size_t sbndaq::NevisTPCDecoder::decode_data(const sbndaq::NevisTPC_ADC_t* data_p
   for(size_t i_w=0; i_w<n_words; ++i_w){
     w_ptr = data_ptr+i_w;
 
-    bool skiptoend = false;
+    bool skippingSecondWaveform = false;
 
     switch(get_word_type(*w_ptr)){
 
     case NevisTPCWordType_t::kChannelHeader:
-      if (currentChannel == 63) {
-	TRACE(TWARNING,"Unexpected channel header for channel %u found after last channel",*w_ptr & 0x3F);
-	skiptoend = true;
-	break;
-      }
       currentChannel = (*w_ptr & 0x3F);
       TRACE(TDECODE,"Reading channel %u ...",currentChannel);
 
@@ -75,18 +70,24 @@ size_t sbndaq::NevisTPCDecoder::decode_data(const sbndaq::NevisTPC_ADC_t* data_p
       currentWaveformPtr = &((emplace_pair.first)->second);
 
       if(!(emplace_pair.second)){
-	TRACE(TWARNING,"Previously found channel %u. Overwriting old data!",currentChannel);
-	currentWaveformPtr->clear();
+	TRACE(TWARNING,"Previously found and decoded channel %u. Skipping additional waveforms for this channel!",currentChannel);
+	skippingSecondWaveform = true;
+	break;
+      }
+      else {
+	skippingSecondWaveform = false;
       }
       currentWaveformPtr->reserve(fReserveWvfmSize);
       
       break;
 
     case NevisTPCWordType_t::kADC:
+      if (skippingSecondWaveform) break;
       currentWaveformPtr->emplace_back( (*w_ptr & 0xFFF) );
       break;
 
     case NevisTPCWordType_t::kADCHuffman: { // Brackets needed to declare variables
+      if (skippingSecondWaveform) break;
       zeros=0;
       differences.clear();
       differences.reserve(14); // Speed up: reserve for the maximum number of differences stored in a Huffman word
@@ -105,12 +106,7 @@ size_t sbndaq::NevisTPCDecoder::decode_data(const sbndaq::NevisTPC_ADC_t* data_p
 
     }break;
     case NevisTPCWordType_t::kChannelEnding:
-      if (currentChannel == 63) {
-	TRACE(TWARNING,"Unexpected channel trailer for channel %u found after last channel",*w_ptr & 0x3F);
-	skiptoend = true;
-	break;
-      }
-
+      if (skippingSecondWaveform) break;
       if( (*w_ptr & 0x3F) == currentChannel )
 	TRACE(TDECODE,"Finished reading channel %u. %lu ADC samples read.",currentChannel,currentWaveformPtr->size());
       else
@@ -123,9 +119,6 @@ size_t sbndaq::NevisTPCDecoder::decode_data(const sbndaq::NevisTPC_ADC_t* data_p
 
       break;
     }//endswitch
-
-    if (skiptoend) break;
-
   }//end loop over words
 
   return wvfm_map.size();
