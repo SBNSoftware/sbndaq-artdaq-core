@@ -55,10 +55,9 @@ size_t sbndaq::NevisTPCDecoder::decode_data(const sbndaq::NevisTPC_ADC_t* data_p
   std::vector<int> differences; // Vector with Huffman-decoded differences
   differences.reserve(14);
 
+  bool skippingSecondWaveform = false;
   for(size_t i_w=0; i_w<n_words; ++i_w){
     w_ptr = data_ptr+i_w;
-
-    bool skippingSecondWaveform = false;
 
     switch(get_word_type(*w_ptr)){
 
