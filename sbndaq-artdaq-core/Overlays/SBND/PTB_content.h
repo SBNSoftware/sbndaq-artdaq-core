@@ -17,7 +17,7 @@ namespace ptb {
 
   namespace content {
 
-    const int version = 2 ;
+    const int version = 3; //Updated to 16 bit gate counter
 
     using std::size_t ;
 
@@ -252,9 +252,9 @@ namespace ptb {
            static size_t const n_bits_timestamp = 64;
 	 //static size_t const n_bits_tmask     = 61;
 
-	 //Added these two in order to have 8 bits to the gate counter
-           static size_t const n_bits_tmask     = 53;
-	   static size_t const n_bits_gcounter  = 8;
+	 //Added these two in order to have 16 bits to the gate counter
+           static size_t const n_bits_tmask     = 45;
+	   static size_t const n_bits_gcounter  = 16;
 
 	   static size_t const n_bits_type      = word_t::n_bits_type ;
 
