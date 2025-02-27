@@ -36,8 +36,8 @@ sbndaq::NevisTPCHeader sbndaq::NevisTPCDecoder::decode_header(const char* hdr_pt
 }
 
 size_t sbndaq::NevisTPCDecoder::decode_data(const sbndaq::NevisTPC_ADC_t* data_ptr,
-					     size_t n_words,
-					     std::unordered_map<uint16_t,sbndaq::NevisTPC_Data_t> & wvfm_map)
+                                            size_t n_words,
+                                            std::unordered_map<uint16_t,sbndaq::NevisTPC_Data_t> & wvfm_map)
 {
   //clear out the output map
   wvfm_map.clear();
@@ -45,7 +45,7 @@ size_t sbndaq::NevisTPCDecoder::decode_data(const sbndaq::NevisTPC_ADC_t* data_p
   //some initialization so we don't do this in the loops
   const NevisTPC_ADC_t* w_ptr;
   uint16_t currentChannel = 0;
-  NevisTPC_Data_t* currentWaveformPtr;
+  NevisTPC_Data_t* currentWaveformPtr = nullptr;
   std::pair< std::unordered_map<uint16_t,NevisTPC_Data_t>::iterator, bool> emplace_pair;
   uint16_t mask;
   size_t i_diff;
@@ -69,54 +69,55 @@ size_t sbndaq::NevisTPCDecoder::decode_data(const sbndaq::NevisTPC_ADC_t* data_p
       currentWaveformPtr = &((emplace_pair.first)->second);
 
       if(!(emplace_pair.second)){
-	TRACE(TWARNING,"Previously found and decoded channel %u. Skipping additional waveforms for this channel!",currentChannel);
-	skippingSecondWaveform = true;
-	break;
+        TRACE(TWARNING,"Previously found and decoded channel %u. Skipping additional waveforms for this channel!",currentChannel);
+        skippingSecondWaveform = true;
+        break;
       }
       else {
-	skippingSecondWaveform = false;
+        skippingSecondWaveform = false;
       }
       currentWaveformPtr->reserve(fReserveWvfmSize);
-      
       break;
 
     case NevisTPCWordType_t::kADC:
       if (skippingSecondWaveform) break;
+      if (!currentWaveformPtr) break;
       currentWaveformPtr->emplace_back( (*w_ptr & 0xFFF) );
       break;
 
     case NevisTPCWordType_t::kADCHuffman: { // Brackets needed to declare variables
       if (skippingSecondWaveform) break;
+      if (!currentWaveformPtr) break;
       zeros=0;
       differences.clear();
       differences.reserve(14); // Speed up: reserve for the maximum number of differences stored in a Huffman word
 
       // Read the lowest 14 bits from left to right
       for(mask = 0x2000; mask > 0x0; mask = (mask>>1)){
-	if( (*w_ptr & mask) == mask ){ // Found 1
-	  differences.emplace_back( decode_huffman(zeros) );
-	  zeros = 0; // Reset counter
-	} else ++zeros;
+        if( (*w_ptr & mask) == mask ){ // Found 1
+          differences.emplace_back( decode_huffman(zeros) );
+          zeros = 0; // Reset counter
+        } else ++zeros;
       }
       // Differences are time-ordered from right to left
       for(i_diff = differences.size(); i_diff > 0; i_diff--){
-	currentWaveformPtr->emplace_back( currentWaveformPtr->back() + differences[i_diff - 1] );
+        currentWaveformPtr->emplace_back( currentWaveformPtr->back() + differences[i_diff - 1] );
       }
+    } break;
 
-    }break;
     case NevisTPCWordType_t::kChannelEnding:
       if (skippingSecondWaveform) break;
+      if (!currentWaveformPtr) break;
       if( (*w_ptr & 0x3F) == currentChannel )
-	TRACE(TDECODE,"Finished reading channel %u. %lu ADC samples read.",currentChannel,currentWaveformPtr->size());
+        TRACE(TDECODE,"Finished reading channel %u. %lu ADC samples read.",currentChannel,currentWaveformPtr->size());
       else
-	TRACE(TERROR,"ERROR: Channel header %u and ending %u do not match.",currentChannel,(*w_ptr & 0x3F));
-
+        TRACE(TERROR,"ERROR: Channel header %u and ending %u do not match.",currentChannel,(*w_ptr & 0x3F));
       break;
 
     case NevisTPCWordType_t::kUnknown:
       TRACE(TDECODE,"Found unknown word %u.",*w_ptr);
-
       break;
+
     }//endswitch
   }//end loop over words
 
