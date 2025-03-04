@@ -34,6 +34,8 @@ namespace sbnd::trigger {
     double prelimPE;       // total PE for the 1 us before trigger time
     double peakPE;
     double peaktime;
+    double michelpeakPE;
+    double michelpeaktime;
     std::vector<sbnd::trigger::pmtInfo> pmtInfoVec;
     pmtSoftwareTrigger() {}
   };
