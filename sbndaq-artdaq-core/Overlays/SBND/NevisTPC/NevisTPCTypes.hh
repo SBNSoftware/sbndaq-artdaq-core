@@ -112,7 +112,15 @@ struct sbndaq::NevisTPCHeader{
     return trig_frame_sample_word.tf2 << 8 | trig_frame_sample_word.tf1;
   }
   uint32_t getTrigFrame() const {
-    return trig_frame_sample_word.tf3;
+    uint32_t frame = getFrameNum();
+    uint32_t trig_frame = (frame & ~0x7) | (trig_frame_sample_word.tf3 & 0x7);
+
+    // Adjust for rollover
+    if (static_cast<int>(trig_frame) - static_cast<int>(frame) < 0) {
+      trig_frame += 8;      
+    }
+    
+    return trig_frame;
   }
   
   NevisTPCHeader(uint8_t _fid, uint8_t _slot, uint32_t _adcwords, uint32_t _eventnum, uint32_t _framenum, uint32_t _checksum, uint32_t _trigframe, uint32_t _sample2mhznum){
