@@ -5,6 +5,7 @@ cet_make_library(
     testStandTrigger.cc
     CRTmetric.cc
     pmtSoftwareTrigger.cc
+    TPCmetric.cc
   LIBRARIES
     ${LIBRARY_CORE_LIB_LIST}
 )
