@@ -17,7 +17,12 @@ namespace ptb {
 
   namespace content {
 
-    const int version = 3; //Updated to 16 bit gate counter
+	// Documenting Version of PTB Word: 
+	// no version: prior to info being added to PTB word for POT Accounting (no gate counter or prev timestamp, also words 128 bits long)
+	// version 2: 8 bit gate counter added (Added gate counter and prev timestamp, words are now 192 bits long)
+	// version 3: 8 bit counter overlapped too many times, so we increased to 16 bit gate counter
+	// version 4: HLT 6 was overwriting HLT 2 POT information at beginning of Run 2, so we replaced ordering
+    const int version = 4; 
 
     using std::size_t ;
 
