@@ -6,6 +6,7 @@
 #include <sstream>
 #include <iomanip>
 #include <vector>
+#include <cstdint>
 
 namespace sbndaq{
   
