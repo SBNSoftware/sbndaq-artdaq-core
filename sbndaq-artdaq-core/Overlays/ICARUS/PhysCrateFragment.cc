@@ -520,9 +520,9 @@ artdaq::Fragment icarus::PhysCrateFragment::decompressArtdaqFragment(artdaq::Fra
     // update the board tile header packSize
     // endianness is weird for this, hence the htonl...
     icarus::PhysCrateDataTileHeader* boardHeader = reinterpret_cast<PhysCrateDataTileHeader*>(decompressed_fragment.dataBeginBytes() 
-                                                                                              + board*(sizeof(PhysCrateDataTileHeader) + sizeof(A2795DataBlock::Header)) / sizeof(uint16_t)
-                                                                                              + board*overlay.nChannelsPerBoard()*overlay.nSamplesPerChannel()
-                                                                                              + board*4);
+                                                                                              + board*(sizeof(PhysCrateDataTileHeader) + sizeof(A2795DataBlock::Header))
+                                                                                              + board*overlay.nChannelsPerBoard()*overlay.nSamplesPerChannel()*sizeof(uint16_t)
+                                                                                              + board*4*sizeof(uint16_t));
     boardHeader->packSize = htonl(sizeof(PhysCrateDataTileHeader) + sizeof(A2795DataBlock::Header) + overlay.nChannelsPerBoard()*overlay.nSamplesPerChannel()*sizeof(uint16_t) + 4*sizeof(uint16_t));
   }
   
