@@ -28,6 +28,8 @@ end_product_list
 qualifier                artdaq_core
 c7:prof:s112              c7:prof:s120a
 c7:debug:s112             c7:debug:s120a
+c14:prof:s131             c14:prof:s131
+c14:debug:s131            c14:debug:s131
 e20:prof:s120a            e20:prof:s120a
 e20:debug:s120a           e20:debug:s120a
 e20:prof:icarus:s120a     e20:prof:s120a
